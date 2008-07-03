@@ -1,7 +1,7 @@
 <?php
 
 /*
- adds patch to disallow page editing without acces to default language
+ adds patch to disallow page editing without access to default language
 */
 class ux_SC_alt_doc extends SC_alt_doc {
 

@@ -14,7 +14,7 @@ class ux_t3lib_TCEmain extends t3lib_TCEmain	{
 			if (t3lib_extMgm::isLoaded('languagevisibility')) {
 					require_once(t3lib_extMgm::extPath("languagevisibility").'class.tx_languagevisibility_beservices.php');									
 					$visibilityservice=t3lib_div::makeInstance('tx_languagevisibility_beservices');
-					if (!$visibilityservice->hasUserAccessToPageRecord($theUid,'delete')) {
+					if (!$visibilityservice->hasUserAccessToPageRecord($uid,'delete')) {
 						return 'Attempt to delete records without access to the visible languages';
 					}									
 				}	

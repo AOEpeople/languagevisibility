@@ -52,7 +52,7 @@ class tx_languagevisibility_behooks {
 			*/						
 			switch ($table) {
 				case 'pages': case 'tt_content': case 'tt_news':
-					if (isset($incomingFieldArray['tx_languagevisibility_visibility'])) {						
+					if (isset($incomingFieldArray['tx_languagevisibility_visibility']) && is_array($incomingFieldArray['tx_languagevisibility_visibility'])) {						
 						$incomingFieldArray['tx_languagevisibility_visibility']=serialize($incomingFieldArray['tx_languagevisibility_visibility']);
 					}
 					else {
