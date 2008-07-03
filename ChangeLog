@@ -1,0 +1,6 @@
+13.03.2008
+	* modify templavoila pi1 patch: override visualId to not show the preview at all. New typoscript option "showVisualId"
+
+07-12-12   <>
+
+	* Initial release
