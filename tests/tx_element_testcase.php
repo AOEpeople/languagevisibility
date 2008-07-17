@@ -28,7 +28,7 @@
  * WARNING: Never ever run a unit test like this on a live site!
  *
  *
- * @author	Daniel Pötzinger
+ * @author	Daniel Pï¿½tzinger
  */
 
 require_once(t3lib_extMgm::extPath("languagevisibility").'classes/class.tx_languagevisibility_elementFactory.php');
@@ -49,24 +49,18 @@ class tx_element_testcase extends tx_phpunit_testcase {
 		$_uid=9990;
 		$_table='pages';		
 		
-		
 		$dao=new tx_languagevisibility_daocommon;		
 		$factoryClass=t3lib_div::makeInstanceClassName('tx_languagevisibility_elementFactory');	
 		$factory=new $factoryClass($dao);		
 		
 		//get element from factory:
-    $element=$factory->getElementForTable($_table,$_uid);
-    //print_r($element);
-    //test element 210    
-    $this->assertTrue($element->hasTranslation('98'), "element 9990 should have translation for language 98");    
-    $this->assertTrue($element->hasTranslation('0'), "default transla should be there always"); 
-    $this->assertEquals('page',$element->getFieldToUseForDefaultVisibility(), "page element should return page as field to use for default visibility"); 
-    
-    $this->assertFalse($element->hasTranslation('99'), "element 9990 should not be translated for 99!"); 
-   
-    
-    
-	}
+	    $element=$factory->getElementForTable($_table,$_uid);
+
+	    $this->assertTrue($element->hasTranslation('98'), "element 9990 should have translation for language 98");    
+	    $this->assertTrue($element->hasTranslation('0'), "default translation should be there always"); 
+	    $this->assertEquals('page',$element->getFieldToUseForDefaultVisibility(), "page element should return page as field to use for default visibility"); 
+	    $this->assertFalse($element->hasTranslation('99'), "element 9990 should not be translated for 99!"); 
+   	}
 	
 	public function test_hasTranslation_celement()
 	{
@@ -82,40 +76,40 @@ class tx_element_testcase extends tx_phpunit_testcase {
 		$factory=new $factoryClass($dao);		
 		
 		//get element from factory:
-    $element=$factory->getElementForTable($_table,$_uid);
-    
-    //test element 210    
-    $this->assertTrue($element->hasTranslation('98'), "record should have translation");    
-    $this->assertTrue($element->hasTranslation('0'), "default transla should be there always"); 
-    
-    $element=$factory->getElementForTable($_table,'4922');
-    $this->assertFalse($element->hasTranslation('99'), "element 4922 should not be translated!"); 
-  
-    
+	    $element=$factory->getElementForTable($_table,$_uid);
+	    
+	    //test element 210    
+	    $this->assertTrue($element->hasTranslation('98'), "record should have translation");    
+	    $this->assertTrue($element->hasTranslation('0'), "default transla should be there always"); 
+	    
+	    $element=$factory->getElementForTable($_table,'4922');
+	    $this->assertFalse($element->hasTranslation('99'), "element 4922 should not be translated!"); 
 	}
 	
 	public function test_hasTranslation_normalfcelement()
 	{
-			//this time data in DB is tested!
-			$this->_create_fixture_fcecontentrecord();
-			$this->_create_fixture_fcedatastructures();
-			$this->_create_fixture_languagerecords();
-			$_uid=9992;		
-			$_table='tt_content';		
-			
-			
-			$dao=new tx_languagevisibility_daocommon;		
-			$factoryClass=t3lib_div::makeInstanceClassName('tx_languagevisibility_elementFactory');	
-			$factory=new $factoryClass($dao);		
+		//this time data in DB is tested!
+		$this->_create_fixture_fcecontentrecord();
+		$this->_create_fixture_fcedatastructures();
+		$this->_create_fixture_languagerecords();
+		$_uid=9992;		
+		$_table='tt_content';		
+		
+		
+		$dao=new tx_languagevisibility_daocommon;		
+		$factory=new tx_languagevisibility_elementFactory($dao);		
 			
 			//get element from factory:
 	    $element=$factory->getElementForTable($_table,$_uid);
-	   
+//$GLOBALS['kkk']=true;
 	  	$this->assertTrue($element instanceof tx_languagevisibility_fceelement, "not object of type tx_languagevisibility_fcelement returned!");
-	    $this->assertTrue($element->hasTranslation('98'), "record should have translation");    
-	    $this->assertTrue($element->hasTranslation('0'), "default transla should be there always");     
+
+	  	$this->assertTrue($element->hasTranslation('98'), "record should have translation");    
+
+	  	$this->assertTrue($element->hasTranslation('0'), "default transla should be there always");     
 	    
 	    $this->assertFalse($element->hasTranslation('99'), "element should not be translated!");     
+
 	}
 	
 	public function test_hasTranslation_overlayfcelement()

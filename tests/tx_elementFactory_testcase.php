@@ -28,7 +28,7 @@
  * WARNING: Never ever run a unit test like this on a live site!
  *
  *
- * @author	Daniel Pötzinger
+ * @author	Daniel Pï¿½tzinger
  */
 
 require_once(t3lib_extMgm::extPath("languagevisibility").'classes/class.tx_languagevisibility_elementFactory.php');
@@ -93,10 +93,30 @@ class tx_elementFactory_testcase extends tx_phpunit_testcase {
 		$factoryClass=t3lib_div::makeInstanceClassName('tx_languagevisibility_elementFactory');	
 		$factory=new $factoryClass($daostub);
 		
-    $element=$factory->getElementForTable($_table,$_uid);
+	    $element=$factory->getElementForTable($_table,$_uid);
+	    
+	    $this->assertTrue($element instanceof tx_languagevisibility_element, "not object of type tx_languagevisibility_element returned!");    
+	    $this->assertTrue($element instanceof tx_languagevisibility_fceelement, "not object of type tx_languagevisibility_fcelement returned!");    
     
-    $this->assertTrue($element instanceof tx_languagevisibility_element, "not object of type tx_languagevisibility_element returned!");    
-    $this->assertTrue($element instanceof tx_languagevisibility_fceelement, "not object of type tx_languagevisibility_fcelement returned!");    
+	}
+	
+	public function test_canGetElementForTTNEWS()
+	{
+		// Create the Array fixture.
+		$_uid=1;
+		$_table='tt_news';
+		
+		$fixture = array('uid'=>$_uid,'title'=>'news');
+		$daostub=new tx_languagevisibility_daocommon_stub;
+		$daostub->stub_setRow($fixture,$_table);
+		
+		$factoryClass=t3lib_div::makeInstanceClassName('tx_languagevisibility_elementFactory');	
+		$factory=new $factoryClass($daostub);
+		
+	    $element=$factory->getElementForTable($_table,$_uid);
+	    
+	    $this->assertTrue($element instanceof tx_languagevisibility_element, "not object of type tx_languagevisibility_element returned!");    
+	    $this->assertTrue($element instanceof tx_languagevisibility_ttnewselement, "not object of type tx_languagevisibility_ttnewselement returned!");    
     
 	}
 	

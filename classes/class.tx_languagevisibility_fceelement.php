@@ -44,7 +44,7 @@ class tx_languagevisibility_fceelement extends tx_languagevisibility_element {
 	
 	function _hasOverlayRecordForLanguage($id) {		
 		$languageRep=t3lib_div::makeInstance('tx_languagevisibility_languagerepository');	
-    $language=$languageRep->getLanguageById($id);
+    	$language=$languageRep->getLanguageById($id);
 		$this->langIsoCodeForFlexFormCallback=strtoupper($language->getIsoCode());
 		$this->_callBackFoundOverlay=FALSE;
 		//$data=t3lib_div::xml2array($this->row['tx_templavoila_flex']);
@@ -80,6 +80,7 @@ class tx_languagevisibility_fceelement extends tx_languagevisibility_element {
 		}
 		else  {
 			//the FCE has no real overlay record
+			
 			$flexObj = t3lib_div::makeInstance('t3lib_flexformtools');			
 			$flexObj->traverseFlexFormXMLData('tt_content','tx_templavoila_flex',$this->row,$this,'_hasOverlayRecordForLanguage_Seperate_flexFormCallBack');			
 			return $this->_callBackFoundOverlay;

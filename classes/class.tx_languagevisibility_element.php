@@ -1,5 +1,31 @@
 <?php
-
+/***************************************************************
+*  Copyright notice
+*  
+*  (c) 2007 Daniel P?tzinger (poetzinger@aoemedia.de)
+*  All rights reserved
+*
+*  This script is part of the TYPO3 project. The TYPO3 project is 
+*  free software; you can redistribute it and/or modify
+*  it under the terms of the GNU General Public License as published by
+*  the Free Software Foundation; either version 2 of the License, or
+*  (at your option) any later version.
+* 
+*  The GNU General Public License can be found at
+*  http://www.gnu.org/copyleft/gpl.html.
+* 
+*  This script is distributed in the hope that it will be useful,
+*  but WITHOUT ANY WARRANTY; without even the implied warranty of
+*  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+*  GNU General Public License for more details.
+*
+*  This copyright notice MUST APPEAR in all copies of the script!
+***************************************************************/
+/** 
+ * Abstract basis class for all elements (elements are any translateable records in the system)
+ *
+ * @author	Daniel Poetzinger <poetzinger@aoemedia.de>
+ */
 require_once(t3lib_extMgm::extPath("languagevisibility").'classes/class.tx_languagevisibility_languagerepository.php');
 
 
@@ -23,6 +49,11 @@ abstract class tx_languagevisibility_element {
 		
 	}
 	
+	/**
+	 * Checks if the current record is set to language all (that is typically used to indicate that per default this element is visible in all langauges)
+	 *
+	 * @return unknown
+	 */
 	function isLanguageSetToAll() {
 		if ($this->row['sys_language_uid']	== '-1')
 			return true;
@@ -63,9 +94,9 @@ abstract class tx_languagevisibility_element {
 	protected function _hasOverlayRecordForLanguage($langid) {
 		$row=$this->getOverLayRecordForCertainLanguage($langid,true);
 		if ($row['uid'] != '')
-    	return true;
-    else
-    	return false;		
+    		return true;
+    	else
+    		return false;		
 	}
 	
 	abstract function getOverLayRecordForCertainLanguage($languageId,$onlyUid=FALSE);

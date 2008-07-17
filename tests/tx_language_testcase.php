@@ -28,7 +28,7 @@
  * WARNING: Never ever run a unit test like this on a live site!
  *
  *
- * @author	Daniel Pötzinger
+ * @author	Daniel Pï¿½tzinger
  */
 
 require_once(t3lib_extMgm::extPath("languagevisibility").'classes/class.tx_languagevisibility_language.php');
@@ -74,6 +74,23 @@ class tx_language_testcase extends tx_phpunit_testcase {
 
 		// Assert that the size of the Array fixture is 0.
 		$this->assertEquals(array('0','1','2'), $language->getFallbackOrder(), "wrong getFallbackOrder");
+	}
+	
+	public function test_canGetGlobalVisibility()
+	{
+		// Create the Array fixture.
+		$fixture = array('uid'=>1,
+						'tx_languagevisibility_defaultvisibility'=>'t',
+						'tx_languagevisibility_defaultvisibilityel'=>'f',
+						'tx_languagevisibility_defaultvisibilityttnewsel'=>'y');
+		
+		$language=new tx_languagevisibility_language;
+		$language->setData($fixture);
+
+		
+		$this->assertEquals('y', $language->getDefaultVisibilityForTTNewsElement(), "wrong visibility");
+		$this->assertEquals('f', $language->getDefaultVisibilityForElement(), "wrong visibility");
+		$this->assertEquals('t', $language->getDefaultVisibilityForPage(), "wrong visibility");
 	}
 	
 	/*
