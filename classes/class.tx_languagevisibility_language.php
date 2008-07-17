@@ -24,6 +24,10 @@ class tx_languagevisibility_language {
 	function getDefaultVisibilityForElement() {
 		return $this->row['tx_languagevisibility_defaultvisibilityel'];
 	}
+
+	function getDefaultVisibilityForTTNewsElement() {
+		return $this->row['tx_languagevisibility_defaultvisibilityttnewsel'];
+	}	
 	
 	function getUid() {
 		return $this->row['uid'];

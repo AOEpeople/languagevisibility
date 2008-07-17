@@ -93,6 +93,9 @@ class tx_languagevisibility_visibilityService {
 			if ($element->getFieldToUseForDefaultVisibility()=='page') {
 				$global=$language->getDefaultVisibilityForPage();
 			}
+			elseif($element->getFieldToUseForDefaultVisibility()=='tt_news'){
+				$global=$language->getDefaultVisibilityForTTNewsElement();
+			}
 			else {
 				$global=$language->getDefaultVisibilityForElement();
 			}

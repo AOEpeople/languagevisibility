@@ -10,7 +10,8 @@
 			<label index="pages.tx_languagevisibility_visibility">language visibility</label>
 			<label index="tt_content.tx_languagevisibility_visibility">language visibility</label>			
 			<label index="sys_language.tx_languagevisibility_defaultvisibility">default visibility for pages</label>
-			<label index="sys_language.tx_languagevisibility_visibilityel">default visibility for elements</label>
+			<label index="sys_language.tx_languagevisibility_defaultvisibilityel">default visibility for other elements</label>
+			<label index="sys_language.tx_languagevisibility_defaultvisibilityttnewsel">default visibility for tt_news elements</label>
 			<label index="tx_languagevisibility_visibility.I.yes">forced to YES</label>
 			<label index="tx_languagevisibility_visibility.I.no">forced to NO</label>
 			<label index="tx_languagevisibility_visibility.I.f">if translation in fallback</label>

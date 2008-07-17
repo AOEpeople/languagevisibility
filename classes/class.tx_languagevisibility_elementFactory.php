@@ -59,10 +59,10 @@ class tx_languagevisibility_elementFactory {
 					return $element;
 				break;
 				case 'tt_news':
-					require_once(t3lib_extMgm::extPath("languagevisibility").'classes/class.tx_languagevisibility_recordelement.php');
-					$elementclass=t3lib_div::makeInstanceClassName('tx_languagevisibility_recordelement');					
+					require_once(t3lib_extMgm::extPath("languagevisibility").'classes/class.tx_languagevisibility_ttnewselement.php');
+					$elementclass=t3lib_div::makeInstanceClassName('tx_languagevisibility_ttnewselement');					
 					$element=new $elementclass($row);
-					$element->setTable($table);
+
 					return $element;
 				break;
 				case 'tt_content':					

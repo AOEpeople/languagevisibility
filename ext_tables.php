@@ -54,12 +54,29 @@ $tempColumns = Array (
 			"maxitems" => 1,
 		)
 	),
+	"tx_languagevisibility_defaultvisibilityttnewsel" => Array (		
+		"exclude" => 0,		
+		"label" => "LLL:EXT:languagevisibility/locallang_db.xml:sys_language.tx_languagevisibility_defaultvisibilityttnewsel",		
+		"config" => Array (
+			"type" => "select",
+			"items" => Array (	
+				Array('',''),							
+				Array("LLL:EXT:languagevisibility/locallang_db.xml:tx_languagevisibility_visibility.I.yes", "yes"),
+				Array("LLL:EXT:languagevisibility/locallang_db.xml:tx_languagevisibility_visibility.I.no", "no"),
+				Array("LLL:EXT:languagevisibility/locallang_db.xml:tx_languagevisibility_visibility.I.t", "t"),
+				Array("LLL:EXT:languagevisibility/locallang_db.xml:tx_languagevisibility_visibility.I.f", "f"),
+			),
+			'default'=>'f',
+			"size" => 1,	
+			"maxitems" => 1,
+		)
+	),
 );
 
 
 t3lib_div::loadTCA("sys_language");
 t3lib_extMgm::addTCAcolumns("sys_language",$tempColumns,1);
-t3lib_extMgm::addToAllTCAtypes("sys_language","tx_languagevisibility_fallbackorder;;;;1-1-1, tx_languagevisibility_defaultvisibility, tx_languagevisibility_defaultvisibilityel");
+t3lib_extMgm::addToAllTCAtypes("sys_language","tx_languagevisibility_fallbackorder;;;;1-1-1, tx_languagevisibility_defaultvisibility, tx_languagevisibility_defaultvisibilityttnewsel, tx_languagevisibility_defaultvisibilityel");
 
 $tempColumns = Array (
 	"tx_languagevisibility_visibility" => Array (		

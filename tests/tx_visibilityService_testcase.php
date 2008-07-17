@@ -98,6 +98,10 @@ class tx_visibilityService_testcase extends tx_phpunit_testcase {
 		//test
 		$visibility=t3lib_div::makeInstance('tx_languagevisibility_visibilityService');	
 
+		print('<pre>');
+		print_r($visibility);
+		print('</pre>');
+		
 		// language 1 should be set local to "t"
 		$this->assertEquals('-', $element->getLocalVisibilitySetting(1), "setting default (-) expected");		
 		$this->assertEquals('f', $visibility->getVisibilitySetting($language,$element), "setting f expected (because default is used)");		
