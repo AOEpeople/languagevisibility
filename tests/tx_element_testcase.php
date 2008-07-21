@@ -101,7 +101,7 @@ class tx_element_testcase extends tx_phpunit_testcase {
 			
 			//get element from factory:
 	    $element=$factory->getElementForTable($_table,$_uid);
-//$GLOBALS['kkk']=true;
+
 	  	$this->assertTrue($element instanceof tx_languagevisibility_fceelement, "not object of type tx_languagevisibility_fcelement returned!");
 
 	  	$this->assertTrue($element->hasTranslation('98'), "record should have translation");    

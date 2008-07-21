@@ -133,7 +133,13 @@ class tx_languagevisibility_beservices {
 		return true;		
 	}
 	
-	function getAvailableOptionsForLanguage($language) {
+	/**
+	 * returns array with the visibility options that are allowed for the current user.
+	 *
+	 * @param tx_languagevisibility_language $language
+	 * @return array
+	 */
+	function getAvailableOptionsForLanguage(tx_languagevisibility_language $language) {
 		$uid=$language->getUid();		
 		$select=array();		
 		if ($uid==0) {

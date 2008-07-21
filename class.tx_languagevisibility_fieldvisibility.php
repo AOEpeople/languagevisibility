@@ -7,9 +7,13 @@ require_once(t3lib_extMgm::extPath("languagevisibility").'classes/dao/class.tx_l
 require_once(t3lib_extMgm::extPath("languagevisibility").'class.tx_languagevisibility_beservices.php');
 
 class user_tx_languagevisibility_fieldvisibility {
+	private $isNewElement=false;
+	private $pageId=0;
+	private $modTSconfig=array();
 	
 	function init() {
 		$this->calcPerms = $GLOBALS['BE_USER']->calcPerms($pageInfoArr);
+		
 	}
 	
 	public function user_fieldvisibility($PA, $fobj)    {
@@ -18,6 +22,15 @@ class user_tx_languagevisibility_fieldvisibility {
 		$this->init();
 		
 		$this->pageId=$PA['row']['pid'];
+		$uid=$PA['row']['uid'];
+		if (substr($uid,0,3)=='NEW') {
+			$this->isNewElement=TRUE;
+		}
+		if ($PA['table']=='pages' && !$this->isNewElement) {
+			$this->pageId=$PA['row']['uid'];
+		}
+		$_modTSconfig = $GLOBALS["BE_USER"]->getTSConfig('mod.languagevisibility',t3lib_BEfunc::getPagesTSconfig($this->pageId));
+		$this->modTSconfig=$_modTSconfig['properties'];
 		
 		$value=$PA['row'][$PA['field']];
 		if ($PA['row']['l18n_parent'] !=0) {
@@ -34,24 +47,24 @@ class user_tx_languagevisibility_fieldvisibility {
 		$dao=t3lib_div::makeInstance('tx_languagevisibility_daocommon');
 		$elementfactoryName= t3lib_div::makeInstanceClassName('tx_languagevisibility_elementFactory');		
 		$elementfactory=new $elementfactoryName($dao);
-		$uid=$PA['row']['uid'];
+		
 		try {
 			$element=$elementfactory->getElementForTable($PA['table'],$uid);     	  	
-	  }
-	  catch (Exception $e) {
-	  	return 'sorry this element supports no visibility settings';
-	  }
-       
-    
-
-    $content.=$element->getInformativeDescription();
-    
-    $languageRep=t3lib_div::makeInstance('tx_languagevisibility_languagerepository');	
-    $languageList=$languageRep->getLanguages();
-    
-    $visibility=t3lib_div::makeInstance('tx_languagevisibility_visibilityService');	    
-    $infosStruct=array();
-    foreach ($languageList as $language) {    	
+		  }
+		  catch (Exception $e) {
+		  	return 'sorry this element supports no visibility settings';
+		  }
+	       
+	    
+	
+	    $content.=$element->getInformativeDescription();
+	    
+	    $languageRep=t3lib_div::makeInstance('tx_languagevisibility_languagerepository');	
+	    $languageList=$languageRep->getLanguages();
+	    
+	    $visibility=t3lib_div::makeInstance('tx_languagevisibility_visibilityService');	    
+	    $infosStruct=array();
+	    foreach ($languageList as $language) {    	
     	
 	    	$infoitem=array('visible'=>$visibility->isVisible($language,$element),
 	    								'languageTitle'=>$language->getTitle($this->pageId),
@@ -65,9 +78,15 @@ class user_tx_languagevisibility_fieldvisibility {
 	    	$currentOptionsForUserAndLanguage=tx_languagevisibility_beservices::getAvailableOptionsForLanguage($language);
 	    	if ($currentSetting=='' || isset($currentOptionsForUserAndLanguage[$currentSetting])) {
 	    	//if ($currentSetting=='' || $GLOBALS['BE_USER']->checkLanguageAccess($language->getUid())) {
+	    		$defaultSelect=$element->getLocalVisibilitySetting($language->getUid());
+	    		if ($this->isNewElement && $defaultSelect=='') {
+	    			if ($this->modTSconfig['language.'][$language->getUid().'.']['defaultVisibilityOnCreate']!='') {
+	    				$defaultSelect=$this->modTSconfig['language.'][$language->getUid().'.']['defaultVisibilityOnCreate'];
+	    			}
+	    		}
 	    		$infoitem['options']=$this->_getSelectBox($language->getUid(),
 	    																							$this->_getSelectOptionsForLanguage($language),
-	    																							$element->getLocalVisibilitySetting($language->getUid()),
+	    																							$defaultSelect,
 	    																							$PA['itemFormElName']);
 	    	}
 	    	else {	    		
