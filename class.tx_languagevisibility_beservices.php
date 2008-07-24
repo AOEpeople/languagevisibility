@@ -59,6 +59,25 @@ class tx_languagevisibility_beservices {
 		
 	}
 	
+	//@TODO: check TCA and get correct l18n_parent
+	function isOverlayRecord($row,$table) {
+		
+		if ($row['l18n_parent']!='')
+			return true;
+		else
+			return false;
+	}
+	
+	function isSupportedTable($table) {
+		$supported=array('tt_news','tt_content','pages');
+		if (in_array($table,$supported)) {
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
+	
 	/**
 	* checks if the current BE_USER has access to the page record:
 	*  that is the case if:
@@ -111,6 +130,20 @@ class tx_languagevisibility_beservices {
 		if (!is_numeric($id)) {
 			return false;
 		}
+		if (!$this->isSupportedTable($table)) {
+			return true;
+		}
+		//check if overlay record:
+		$dao=t3lib_div::makeInstance('tx_languagevisibility_daocommon');
+		$row=$dao->getRecord($id,$table);
+		//@TODO check TCA for languagefield
+		if ($this->isOverlayRecord($row,$table)) {
+			if ($BE_USER->checkLanguageAccess($row['sys_language_uid']))
+				return true;
+			else
+				return false;
+		}
+			
 		$rep=t3lib_div::makeInstance('tx_languagevisibility_languagerepository');
 		$languages=$rep->getLanguages();
 		foreach ($languages as $language) {
