@@ -76,9 +76,10 @@ class ux_t3lib_pageSelect extends t3lib_pageSelect {
 	    
 	   
 	    if ($overlayLanguage===false) {	    	 	    	
-    		//not visible, but this function is also used for rootline fillings -> so just mark this page as not visible!
-    		$pageInput['_NOTVISIBLE'] = TRUE;
+    		$overlayLanguageForced=tx_languagevisibility_feservices::getOverlayLanguageIdForElementRecordForced($page_id,'pages',$lUid);
     		// $pageInput['title'].=' [[not visible]]';    		
+    		$pageInput= $this->_original_getPageOverlay($pageInput,$overlayLanguageForced);	
+    		$pageInput['_NOTVISIBLE'] = TRUE;
     		return $pageInput;
     	}
     	else {

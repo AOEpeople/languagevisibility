@@ -47,12 +47,25 @@ class tx_languagevisibility_feservices {
 		$dao=t3lib_div::makeInstance('tx_languagevisibility_daocommon');
 		$elementfactoryName= t3lib_div::makeInstanceClassName('tx_languagevisibility_elementFactory');		
 		$elementfactory=new $elementfactoryName($dao);		
-    $element=$elementfactory->getElementForTable($table,$uid);        
-    $languageRep=t3lib_div::makeInstance('tx_languagevisibility_languagerepository');	
-    $language=$languageRep->getLanguageById($lUid);
-   
-    $visibility=t3lib_div::makeInstance('tx_languagevisibility_visibilityService');	 
+	    $element=$elementfactory->getElementForTable($table,$uid);        
+	    $languageRep=t3lib_div::makeInstance('tx_languagevisibility_languagerepository');	
+	    $language=$languageRep->getLanguageById($lUid);
+	   
+	    $visibility=t3lib_div::makeInstance('tx_languagevisibility_visibilityService');	 
 		return $visibility->getOverlayLanguageIdForLanguageAndElement($language,$element);
+		
+	}
+	function getOverlayLanguageIdForElementRecordForced($uid,$table,$lUid) {
+		$dao=t3lib_div::makeInstance('tx_languagevisibility_daocommon');
+		$elementfactoryName= t3lib_div::makeInstanceClassName('tx_languagevisibility_elementFactory');		
+		$elementfactory=new $elementfactoryName($dao);		
+	    $element=$elementfactory->getElementForTable($table,$uid);        
+	    $languageRep=t3lib_div::makeInstance('tx_languagevisibility_languagerepository');	
+	    $language=$languageRep->getLanguageById($lUid);
+	   
+	    $visibility=t3lib_div::makeInstance('tx_languagevisibility_visibilityService');	 
+		$visibility->isVisible($language,$element);
+		return $visibility->getLastRelevantOverlayLanguageId();
 		
 	}
 	

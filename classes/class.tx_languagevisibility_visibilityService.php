@@ -16,6 +16,15 @@ class tx_languagevisibility_visibilityService {
 			return false;
 		}		
 	}
+	/**
+	 * currently used to get correct r
+	 * page rootline - also if a page in rootline is not vivible
+	 *
+	 * @return unknown
+	 */
+	function getLastRelevantOverlayLanguageId() {
+		return $this->_relevantOverlayLanguageId;
+	}
 	
 	
 	/**
