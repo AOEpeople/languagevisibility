@@ -12,9 +12,9 @@
 
 $EM_CONF[$_EXTKEY] = array(
 	'title' => 'Multilanguage Projects: Language Visibility',
-	'description' => '',
-	'category' => '',
-	'author' => '',
+	'description' => 'Enables multelevel fallback and introduce languagevisibility concept',
+	'category' => 'fe',
+	'author' => 'Daniel Pötzinger - AOE media GmbH',
 	'author_email' => '',
 	'shy' => '',
 	'dependencies' => 'cms',
