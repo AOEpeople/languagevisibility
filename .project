@@ -6,6 +6,11 @@
 	</projects>
 	<buildSpec>
 		<buildCommand>
+			<name>net.sourceforge.phpeclipse.parserbuilder</name>
+			<arguments>
+			</arguments>
+		</buildCommand>
+		<buildCommand>
 			<name>org.eclipse.php.core.PhpIncrementalProjectBuilder</name>
 			<arguments>
 			</arguments>
@@ -18,5 +23,6 @@
 	</buildSpec>
 	<natures>
 		<nature>org.eclipse.php.core.PHPNature</nature>
+		<nature>net.sourceforge.phpeclipse.phpnature</nature>
 	</natures>
 </projectDescription>

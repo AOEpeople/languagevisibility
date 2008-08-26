@@ -4,17 +4,17 @@
 
 
 class tx_languagevisibility_visibilityService {
-	
+
 	/**
 	* returns relevant languageid for overlay record or false if element is not visible for guven language
 	**/
 	function getOverlayLanguageIdForLanguageAndElement(tx_languagevisibility_language $language,$element) {
-		if ($this->isVisible($language,$element)) {			
+		if ($this->isVisible($language,$element)) {
 			return $this->_relevantOverlayLanguageId;
 		}
-		else {				
+		else {
 			return false;
-		}		
+		}
 	}
 	/**
 	 * currently used to get correct r
@@ -25,8 +25,8 @@ class tx_languagevisibility_visibilityService {
 	function getLastRelevantOverlayLanguageId() {
 		return $this->_relevantOverlayLanguageId;
 	}
-	
-	
+
+
 	/**
 	* Returns true or false wether the element is visible in the certain language.
 	*  (sets for internal access only $this->_relevantOverlayLanguageId which holds the overlay languageid)
@@ -34,7 +34,7 @@ class tx_languagevisibility_visibilityService {
 	function isVisible(tx_languagevisibility_language $language,$element)    {
 			$this->_relevantOverlayLanguageId=$language->getUid();
 			$visibility=$this->getVisibilitySetting($language,$element);
-			
+
 			if ($visibility=='yes') {
 					return true;
 			}
@@ -64,7 +64,7 @@ class tx_languagevisibility_visibilityService {
 						}
 					}
 					/*
-					$languageRep=t3lib_div::makeInstance('tx_languagevisibility_languagerepository');	    			
+					$languageRep=t3lib_div::makeInstance('tx_languagevisibility_languagerepository');
 					foreach ($fallBackOrder as $languageid) {
 						$fallbackLanguage=$languageRep->getById($languageid);
 						if ($this->isVisible($fallbackLanguage,$element)) {
@@ -77,28 +77,33 @@ class tx_languagevisibility_visibilityService {
 			}
 			else {
 				//no setting or default:
-				if ($language->getUid() == '0') 
+				if ($language->getUid() == '0')
 					return true;
 				else
 					return false;
 			}
 	}
-	
+
 	/**
 	* return the accumulated visibility setting: reads default for language then reads local for element and merges them.
 	*  if local is default, then the global is used or it is forced to be "yes" if the language was set to all.
+	*  if the element itself is a translated original record the element is only visible in the specific language
 	*	 If nothing is set the hardcoded default "t" (translated) is returned
-	*/	
-	function getVisibilitySetting(tx_languagevisibility_language $language,$element) {		
+	*/
+	function getVisibilitySetting(tx_languagevisibility_language $language,$element) {
 		$local=$element->getLocalVisibilitySetting($language->getUid());
 		if ($local !='' && $local !='-') {
 			return $local;
 		}
 		else {
 			if ($element->isLanguageSetToAll()) {
-				return 'yes';	
+				return 'yes';
 			}
-			
+
+			if($element->isMonolithicTranslated()) {
+				return $element->languageEquals($language)?'yes':'no';
+			}
+
 			if ($element->getFieldToUseForDefaultVisibility()=='page') {
 				$global=$language->getDefaultVisibilityForPage();
 			}
@@ -112,10 +117,10 @@ class tx_languagevisibility_visibilityService {
 				return 't';
 			else
 				return $global;
-		}		
+		}
 	}
-	
-	
+
+
 }
 
 ?>

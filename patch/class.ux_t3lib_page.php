@@ -40,9 +40,9 @@ require_once(t3lib_extMgm::extPath("languagevisibility").'class.tx_languagevisib
 
 
 class ux_t3lib_pageSelect extends t3lib_pageSelect {
-	
-	
-		
+
+
+
 	/**
 	 * Returns the relevant page overlay record fields
 	 *
@@ -51,43 +51,40 @@ class ux_t3lib_pageSelect extends t3lib_pageSelect {
 	 * @return	array		Page row which is overlayed with language_overlay record (or the overlay record alone)
 	 */
 	function getPageOverlay($pageInput,$lUid=-1)	{
-				
+
 			if ($lUid<0)	{
 				$lUid = $this->sys_language_uid;
 			}
-			
-		
 			/*echo t3lib_div::debug_trail();
 			echo '<b>'.$pageInput.'##'.$pageInput['uid'].'</b>';
 			echo '+++'.$lUid;
 			echo '<hr>';
 			*/
-			
-			
-			if (is_array($pageInput))	{				
-				$page_id = $pageInput['uid'];				
+
+
+			if (is_array($pageInput))	{
+				$page_id = $pageInput['uid'];
 			} else {
 				return $this->_original_getPageOverlay($pageInput,$lUid);
 			}
-			
-		 			
+
+
 			//call service to know if element is visible and which overlay language to use
 			$overlayLanguage=tx_languagevisibility_feservices::getOverlayLanguageIdForElementRecord($page_id,'pages',$lUid);
-	    
-	   
-	    if ($overlayLanguage===false) {	    	 	    	
+
+	    if ($overlayLanguage===false) {
     		$overlayLanguageForced=tx_languagevisibility_feservices::getOverlayLanguageIdForElementRecordForced($page_id,'pages',$lUid);
-    		// $pageInput['title'].=' [[not visible]]';    		
-    		$pageInput= $this->_original_getPageOverlay($pageInput,$overlayLanguageForced);	
+    		// $pageInput['title'].=' [[not visible]]';
+    		$pageInput= $this->_original_getPageOverlay($pageInput,$overlayLanguageForced);
     		$pageInput['_NOTVISIBLE'] = TRUE;
     		return $pageInput;
     	}
     	else {
-    		//$pageInput['title'].='-allowed- '.$lUid.'-'.$page_id.'-'.$overlayLanguage;    		
-    		
-				return $this->_original_getPageOverlay($pageInput,$overlayLanguage);				
-			}		
-		
+    		//$pageInput['title'].='-allowed- '.$lUid.'-'.$page_id.'-'.$overlayLanguage;
+
+				return $this->_original_getPageOverlay($pageInput,$overlayLanguage);
+			}
+
 	}
 
 	/**
@@ -103,10 +100,10 @@ class ux_t3lib_pageSelect extends t3lib_pageSelect {
 		//echo $table.'--'.$row['uid'].'--'.$sys_language_content.'--'.$OLmode;
 		//echo '<hr>';
 		//return parent::getRecordOverlay($table,$row,$sys_language_content,$OLmode);
-	
+
 		global $TCA;
 		//echo $row['uid'].'-';  //39348
-		
+
 		//unset olmode
 		$OLmode='';
 	//	die('���');
@@ -114,27 +111,27 @@ class ux_t3lib_pageSelect extends t3lib_pageSelect {
 		try {
 			$element=tx_languagevisibility_feservices::getElement($row['uid'],$table);
 	  	$overlayLanguage=tx_languagevisibility_feservices::getOverlayLanguageIdForElement($element,$sys_language_content);
-	  	
+
 	  }
 	  catch (Exception $e) {
 	  	//for any other tables:
 	  	return parent::getRecordOverlay($table,$row,$sys_language_content,$OLmode);
 	  }
 		//debug($overlayLanguage);
-    if ($overlayLanguage===false) {  
+    if ($overlayLanguage===false) {
     	//echo 'unset  '.$table.'  / '.$row['uid'];
     	//not visible:
     	unset($row);
     	return $row;
     }
     else {
-    	//visible:    	
-    	if ($overlayLanguage!=0) {    			
-    		
-    		if ($element instanceof tx_languagevisibility_fceelement) {    			
+    	//visible:
+    	if ($overlayLanguage!=0) {
+
+    		if ($element instanceof tx_languagevisibility_fceelement) {
     			//for FCE the overlay processing is handled by templavoila module, so mark the row with additional infos:
-    			$languageRep=t3lib_div::makeInstance('tx_languagevisibility_languagerepository');	
-    			$overlayLanguageObj=$languageRep->getLanguageById($overlayLanguage);  
+    			$languageRep=t3lib_div::makeInstance('tx_languagevisibility_languagerepository');
+    			$overlayLanguageObj=$languageRep->getLanguageById($overlayLanguage);
     			$row['_OVERLAYLANGUAGEISOCODE']=$overlayLanguageObj->getIsoCode();
     			return $row;
     		}
@@ -142,27 +139,28 @@ class ux_t3lib_pageSelect extends t3lib_pageSelect {
     			//now its getting tricky: we need to return overlay record with merged XML
     			$olrow=$this->_getDatabaseTranslationOverlayRecord('tt_content',$row,$overlayLanguage);
     			if ($GLOBALS['TSFE']) {
-						$GLOBALS['TSFE']->includeTCA('tt_content');		
+						$GLOBALS['TSFE']->includeTCA('tt_content');
 					}
     			//parse fce xml, and where a xml field is empty in olrow -> use default one
-    			$flexObj = t3lib_div::makeInstance('t3lib_flexformtools');	    			
+    			$flexObj = t3lib_div::makeInstance('t3lib_flexformtools');
     			$this->_callbackVar_defaultXML=t3lib_div::xml2array($row['tx_templavoila_flex']);
     			$this->_callbackVar_overlayXML=t3lib_div::xml2array($olrow['tx_templavoila_flex']);
+    			if(!is_array($this->_callbackVar_overlayXML)) $this->_callbackVar_overlayXML = array();
 					$return=$flexObj->traverseFlexFormXMLData('tt_content','tx_templavoila_flex',$row,$this,'_callback_checkXMLFieldsForFallback');
-					
+
 					$row=parent::getRecordOverlay($table,$row,$overlayLanguage,$OLmode);
 					$row['tx_templavoila_flex']=t3lib_div::array2xml($this->_callbackVar_overlayXML);
 					return $row;
     		}
     		else {
-    			//for default elements just do TYPO3 default overlay    			
+    			//for default elements just do TYPO3 default overlay
     			return parent::getRecordOverlay($table,$row,$overlayLanguage,$OLmode);
     		}
     	}
     	else {
     		return $row;
-    	}    	
-    }    
+    	}
+    }
 	}
 
 
@@ -171,22 +169,22 @@ class ux_t3lib_pageSelect extends t3lib_pageSelect {
 		then in the overlay record XML this field is replaced by default one.
 		TO-DO: replace in fallbackOrder
 	**/
-	
-	function _callback_checkXMLFieldsForFallback($dsArr, $dataValue, $PA, $structurePath, &$pObj) {		
-		if ($dataValue!='' && ($dsArr['TCEforms']['l10n_mode']=='mergeIfNotBlank' || $dsArr['TCEforms']['l10n_mode']=='exclude')) {			
+
+	function _callback_checkXMLFieldsForFallback($dsArr, $dataValue, $PA, $structurePath, &$pObj) {
+		if ($dataValue!='' && ($dsArr['TCEforms']['l10n_mode']=='mergeIfNotBlank' || $dsArr['TCEforms']['l10n_mode']=='exclude')) {
 			//echo 'check '.$structurePath;
 			if ($dsArr['TCEforms']['l10n_mode']=='exclude') {
 				$pObj->setArrayValueByPath($structurePath,$this->_callbackVar_overlayXML,$dataValue);
 			}
 			else {
 				$overlayValue = $pObj->getArrayValueByPath($structurePath, $this->_callbackVar_overlayXML);
-				if ($overlayValue=='' && $dsArr['TCEforms']['l10n_mode']=='mergeIfNotBlank') {				
-					$pObj->setArrayValueByPath($structurePath,$this->_callbackVar_overlayXML,$dataValue);			
+				if ($overlayValue=='' && $dsArr['TCEforms']['l10n_mode']=='mergeIfNotBlank') {
+					$pObj->setArrayValueByPath($structurePath,$this->_callbackVar_overlayXML,$dataValue);
 				}
 			}
-		}		
+		}
 	}
-	
+
 	function _getDatabaseTranslationOverlayRecord($table,$row,$languageId) {
 		global $TCA;
 		// Select overlay record:
@@ -285,8 +283,8 @@ class ux_t3lib_pageSelect extends t3lib_pageSelect {
 		}
 		return $output;
 	}
-	
-	
+
+
 /**
 	 * Returns the relevant page overlay record fields
 	 *
@@ -345,7 +343,7 @@ class ux_t3lib_pageSelect extends t3lib_pageSelect {
 			unset ($row['url']);
 		if (isset($row['urltype']) && empty($row['urltype']))
 			unset ($row['urltype']);
-		
+
 			// Create output:
 		if (is_array($pageInput))	{
 			return is_array($row) ? array_merge($pageInput,$row) : $pageInput;	// If the input was an array, simply overlay the newfound array and return...
