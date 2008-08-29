@@ -7,7 +7,7 @@ require_once(t3lib_extMgm::extPath("languagevisibility").'classes/class.tx_langu
 class tx_languagevisibility_pageelement extends tx_languagevisibility_element {
 
 	function isOrigElement() {
-		return false;
+		return array_key_exists('l18n_diffsource',$this->row);
 	}
 
 	function getInformativeDescription() {
