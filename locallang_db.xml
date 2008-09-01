@@ -27,6 +27,7 @@
 			<label index="yes">always</label>						
 			<label index="translated">if translated</label>		
 			<label index="moduleFunction.tx_languagevisibility_modfunc1">Language Visibility Overview</label>								
+			<label index="be_groups.allow_movecutdelete_foroverlays">Allow move, copy, cut and delete for elements with overlays:</label>
 		</languageKey>
 	</data>
 </T3locallang>

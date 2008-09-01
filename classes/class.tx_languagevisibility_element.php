@@ -132,6 +132,14 @@ abstract class tx_languagevisibility_element {
 			return false;
 		}
 	}
+	
+	function hasAnyTranslationInAnyWorkspace(){
+		if($this->hasOverLayRecordForAnyLanguageInAnyWorkspace()){
+			return true;
+		}else{
+			return false;
+		}
+	}
 
 	protected function _hasOverlayRecordForLanguage($langid) {
 		$row=$this->getOverLayRecordForCertainLanguage($langid,true);
@@ -140,6 +148,9 @@ abstract class tx_languagevisibility_element {
     	else
     		return false;
 	}
+	
+	abstract function hasOverLayRecordForAnyLanguageInAnyWorkspace();
+	
 
 	abstract function getOverLayRecordForCertainLanguage($languageId,$onlyUid=FALSE);
 

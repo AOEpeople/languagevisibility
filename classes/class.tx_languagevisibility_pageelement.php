@@ -1,15 +1,16 @@
 <?php
 
-require_once(t3lib_extMgm::extPath("languagevisibility").'classes/class.tx_languagevisibility_element.php');
 
+require_once(t3lib_extMgm::extPath("languagevisibility").'classes/class.tx_languagevisibility_element.php');
 
 
 class tx_languagevisibility_pageelement extends tx_languagevisibility_element {
 
 	function isOrigElement() {
-		return array_key_exists('l18n_diffsource',$this->row);
+		$is_overlay =  array_key_exists('l18n_diffsource',$this->row);;
+		return !$is_overlay;
 	}
-
+	
 	function getInformativeDescription() {
 		return 'this is a normal page element (translations are managed with seperate overlay records)';
 	}
@@ -33,19 +34,44 @@ class tx_languagevisibility_pageelement extends tx_languagevisibility_element {
 			$fields='uid';
 		$result = $GLOBALS['TYPO3_DB']->exec_SELECTquery($fields, 'pages_language_overlay', $where, '','');
 		//echo $GLOBALS['TYPO3_DB']->SELECTquery($fields, 'pages_language_overlay', $where, '','');
+		
         $row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($result);
 
 		return $row;
 	}
+	
+
 
 	/**
-	*returns which field in the language should be used to read the default visibility
-	*
-	*@return string (blank=default / page=page)
-	**/
+	 *returns which field in the language should be used to read the default visibility
+	 *
+	 *@return string (blank=default / page=page)
+	 **/
 	function getFieldToUseForDefaultVisibility() {
 		return 'page';
 	}
+	
+	function hasOverLayRecordForAnyLanguageInAnyWorkspace(){
+		
+		//if we handle a workspace record, we need to get it's live version
+		if ($this->row ['pid'] == - 1) {
+			$useUid = $this->row ['t3ver_oid'];
+		}else{
+			$useUid = $this->row['uid'];
+		}
+				
+		// if a workspace record has an overlay, an overlay also exists in the livews with versionstate = 1
+		// therefore we have to look for any undeleted overlays of the live version 		
+		$fields = 'count(*) as anz';
+		$table = 'pages_language_overlay';
+		$where = 'deleted = 0 AND pid='.$useUid;
+
+		$rows = $GLOBALS['TYPO3_DB']->exec_SELECTgetRows($fields,$table,$where);				
+		$anz = $rows[0]['anz'];
+		
+		return ($anz > 0);
+	}
+
 
 }
 

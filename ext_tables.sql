@@ -33,3 +33,10 @@ CREATE TABLE tt_content (
 CREATE TABLE tt_news (
 	tx_languagevisibility_visibility text NOT NULL
 );
+
+#
+# Table structure for table 'be_groups'
+#
+CREATE TABLE be_groups (
+	tx_languagevisibility_allow_movecutdelete_foroverlays boolean NOT NULL
+);

@@ -124,6 +124,19 @@ $GLOBALS['TCA']['tt_content']['palettes']['4']['showitem'] = str_replace('sys_la
 $GLOBALS['TCA']['tt_content']['palettes']['4']['showitem'] = str_replace('l18n_parent,','',$GLOBALS['TCA']['tt_content']['palettes']['4']['showitem']);
 $GLOBALS['TCA']['tt_content']['ctrl']['dividers2tabs']=TRUE;
 
+$tempColumns = Array(
+	"tx_languagevisibility_allow_movecutdelete_foroverlays" => Array(
+		"exclude" => 1,
+		"label" => "LLL:EXT:languagevisibility/locallang_db.xml:be_groups.allow_movecutdelete_foroverlays:",
+		"config" => Array(
+			"type" => "check"
+		)
+	),
+);
+
+t3lib_div::loadTCA("be_groups");
+t3lib_extMgm::addTCAcolumns("be_groups",$tempColumns,1);
+t3lib_extMgm::addToAllTCAtypes("be_groups","--div--;LLL:EXT:languagevisibility/locallang_db.xml:tabname,tx_languagevisibility_allow_movecutdelete_foroverlays;;;;1-1-1");
 
 if (TYPO3_MODE=="BE")    {
     t3lib_extMgm::insertModuleFunction(

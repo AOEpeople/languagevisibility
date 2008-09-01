@@ -161,7 +161,9 @@ class tx_languagevisibility_fceelement extends tx_languagevisibility_element {
 		}
 	}
 	
-	
+	function hasOverLayRecordForAnyLanguageInAnyWorkspace(){
+		
+	}
 	
 }
 

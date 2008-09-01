@@ -60,6 +60,25 @@ class tx_languagevisibility_recordelement extends tx_languagevisibility_element 
 	}	
 	
 	
+	function hasOverLayRecordForAnyLanguageInAnyWorkspace(){
+		global $TCA;
+		$table=$this->table;
+		
+		if($this->isOrigElement()){	
+			//get live record of workspace record	
+			$row=$this->_getLiveRowIfWorkspace($this->row,$table);
+			$fields = 'count(*) as ANZ';		
+			
+			$where = 'deleted = 0 AND '.$TCA[$table]['ctrl']['transOrigPointerField'].'='.$row['uid'];
+			$res = $GLOBALS['TYPO3_DB']->exec_SELECTgetRows($fields,$table,$where);
+			
+			return ($res[0]['ANZ'] > 0);
+		}else{
+			//if this is a translation is clear that an overlay must exist
+			return true;	
+		}
+	}
+	
 }
 
 ?>
