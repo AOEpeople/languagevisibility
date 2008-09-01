@@ -14,7 +14,7 @@ class tx_languagevisibility_beUser{
 	 *
 	 * @return unknown
 	 */
-	function allowCutMoveDelete(){
+	function allowCutCopyMoveDelete(){
 		$this->be_user->fetchGroupData();
 		$res = false;
 		
