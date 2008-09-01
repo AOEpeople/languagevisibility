@@ -7,8 +7,14 @@ require_once(t3lib_extMgm::extPath("languagevisibility").'classes/class.tx_langu
 class tx_languagevisibility_pageelement extends tx_languagevisibility_element {
 
 	function isOrigElement() {
-		$is_overlay =  array_key_exists('l18n_diffsource',$this->row);;
-		return !$is_overlay;
+		if(is_array($this->row)){
+			$is_overlay =  array_key_exists('l18n_diffsource',$this->row);
+			
+			return !$is_overlay;
+		}else{
+			
+			return true;
+		}
 	}
 	
 	function getInformativeDescription() {
