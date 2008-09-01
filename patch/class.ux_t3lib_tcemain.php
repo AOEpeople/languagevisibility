@@ -103,10 +103,8 @@ class ux_t3lib_TCEmain extends t3lib_TCEmain	{
 //	}
 	
 	function process_cmdmap(){
-		if (t3lib_extMgm::isLoaded('languagevisibility')) {
-	
+		if (t3lib_extMgm::isLoaded('languagevisibility')) {	
 			require_once(t3lib_extMgm::extPath("languagevisibility").'patch/lib/class.tx_languagevisibility_commandMap.php');
-			require_once(t3lib_extMgm::extPath("languagevisibility").'patch/lib/class.tx_languagevisibility_beUser.php');
 			
 			//user has no rights to cut move copy or delete, therefore the commands need to be filtered
 			$command_map 	= t3lib_div::makeInstance('tx_languagevisibility_commandMap');		
@@ -127,12 +125,7 @@ class ux_t3lib_TCEmain extends t3lib_TCEmain	{
 								$command_map->removeElement($command_element);	
 							}	
 						}else{
-							//current element is no overlay -> if user has rights to cutMoveDelete or is an admin don't filter commants
-							$be_user 		= t3lib_div::makeInstance('tx_languagevisibility_beUser');
-							if($be_user->allowCutMoveDelete() || $be_user->isAdmin() ){				
-								//nothing to do ->  user hase rights to move, cut or delete items
-							
-							}else{
+							if(!tx_languagevisibility_beservices::canCurrrentUserCutCopyMoveDelete()){
 								//if the record has any translation disallow move, cut, copy and delete
 
 								if($elementObj->hasAnyTranslationInAnyWorkspace()){

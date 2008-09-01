@@ -4,6 +4,7 @@ require_once (t3lib_extMgm::extPath ( "languagevisibility" ) . 'classes/class.tx
 require_once (t3lib_extMgm::extPath ( "languagevisibility" ) . 'classes/class.tx_languagevisibility_elementFactory.php');
 require_once (t3lib_extMgm::extPath ( "languagevisibility" ) . 'classes/class.tx_languagevisibility_visibilityService.php');
 require_once (t3lib_extMgm::extPath ( "languagevisibility" ) . 'classes/dao/class.tx_languagevisibility_daocommon.php');
+require_once (t3lib_extMgm::extPath ( "languagevisibility" ) . 'patch/lib/class.tx_languagevisibility_beUser.php');
 
 class tx_languagevisibility_beservices {
 	
@@ -59,6 +60,16 @@ class tx_languagevisibility_beservices {
 		
 		return $visibility->isVisible ( $language, $element );
 	
+	}
+	
+	function canCurrrentUserCutCopyMoveDelete(){
+		//current element is no overlay -> if user has rights to cutMoveDelete or is an admin don't filter commants
+		$be_user 		= t3lib_div::makeInstance('tx_languagevisibility_beUser');
+		if($be_user->allowCutCopyMoveDelete() || $be_user->isAdmin() ){				
+			return true;								
+		}else{
+			return false;
+		}
 	}
 	
 	//@TODO: check TCA and get correct l18n_parent
