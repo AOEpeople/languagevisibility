@@ -26,10 +26,11 @@ class tx_languagevisibility_beUser{
 				}
 			}
 		}
-
 		return $res;
 	}
 	
+	
+
 	function isAdmin(){
 		return $this->be_user->isAdmin();
 	}
