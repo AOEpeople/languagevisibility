@@ -95,6 +95,11 @@ abstract class tx_languagevisibility_element {
 	 * @return boolean
 	 */
 	function isMonolithicTranslated() {
+		/*
+		 * Timo: this does not work with pages because pages do not have the field 'sys_language_uid'
+		 * and the languagevisibility_pages class only represent elements from the table pages not
+		 * from page_language_overlay
+		 */
 		return (!$this->isLanguageSetToDefault()) && $this->isOrigElement();
 	}
 

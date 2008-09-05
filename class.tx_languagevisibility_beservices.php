@@ -266,11 +266,15 @@ class tx_languagevisibility_beservices {
 		$default = array ();
 		foreach ( $languageList as $language ) {
 			$options = tx_languagevisibility_beservices::getAvailableOptionsForLanguage ( $language );
-			$default [$language->getUid ()] = array_shift ( $options );
+
+			$default [$language->getUid ()] = array_shift ( array_keys($options) );
+			
+//			$default [$language->getUid ()] = array_shift ( $options );
+		
 		}
 		return $default;
 	}
-
+	
 }
 
 ?>

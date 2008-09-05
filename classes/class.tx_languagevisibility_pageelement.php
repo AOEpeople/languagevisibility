@@ -7,16 +7,21 @@ require_once(t3lib_extMgm::extPath("languagevisibility").'classes/class.tx_langu
 class tx_languagevisibility_pageelement extends tx_languagevisibility_element {
 
 	function isOrigElement() {
-		if(is_array($this->row)){
+	/*	if(is_array($this->row)){
 			$is_overlay =  array_key_exists('l18n_diffsource',$this->row);
 			
 			return !$is_overlay;
 		}else{
 			
 			return true;
-		}
+		}*/
+		return true;
 	}
 	
+	function isLanguageSetToDefault() {
+		return  true;
+	}
+		
 	function getInformativeDescription() {
 		return 'this is a normal page element (translations are managed with seperate overlay records)';
 	}
@@ -45,7 +50,6 @@ class tx_languagevisibility_pageelement extends tx_languagevisibility_element {
 
 		return $row;
 	}
-	
 
 
 	/**
