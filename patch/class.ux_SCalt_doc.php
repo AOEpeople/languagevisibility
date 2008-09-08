@@ -95,7 +95,7 @@ class ux_SC_alt_doc extends SC_alt_doc {
 									}
 
 										// Check internals regarding access:
-									if ($hasAccess)	{
+									if ($hasAccess)	{										
 										$hasAccess = $BE_USER->recordEditAccessInternals($table, $calcPRec);
 										$deniedAccessReason = $BE_USER->errorMsg;
 									}

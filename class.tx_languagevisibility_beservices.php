@@ -75,7 +75,7 @@ class tx_languagevisibility_beservices {
 	//@TODO: check TCA and get correct l18n_parent
 	function isOverlayRecord($row, $table) {
 		
-		if ($row ['l18n_parent'] != '')
+		if ($row['l18n_parent'] != '' && $row['l18n_parent']!='0')
 			return true;
 		else
 			return false;
@@ -184,6 +184,7 @@ class tx_languagevisibility_beservices {
 		$row = $dao->getRecord ( $id, $table );
 		//@TODO check TCA for languagefield
 		if ($this->isOverlayRecord ( $row, $table )) {
+			print_r($row);
 			if ($BE_USER->checkLanguageAccess ( $row ['sys_language_uid'] ))
 				return true;
 			else

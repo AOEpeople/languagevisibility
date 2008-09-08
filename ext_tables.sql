@@ -38,5 +38,5 @@ CREATE TABLE tt_news (
 # Table structure for table 'be_groups'
 #
 CREATE TABLE be_groups (
-	tx_languagevisibility_allow_movecutdelete_foroverlays boolean NOT NULL
+	tx_languagevisibility_allow_movecutdelete_foroverlays tinyint(1) DEFAULT '0' NOT NULL
 );

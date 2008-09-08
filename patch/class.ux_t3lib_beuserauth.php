@@ -35,19 +35,23 @@ class ux_t3lib_beUserAuth extends t3lib_beUserAuth {
 
 				// Checking languages:
 			if ($TCA[$table]['ctrl']['languageField'])	{
+				
 				if (isset($idOrRow[$TCA[$table]['ctrl']['languageField']]))	{	// Language field must be found in input row - otherwise it does not make sense.					
 					$skipLanguageErrorMessage=FALSE;
 					//danielp allow default language for creating new elements as well as editing if languagevisibility allows it
 					if (!$this->checkLanguageAccess($idOrRow[$TCA[$table]['ctrl']['languageField']])) {
-						if ($idOrRow[$TCA[$table]['ctrl']['languageField']] ==0) {							
+						if ($idOrRow[$TCA[$table]['ctrl']['languageField']] ==0) {		
+												
 							$editingIsAllowed=FALSE;
 							require_once(t3lib_extMgm::extPath("languagevisibility").'class.tx_languagevisibility_beservices.php');	
 							$visibilityservice=t3lib_div::makeInstance('tx_languagevisibility_beservices');							
 							if ($visibilityservice->hasUserAccessToEditRecord($table,$idOrRow['uid'])) {
 								$editingIsAllowed=TRUE;
-							}							
+								
+							}												
 							if ($newRecord OR $editingIsAllowed) {
 								$skipLanguageErrorMessage=TRUE;
+							
 							}
 						}
 						if (!$skipLanguageErrorMessage) {

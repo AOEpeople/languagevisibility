@@ -30,6 +30,7 @@ class ux_t3lib_TCEmain extends t3lib_TCEmain	{
 	 * @return	boolean		Returns true if the user may update the record given by $table and $id
 	 */
 	function checkRecordUpdateAccess($table,$id)	{
+		
 		global $TCA;
 		$res = 0;
 		if ($TCA[$table] && intval($id)>0)	{
