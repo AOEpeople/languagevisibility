@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dataset>
+
+	<pages>
+		<uid>1</uid>
+		<pid>0</pid>
+		<title>Page without overlays</title>
+		<hidden>0</hidden>
+		<deleted>0</deleted>
+		<tx_languagevisibility_visibility>a:3:{i:0;s:1:"-";i:1;s:1:"-";i:2;s:1:"-";}</tx_languagevisibility_visibility>
+	</pages>
+
+	<pages>
+		<uid>2</uid>
+		<pid>0</pid>
+		<title>Page with overlays</title>
+		<hidden>0</hidden>
+		<deleted>0</deleted>
+		<tx_languagevisibility_visibility>a:3:{i:0;s:1:"-";i:1;s:1:"-";i:2;s:1:"-";}</tx_languagevisibility_visibility>
+	</pages>
+
+	<pages_language_overlay>
+		<uid>2</uid>
+		<pid>2</pid>
+		<sys_language_uid>1</sys_language_uid>
+		<hidden>0</hidden>
+		<deleted>0</deleted>
+	</pages_language_overlay>
+
+	<tt_content>
+		<uid>1</uid>
+		<pid>1</pid>
+		<header>Element with default visibility and without overlays</header>
+		<hidden>0</hidden>
+		<deleted>0</deleted>
+		<t3ver_wsid>0</t3ver_wsid>
+		<l18n_parent>0</l18n_parent>
+		<l18n_diffsource></l18n_diffsource>
+		<sys_language_uid>0</sys_language_uid>
+		<tx_languagevisibility_visibility>a:3:{i:0;s:1:"-";i:1;s:1:"-";i:2;s:1:"-";}</tx_languagevisibility_visibility>
+	</tt_content>
+
+	<tt_content>
+		<uid>2</uid>
+		<pid>1</pid>
+		<header>Element with default visibility and with overlay in L1</header>
+		<hidden>0</hidden>
+		<deleted>0</deleted>
+		<t3ver_wsid>0</t3ver_wsid>
+		<l18n_parent>0</l18n_parent>
+		<l18n_diffsource>0</l18n_diffsource>
+		<sys_language_uid>0</sys_language_uid>
+		<tx_languagevisibility_visibility>a:3:{i:0;s:1:"-";i:1;s:1:"-";i:2;s:1:"-";}</tx_languagevisibility_visibility>
+	</tt_content>
+
+	<tt_content>
+		<uid>3</uid>
+		<pid>1</pid>
+		<header>Overlay for Element uid-2</header>
+		<hidden>0</hidden>
+		<deleted>0</deleted>
+		<t3ver_wsid>0</t3ver_wsid>
+		<l18n_parent>2</l18n_parent>
+		<l18n_diffsource>0</l18n_diffsource>
+		<sys_language_uid>1</sys_language_uid>
+		<tx_languagevisibility_visibility>a:3:{i:0;s:1:"-";i:1;s:1:"-";i:2;s:1:"-";}</tx_languagevisibility_visibility>
+	</tt_content>
+
+</dataset>

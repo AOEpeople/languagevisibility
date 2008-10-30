@@ -4,71 +4,112 @@ if (!defined ('TYPO3_MODE')) 	die ('Access denied.');
 
 
 $tempColumns = Array (
-	"tx_languagevisibility_fallbackorder" => Array (		
-		"exclude" => 0,		
-		"label" => "LLL:EXT:languagevisibility/locallang_db.xml:sys_language.tx_languagevisibility_fallbackorder",		
+	"tx_languagevisibility_fallbackorder" => Array (
+		"exclude" => 0,
+		"label" => "LLL:EXT:languagevisibility/locallang_db.xml:sys_language.tx_languagevisibility_fallbackorder",
 		'l10n_display'=>'hideDiff',
 		"config" => Array (
-			"type" => "select",	
-			"foreign_table" => "sys_language",	
-			"foreign_table_where" => " ORDER BY sys_language.title",	
-			"items" => Array (				
-				Array("default", "999"),				
+			"type" => "select",
+			"foreign_table" => "sys_language",
+			"foreign_table_where" => " ORDER BY sys_language.title",
+			"items" => Array (
+				Array("default", "999"),
 			),
-			"size" => 10,	
+			"size" => 10,
 			"minitems" => 0,
 			"maxitems" => 10,
 		)
 	),
-	"tx_languagevisibility_defaultvisibility" => Array (		
-		"exclude" => 0,		
-		"label" => "LLL:EXT:languagevisibility/locallang_db.xml:sys_language.tx_languagevisibility_defaultvisibility",		
+	"tx_languagevisibility_fallbackorderel" => Array (
+		"exclude" => 0,
+		"label" => "LLL:EXT:languagevisibility/locallang_db.xml:sys_language.tx_languagevisibility_fallbackorderel",
+        "displayCond" => "FIELD:tx_languagevisibility_complexfallbacksetting:>=:1",
+		'l10n_display'=>'hideDiff',
 		"config" => Array (
 			"type" => "select",
-			"items" => Array (	
-				Array('',''),														
+			"foreign_table" => "sys_language",
+			"foreign_table_where" => " ORDER BY sys_language.title",
+			"items" => Array (
+				Array("default", "999"),
+			),
+			"size" => 10,
+			"minitems" => 0,
+			"maxitems" => 10,
+		)
+	),
+	"tx_languagevisibility_fallbackorderttnewsel" => Array (
+		"exclude" => 0,
+		"label" => "LLL:EXT:languagevisibility/locallang_db.xml:sys_language.tx_languagevisibility_fallbackorderttnewsel",
+        "displayCond" => "FIELD:tx_languagevisibility_complexfallbacksetting:>=:1",
+		'l10n_display'=>'hideDiff',
+		"config" => Array (
+			"type" => "select",
+			"foreign_table" => "sys_language",
+			"foreign_table_where" => " ORDER BY sys_language.title",
+			"items" => Array (
+				Array("default", "999"),
+			),
+			"size" => 10,
+			"minitems" => 0,
+			"maxitems" => 10,
+		)
+	),
+	"tx_languagevisibility_defaultvisibility" => Array (
+		"exclude" => 0,
+		"label" => "LLL:EXT:languagevisibility/locallang_db.xml:sys_language.tx_languagevisibility_defaultvisibility",
+		"config" => Array (
+			"type" => "select",
+			"items" => Array (
+				Array('',''),
 				Array("LLL:EXT:languagevisibility/locallang_db.xml:tx_languagevisibility_visibility.I.yes", "yes"),
 				Array("LLL:EXT:languagevisibility/locallang_db.xml:tx_languagevisibility_visibility.I.no", "no"),
 				Array("LLL:EXT:languagevisibility/locallang_db.xml:tx_languagevisibility_visibility.I.t", "t"),
 				Array("LLL:EXT:languagevisibility/locallang_db.xml:tx_languagevisibility_visibility.I.f", "f"),
 			),
 			'default'=>'f',
-			"size" => 1,	
+			"size" => 1,
 			"maxitems" => 1,
 		)
 	),
-	"tx_languagevisibility_defaultvisibilityel" => Array (		
-		"exclude" => 0,		
-		"label" => "LLL:EXT:languagevisibility/locallang_db.xml:sys_language.tx_languagevisibility_defaultvisibilityel",		
+	"tx_languagevisibility_defaultvisibilityel" => Array (
+		"exclude" => 0,
+		"label" => "LLL:EXT:languagevisibility/locallang_db.xml:sys_language.tx_languagevisibility_defaultvisibilityel",
 		"config" => Array (
 			"type" => "select",
-			"items" => Array (	
-				Array('',''),							
+			"items" => Array (
+				Array('',''),
 				Array("LLL:EXT:languagevisibility/locallang_db.xml:tx_languagevisibility_visibility.I.yes", "yes"),
 				Array("LLL:EXT:languagevisibility/locallang_db.xml:tx_languagevisibility_visibility.I.no", "no"),
 				Array("LLL:EXT:languagevisibility/locallang_db.xml:tx_languagevisibility_visibility.I.t", "t"),
 				Array("LLL:EXT:languagevisibility/locallang_db.xml:tx_languagevisibility_visibility.I.f", "f"),
 			),
 			'default'=>'f',
-			"size" => 1,	
+			"size" => 1,
 			"maxitems" => 1,
 		)
 	),
-	"tx_languagevisibility_defaultvisibilityttnewsel" => Array (		
-		"exclude" => 0,		
-		"label" => "LLL:EXT:languagevisibility/locallang_db.xml:sys_language.tx_languagevisibility_defaultvisibilityttnewsel",		
+	"tx_languagevisibility_defaultvisibilityttnewsel" => Array (
+		"exclude" => 0,
+		"label" => "LLL:EXT:languagevisibility/locallang_db.xml:sys_language.tx_languagevisibility_defaultvisibilityttnewsel",
 		"config" => Array (
 			"type" => "select",
-			"items" => Array (	
-				Array('',''),							
+			"items" => Array (
+				Array('',''),
 				Array("LLL:EXT:languagevisibility/locallang_db.xml:tx_languagevisibility_visibility.I.yes", "yes"),
 				Array("LLL:EXT:languagevisibility/locallang_db.xml:tx_languagevisibility_visibility.I.no", "no"),
 				Array("LLL:EXT:languagevisibility/locallang_db.xml:tx_languagevisibility_visibility.I.t", "t"),
 				Array("LLL:EXT:languagevisibility/locallang_db.xml:tx_languagevisibility_visibility.I.f", "f"),
 			),
 			'default'=>'f',
-			"size" => 1,	
+			"size" => 1,
 			"maxitems" => 1,
+		)
+	),
+	"tx_languagevisibility_complexfallbacksetting" => Array (
+		"exclude" => 0,
+		"label" => "LLL:EXT:languagevisibility/locallang_db.xml:sys_language.tx_languagevisibility_complexfallbacksetting",
+		"config" => Array (
+			"type" => "check"
 		)
 	),
 );
@@ -76,14 +117,14 @@ $tempColumns = Array (
 
 t3lib_div::loadTCA("sys_language");
 t3lib_extMgm::addTCAcolumns("sys_language",$tempColumns,1);
-t3lib_extMgm::addToAllTCAtypes("sys_language","tx_languagevisibility_fallbackorder;;;;1-1-1, tx_languagevisibility_defaultvisibility, tx_languagevisibility_defaultvisibilityttnewsel, tx_languagevisibility_defaultvisibilityel");
+t3lib_extMgm::addToAllTCAtypes("sys_language","tx_languagevisibility_defaultvisibility, tx_languagevisibility_fallbackorder;;;;1-1-1,tx_languagevisibility_complexfallbacksetting, tx_languagevisibility_defaultvisibilityttnewsel, tx_languagevisibility_fallbackorderttnewsel;;;;1-1-1, tx_languagevisibility_defaultvisibilityel, tx_languagevisibility_fallbackorderel;;;;1-1-1");
 
 $tempColumns = Array (
-	"tx_languagevisibility_visibility" => Array (		
-		"exclude" => 1,		
-		"label" => "LLL:EXT:languagevisibility/locallang_db.xml:pages.tx_languagevisibility_visibility",		
+	"tx_languagevisibility_visibility" => Array (
+		"exclude" => 1,
+		"label" => "LLL:EXT:languagevisibility/locallang_db.xml:pages.tx_languagevisibility_visibility",
 		"config" => Array (
-			"type" => "user",	
+			"type" => "user",
 			"size" => "30",
 			"userFunc" => 'user_tx_languagevisibility_fieldvisibility->user_fieldvisibility',
 		)
@@ -101,11 +142,11 @@ t3lib_extMgm::addToAllTCAtypes("tt_news","--div--;LLL:EXT:languagevisibility/loc
 
 /*
 $tempColumns = Array (
-	"tx_languagevisibility_visibility" => Array (		
-		"exclude" => 1,		
-		"label" => "LLL:EXT:languagevisibility/locallang_db.xml:tt_content.tx_languagevisibility_visibility",		
+	"tx_languagevisibility_visibility" => Array (
+		"exclude" => 1,
+		"label" => "LLL:EXT:languagevisibility/locallang_db.xml:tt_content.tx_languagevisibility_visibility",
 		"config" => Array (
-			"type" => "user",				
+			"type" => "user",
 			"size" => "30",
 			"userFunc" => 'user_tx_languagevisibility_fieldvisibility->user_fieldvisibility',
 		)
@@ -140,7 +181,7 @@ t3lib_extMgm::addToAllTCAtypes("be_groups","--div--;LLL:EXT:languagevisibility/l
 
 if (TYPO3_MODE=="BE")    {
     t3lib_extMgm::insertModuleFunction(
-        "web_info",        
+        "web_info",
         "tx_languagevisibility_modfunc1",
         t3lib_extMgm::extPath($_EXTKEY)."modfunc1/class.tx_languagevisibility_modfunc1.php",
         "LLL:EXT:languagevisibility/locallang_db.xml:moduleFunction.tx_languagevisibility_modfunc1"

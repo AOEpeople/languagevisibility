@@ -54,7 +54,8 @@ class tx_languagevisibility_visibilityService {
 					return true;
 				}
 				else {
-					$fallBackOrder=$language->getFallbackOrder();
+					$fallBackOrder=$element->getFallbackOrder($language);
+					if(!is_array($fallBackOrder)) throw new Exception(print_r($element,true));
 					//echo 'checking..'.$element->row['uid'];
 					foreach ($fallBackOrder as $languageid) {
 						if ($element->hasTranslation($languageid)) {

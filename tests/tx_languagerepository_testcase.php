@@ -36,37 +36,49 @@ require_once(t3lib_extMgm::extPath("languagevisibility").'classes/class.tx_langu
 // require_once (t3lib_extMgm::extPath('phpunit').'class.tx_phpunit_test.php');
 require_once (PATH_t3lib.'class.t3lib_tcemain.php');
 
-class tx_languagerepository_testcase extends tx_phpunit_testcase {
+class tx_languagerepository_testcase extends tx_phpunit_database_testcase {
 
-	
+
 	public function test_getLanguages()
 	{
 		// Create the Array fixture.
 		$fixture = array('uid'=>1);
-		
-		$languageRep=t3lib_div::makeInstance('tx_languagevisibility_languagerepository');	
-    $languageList=$languageRep->getLanguages();
-    $this->assertTrue(is_array($languageList), "no array");    
-    
+
+		$languageRep=t3lib_div::makeInstance('tx_languagevisibility_languagerepository');
+	    $languageList=$languageRep->getLanguages();
+	    $this->assertTrue(is_array($languageList), "no array");
+
 	}
-	
+
 	public function test_getLanguageById()
 	{
 		// Create the Array fixture.
 		$fixture = array('uid'=>1);
-		
-		$languageRep=t3lib_div::makeInstance('tx_languagevisibility_languagerepository');	
-    $language=$languageRep->getLanguageById(0);
-    $this->assertTrue($language instanceof tx_languagevisibility_language, "no language object");    
-    $this->assertEquals($language->getUid(),0,"wrong uid");
-    
-    $languageRep=t3lib_div::makeInstance('tx_languagevisibility_languagerepository');	
-    $language=$languageRep->getLanguageById(1);
-    $this->assertTrue($language instanceof tx_languagevisibility_language, "no language object");    
-    $this->assertEquals($language->getUid(),1,"wrong uid");
-    
-	}
-	
 
+		$languageRep=t3lib_div::makeInstance('tx_languagevisibility_languagerepository');
+	    $language=$languageRep->getLanguageById(0);
+	    $this->assertTrue($language instanceof tx_languagevisibility_language, "no language object");
+	    $this->assertEquals($language->getUid(),0,"wrong uid");
+
+	    $languageRep=t3lib_div::makeInstance('tx_languagevisibility_languagerepository');
+	    $language=$languageRep->getLanguageById(1);
+	    $this->assertTrue($language instanceof tx_languagevisibility_language, "no language object");
+	    $this->assertEquals($language->getUid(),1,"wrong uid");
+
+	}
+
+	function setUp() {
+		$this->createDatabase();
+		$db = $this->useTestDatabase();
+		// order of extension-loading is important !!!!
+		$this->importExtensions(array('corefake','cms','languagevisibility'));
+		$this->importDataSet(dirname(__FILE__). '/fixtures/dbDefaultLangs.xml');
+	}
+
+	function tearDown() {
+		$this->cleanDatabase();
+   		$this->dropDatabase();
+		$GLOBALS['TYPO3_DB']->sql_select_db(TYPO3_db);
+	}
 }
 ?>

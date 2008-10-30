@@ -121,6 +121,15 @@ abstract class tx_languagevisibility_element {
 	}
 
 	/**
+	 * receive relevant fallbackOrder
+	 */
+	function getFallbackOrder(tx_languagevisibility_language $language) {
+		return $language->getFallbackOrder();
+	}
+
+
+
+	/**
 	* checks if this element has a translation, therefor several DB accesses are required
 	**/
 	function hasTranslation($languageid) {
@@ -137,7 +146,7 @@ abstract class tx_languagevisibility_element {
 			return false;
 		}
 	}
-	
+
 	function hasAnyTranslationInAnyWorkspace(){
 		if($this->hasOverLayRecordForAnyLanguageInAnyWorkspace()){
 			return true;
@@ -153,9 +162,9 @@ abstract class tx_languagevisibility_element {
     	else
     		return false;
 	}
-	
+
 	abstract function hasOverLayRecordForAnyLanguageInAnyWorkspace();
-	
+
 
 	abstract function getOverLayRecordForCertainLanguage($languageId,$onlyUid=FALSE);
 
