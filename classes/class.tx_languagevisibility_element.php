@@ -58,6 +58,10 @@ abstract class tx_languagevisibility_element {
 		return $this->row['uid'];
 	}
 	
+	public function getTitle(){
+		return $this->row['title'];
+	}
+	
 	/**
 	 * Checks if the current record is set to language all (that is typically used to indicate that per default this element is visible in all langauges)
 	 *
