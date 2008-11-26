@@ -30,7 +30,6 @@ class tx_languagevisibility_beUser{
 	}
 	
 	
-
 	function isAdmin(){
 		return $this->be_user->isAdmin();
 	}

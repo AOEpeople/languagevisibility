@@ -123,9 +123,11 @@ class ux_t3lib_TCEmain extends t3lib_TCEmain	{
 							if($command == 'move' || $command == 'cut'|| $command == 'copy'){
 								$this->newlog('The command '.$command.' can not be applied on overlays',1);	
 								//overlay records should no be move,copy or cutable but it should be possible to delete them
+								//therefore we remove all elements which have the comment cut, copy or move
 								$command_map->removeElement($command_element);	
 							}	
 						}else{
+							//current element is no overlay
 							if(!tx_languagevisibility_beservices::canCurrrentUserCutCopyMoveDelete()){
 								//if the record has any translation disallow move, cut, copy and delete
 
@@ -140,6 +142,7 @@ class ux_t3lib_TCEmain extends t3lib_TCEmain	{
 					}	
 				}
 			}
+			
 			
 			//overwrite the internal map an process the base tce_main method
 			$this->cmdmap = $command_map->getMap();	

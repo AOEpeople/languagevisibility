@@ -10,6 +10,10 @@ class tx_languagevisibility_recordelement extends tx_languagevisibility_element 
 	function setTable($table) {
 		$this->table=$table;
 	}
+	
+	protected function getTable(){
+		return $this->table;
+	}
 
 
 	/**

@@ -18,6 +18,10 @@ class tx_languagevisibility_pageelement extends tx_languagevisibility_element {
 		return true;
 	}
 	
+	protected function getTable(){
+		return 'pages';	
+	}
+	
 	function isLanguageSetToDefault() {
 		return  true;
 	}

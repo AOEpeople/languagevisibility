@@ -184,7 +184,7 @@ class tx_languagevisibility_beservices {
 		$row = $dao->getRecord ( $id, $table );
 		//@TODO check TCA for languagefield
 		if ($this->isOverlayRecord ( $row, $table )) {
-			print_r($row);
+		
 			if ($BE_USER->checkLanguageAccess ( $row ['sys_language_uid'] ))
 				return true;
 			else
@@ -267,10 +267,7 @@ class tx_languagevisibility_beservices {
 		$default = array ();
 		foreach ( $languageList as $language ) {
 			$options = tx_languagevisibility_beservices::getAvailableOptionsForLanguage ( $language );
-
 			$default [$language->getUid ()] = array_shift ( array_keys($options) );
-			
-//			$default [$language->getUid ()] = array_shift ( $options );
 		
 		}
 		return $default;

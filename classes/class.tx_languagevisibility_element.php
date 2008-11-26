@@ -50,6 +50,15 @@ abstract class tx_languagevisibility_element {
 	}
 
 	/**
+	 * Returns the Uid of the Element
+	 *
+	 * @return int
+	 */
+	public function getUid(){
+		return $this->row['uid'];
+	}
+	
+	/**
 	 * Checks if the current record is set to language all (that is typically used to indicate that per default this element is visible in all langauges)
 	 *
 	 * @return unknown
@@ -88,7 +97,37 @@ abstract class tx_languagevisibility_element {
 	function isOrigElement() {
 		return  ($this->row['l18n_parent'] == '0');
 	}
+	
 
+	/**
+	 * Returns the uid of the original element. This method will only return 
+	 * a non zero value if the element is an overlay;
+	 *
+	 * @return int
+	 */
+	function getOrigElementUid(){
+		return  $this->row['l18n_parent']; 
+	}
+
+	/**
+	 * Method to check the element is an Workspaceelement or not.
+	 *
+	 * @return boolean
+	 */
+	function isLiveWorkspaceElement(){
+		return ($this->row['pid'] != -1);
+	}
+	
+	/**
+	 * Returns the uid or the LiveWorkspace Record
+	 *
+	 * @return int
+	 */
+	function getLiveWorkspaceUid(){
+		return $this->_getLiveUIDIfWorkspace($this->row);
+	}
+	
+	
 	/**
 	 * Determines whether the element is a translated original record ...
 	 *
@@ -118,6 +157,15 @@ abstract class tx_languagevisibility_element {
 	function getLocalVisibilitySetting($languageid) {
 		return $this->visibilitySetting[$languageid];
 
+	}
+	
+	/**
+	 * Returns all VisibilitySetting for this element.
+	 *
+	 * @return array
+	 */
+	function getAllVisibilitySettings(){
+		return $this->visibilitySetting;
 	}
 
 	/**
@@ -192,6 +240,37 @@ abstract class tx_languagevisibility_element {
 	**/
 	function getFieldToUseForDefaultVisibility() {
 		return '';
+	}
+	
+	/**
+	 * Abstract function to determine the table, where the element is located in the database
+	 *
+	 * @return string
+	 */
+	abstract protected function getTable();
+	
+	/**
+	 * Uses the abstract function getTable to get all Workspaceversion-UIDs of this
+	 * record.
+	 *
+	 * @return array
+	 */
+	function getWorkspaceVersionUids(){
+		$table 	= $this->getTable();
+		$uids 	= array();
+					
+		if($table != ''){
+			$res = $GLOBALS['TYPO3_DB']->exec_SELECTquery(
+							'uid',
+							$table,
+							't3ver_oid='.$GLOBALS['TYPO3_DB']->fullQuoteStr($this->row['uid'], $table).
+							' AND uid !='.$GLOBALS['TYPO3_DB']->fullQuoteStr($this->row['uid'], $table).t3lib_BEfunc::deleteClause($table));
+
+			while($row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res))	{
+				$uids[] = $row['uid'];
+			}
+		}
+		return $uids;	
 	}
 
 }

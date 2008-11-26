@@ -25,6 +25,10 @@ class tx_languagevisibility_fceelement extends tx_languagevisibility_element {
 		
 	}
 	
+	protected function getTable(){
+		return 'tt_content';
+	}
+	
 	function getInformativeDescription() {
 		if ($this->langDisabled==1) {
 			if ($this->disabledIsVisible==1) {
