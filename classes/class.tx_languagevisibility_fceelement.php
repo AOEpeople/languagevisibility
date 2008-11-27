@@ -63,9 +63,11 @@ class tx_languagevisibility_fceelement extends tx_languagevisibility_element {
 			else
 				return false;
 		}
+
 		if ($GLOBALS['TSFE']) {
-			$GLOBALS['TSFE']->includeTCA('tt_content');		
+			@$GLOBALS['TSFE']->includeTCA();		
 		}
+
 		if ($this->langChildren == 1) {
 			//the FCE has real overlay record 
 			
@@ -99,6 +101,7 @@ class tx_languagevisibility_fceelement extends tx_languagevisibility_element {
 	*TODO
 	**/
 	function getOverLayRecordForCertainLanguage($languageId,$onlyUid=FALSE) {
+		return array();
 	}
 	
 	

@@ -8,6 +8,7 @@ class tx_languagevisibility_languagerepository {
 	
 	
 	function getLanguages()    {
+
   		$res = $GLOBALS['TYPO3_DB']->exec_SELECTquery('*','sys_language','','','','');
   		$return=array();
   		$return[]=$this->getDefaultLanguage();

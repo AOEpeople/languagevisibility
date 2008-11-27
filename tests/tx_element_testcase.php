@@ -39,8 +39,6 @@ require_once (PATH_t3lib.'class.t3lib_tcemain.php');
 
 class tx_element_testcase extends tx_phpunit_database_testcase {
 
-
-
 	public function test_hasTranslation_pageelement()
 	{
 		//this time data in DB is tested!
@@ -91,6 +89,7 @@ class tx_element_testcase extends tx_phpunit_database_testcase {
 		//this time data in DB is tested!
 		$this->_create_fixture_fcecontentrecord();
 		$this->_create_fixture_fcedatastructures();
+		$this->_create_static_inforecords();
 		$this->_create_fixture_languagerecords();
 		$_uid=9992;
 		$_table='tt_content';
@@ -102,13 +101,13 @@ class tx_element_testcase extends tx_phpunit_database_testcase {
 			//get element from factory:
 	    $element=$factory->getElementForTable($_table,$_uid);
 
-	  	$this->assertTrue($element instanceof tx_languagevisibility_fceelement, "not object of type tx_languagevisibility_fcelement returned!");
+	  	$this->assertEquals(true,($element instanceof tx_languagevisibility_fceelement), "not object of type tx_languagevisibility_fcelement returned!");
 
-	  	$this->assertTrue($element->hasTranslation('98'), "record should have translation");
+	  	$this->assertEquals(true,$element->hasTranslation('98'), "record should have translation");
 
-	  	$this->assertTrue($element->hasTranslation('0'), "default transla should be there always");
+	  	$this->assertEquals(true,$element->hasTranslation('0'), "default transla should be there always");
 
-	    $this->assertFalse($element->hasTranslation('99'), "element should not be translated!");
+	    $this->assertEquals(false,$element->hasTranslation('99'), "element should not be translated!");
 
 	}
 
@@ -329,7 +328,7 @@ class tx_element_testcase extends tx_phpunit_database_testcase {
 		//normal language
 		$fields_values=array('uid'=>98,
 													'pid'=>0,
-													'static_lang_isocode'=>'30',
+													'static_lang_isocode'=>'999',
 													'title'=>'testlanguage(translatedmode)',
 													'tx_languagevisibility_defaultvisibility'=>'t',
 													'tx_languagevisibility_defaultvisibilityel'=>'t');
@@ -347,16 +346,23 @@ class tx_element_testcase extends tx_phpunit_database_testcase {
 		$GLOBALS['TYPO3_DB']->exec_DELETEquery('sys_language','uid=99');
 		$GLOBALS['TYPO3_DB']->exec_INSERTquery('sys_language',$fields_values);
 
-
-
 	}
 
-
+	function _create_static_inforecords(){
+		$fields_values = array(	'uid' => 999, 
+								'pid' => 0,
+								'lg_iso_2' => 'EN',
+								'lg_name_en' => 'English');
+		$GLOBALS['TYPO3_DB']->exec_DELETEquery('static_languages','uid=999');
+		$GLOBALS['TYPO3_DB']->exec_INSERTquery('static_languages',$fields_values);
+	}
+	
 	function setUp() {
 		$this->createDatabase();
 		$db = $this->useTestDatabase();
+		
 		// order of extension-loading is important !!!!
-		$this->importExtensions(array('corefake','cms','static_info_tables','templavoila','languagevisibility'));
+		$this->importExtensions(array('corefake','cms','static_info_tables','templavoila','languagevisibility','mwimagemap'));
 	}
 
 	function tearDown() {

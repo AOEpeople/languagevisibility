@@ -185,16 +185,21 @@ abstract class tx_languagevisibility_element {
 	* checks if this element has a translation, therefor several DB accesses are required
 	**/
 	function hasTranslation($languageid) {
-		if (!is_numeric($languageid))
+		if (!is_numeric($languageid)){
 			return false;
+		}
+				
 		//check if overlay exist:
-		if ($languageid==0)
+		if($languageid==0){
 			return true;
+		}
 
-		if ($this->_hasOverlayRecordForLanguage($languageid)) {
+		$hasOverlay = $this->_hasOverlayRecordForLanguage($languageid);		
+		if ($hasOverlay) {
 			return true;
 		}
 		else {
+				
 			return false;
 		}
 	}
@@ -209,6 +214,7 @@ abstract class tx_languagevisibility_element {
 
 	protected function _hasOverlayRecordForLanguage($langid) {
 		$row=$this->getOverLayRecordForCertainLanguage($langid,true);
+		
 		if ($row['uid'] != '')
     		return true;
     	else
