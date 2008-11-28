@@ -15,7 +15,10 @@ class tx_languagevisibility_recordelement extends tx_languagevisibility_element 
 		return $this->table;
 	}
 
-
+	public function getElementDescription(){
+		return 'TYPO3-Record';
+	}
+	
 	/**
 	* workspace aware check of overlay records for tt_content
 	**/

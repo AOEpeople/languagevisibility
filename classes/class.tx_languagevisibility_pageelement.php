@@ -22,6 +22,10 @@ class tx_languagevisibility_pageelement extends tx_languagevisibility_element {
 		return 'pages';	
 	}
 	
+	public function getElementDescription(){
+		return 'Page';
+	}
+	
 	function isLanguageSetToDefault() {
 		return  true;
 	}

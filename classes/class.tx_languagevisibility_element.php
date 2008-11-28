@@ -28,8 +28,6 @@
  */
 require_once(t3lib_extMgm::extPath("languagevisibility").'classes/class.tx_languagevisibility_languagerepository.php');
 
-
-
 abstract class tx_languagevisibility_element {
 	private $visibilitySetting;
 
@@ -56,6 +54,15 @@ abstract class tx_languagevisibility_element {
 	 */
 	public function getUid(){
 		return $this->row['uid'];
+	}
+	
+	/**
+	 * Returns the pid of the Element
+	 *
+	 * @return int
+	 */
+	public function getPid(){
+		return $this->row['pid'];
 	}
 	
 	public function getTitle(){
@@ -119,7 +126,15 @@ abstract class tx_languagevisibility_element {
 	 * @return boolean
 	 */
 	function isLiveWorkspaceElement(){
-		return ($this->row['pid'] != -1);
+		return ($this->row['t3ver_wsid'] == 0);
+	}
+	
+	function getWorkspaceUid(){
+		return $this->row['t3ver_wsid'];
+	}
+	
+	function getWorkspaceName(){
+		
 	}
 	
 	/**
@@ -178,8 +193,6 @@ abstract class tx_languagevisibility_element {
 	function getFallbackOrder(tx_languagevisibility_language $language) {
 		return $language->getFallbackOrder();
 	}
-
-
 
 	/**
 	* checks if this element has a translation, therefor several DB accesses are required
@@ -253,11 +266,22 @@ abstract class tx_languagevisibility_element {
 	}
 	
 	/**
-	 * Abstract function to determine the table, where the element is located in the database
+	 * Abstract method to determine the table, where the element is located in the database
 	 *
 	 * @return string
 	 */
 	abstract protected function getTable();
+	
+	/**
+	 * Method to get a short description  of the elementtype. 
+	 * An extending class should overwrite this method.
+	 *
+	 * @return string
+	 */
+	public function getElementDescription(){
+		return 'TYPO3 Element';
+	}
+	
 	
 	/**
 	 * Uses the abstract function getTable to get all Workspaceversion-UIDs of this
@@ -280,9 +304,9 @@ abstract class tx_languagevisibility_element {
 				$uids[] = $row['uid'];
 			}
 		}
+		
 		return $uids;	
 	}
-
 }
 
 ?>

@@ -10,6 +10,11 @@ class tx_languagevisibility_fceoverlayelement extends tx_languagevisibility_cele
 		return 'this is a flexible content element but translations are handled with overlay records.';		
 	}
 	
+	public function getElementDescription(){
+		return 'FCE-Overlay';
+	}
+	
+	
 }
 
 ?>

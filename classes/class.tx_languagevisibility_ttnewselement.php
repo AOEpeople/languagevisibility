@@ -19,7 +19,11 @@ class tx_languagevisibility_ttnewselement extends tx_languagevisibility_recordel
 	function getFieldToUseForDefaultVisibility() {
 		return 'tt_news';
 	}
-
+	
+	public function getElementDescription(){
+		return 'tt-news Record';
+	}
+	
 	function getFallbackOrder(tx_languagevisibility_language $language) {
 		return $language->getFallbackOrderTTNewsElement();
 	}

@@ -18,15 +18,17 @@ class tx_languagevisibility_fceelement extends tx_languagevisibility_element {
 	public function __construct($row,$DS)    {
 		parent::__construct($row);
 		
-		
 		$this->langChildren = $DS['meta']['langChildren'] ? 1 : 0;
 		$this->langDisabled = $DS['meta']['langDisable'] ? 1 : 0;
 		$this->disabledIsVisible = $DS['meta']['disabledIsVisible'] ? 1 : 0;
-		
 	}
 	
 	protected function getTable(){
 		return 'tt_content';
+	}
+	
+	public function getElementDescription(){
+		return 'FCE';
 	}
 	
 	function getInformativeDescription() {
