@@ -35,11 +35,11 @@ class tx_languagevisibility_beservices {
 	
 	}
 	
-	function getElement($uid,$table) {
+	function getElement($uid,$table,$overlay_ids = true) {
 		$dao=t3lib_div::makeInstance('tx_languagevisibility_daocommon');
 		$elementfactoryName= t3lib_div::makeInstanceClassName('tx_languagevisibility_elementFactory');		
 		$elementfactory=new $elementfactoryName($dao);		
-    	$element=$elementfactory->getElementForTable($table,$uid);        
+    	$element=$elementfactory->getElementForTable($table,$uid,$overlay_ids);        
     	return $element;
 	}
 		

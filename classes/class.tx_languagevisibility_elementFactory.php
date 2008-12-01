@@ -17,12 +17,13 @@ class tx_languagevisibility_elementFactory {
 	/**
 	* Returns ready initialised "element" object. Depending on the element the correct element class is used. (e.g. page/content/fce)
 	*
-	* @params $table	table
-	* @params $uid	identifier
+	* @param $table	table
+	* @param $uid	identifier
+	* @param $overlay_ids boolean parameter to overlay uids if the user is in workspace context 
 	*
 	* @throws Unknown_Element_Exception 
 	**/	
-	function getElementForTable($table,$uid) {
+	function getElementForTable($table,$uid,$overlay_ids = true) {
 		/*	
 		echo $uid.'-';
 		echo $uid=t3lib_BEfunc::wsMapId($table,$uid);
@@ -33,24 +34,23 @@ class tx_languagevisibility_elementFactory {
 			$row=array();
 		}
 		else {				
-				/***
-				** WORKSPACE NOTE
-				* the diffrent usecases has to be defined and checked..
-				**/
-				if (is_object($GLOBALS['BE_USER']) && $GLOBALS['BE_USER']->workspace !=0) {				
-					//$uid=t3lib_BEfunc::wsMapId($table,$uid);						
-					$row=$this->dao->getRecord($uid,$table);						
-					if ($row['pid']!=-1) {
-						$uid=t3lib_BEfunc::wsMapId($table,$uid);
-						$row=$this->dao->getRecord($uid,$table);							
-					}
-				}
-				else {
-					$row=$this->dao->getRecord($uid,$table);
+			/***
+			** WORKSPACE NOTE
+			* the diffrent usecases has to be defined and checked..
+			**/
+			if (is_object($GLOBALS['BE_USER']) && $GLOBALS['BE_USER']->workspace !=0 && $overlay_ids) {				
+				
+				$row=$this->dao->getRecord($uid,$table);						
+				if ($row['pid']!=-1) {
+					$uid=t3lib_BEfunc::wsMapId($table,$uid);
+					$row=$this->dao->getRecord($uid,$table);							
 				}
 			}
-		
-		
+			else {
+				$row=$this->dao->getRecord($uid,$table);
+			}
+		}
+				
 		switch ($table) {
 				case 'pages':
 					require_once(t3lib_extMgm::extPath("languagevisibility").'classes/class.tx_languagevisibility_pageelement.php');

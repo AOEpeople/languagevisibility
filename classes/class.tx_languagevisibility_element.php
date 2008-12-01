@@ -125,16 +125,15 @@ abstract class tx_languagevisibility_element {
 	 *
 	 * @return boolean
 	 */
-	function isLiveWorkspaceElement(){
-		return ($this->row['t3ver_wsid'] == 0);
-	}
+
 	
 	function getWorkspaceUid(){
 		return $this->row['t3ver_wsid'];
 	}
 	
-	function getWorkspaceName(){
-		
+	
+	function isLiveWorkspaceElement(){
+		return  ($this->row['pid'] != -1);
 	}
 	
 	/**
@@ -290,21 +289,24 @@ abstract class tx_languagevisibility_element {
 	 * @return array
 	 */
 	function getWorkspaceVersionUids(){
-		$table 	= $this->getTable();
 		$uids 	= array();
-					
-		if($table != ''){
-			$res = $GLOBALS['TYPO3_DB']->exec_SELECTquery(
-							'uid',
-							$table,
-							't3ver_oid='.$GLOBALS['TYPO3_DB']->fullQuoteStr($this->row['uid'], $table).
-							' AND uid !='.$GLOBALS['TYPO3_DB']->fullQuoteStr($this->row['uid'], $table).t3lib_BEfunc::deleteClause($table));
+		
+		if($this->isLiveWorkspaceElement()){
+			$table 	= $this->getTable();
+			$uid 	= $this->row['uid'];
+			if($table != ''  && $uid != 0){
+				$res = $GLOBALS['TYPO3_DB']->exec_SELECTquery(
+								'uid',
+								$table,
+								't3ver_oid='.$GLOBALS['TYPO3_DB']->fullQuoteStr($this->row['uid'], $table).
+								' AND uid !='.$GLOBALS['TYPO3_DB']->fullQuoteStr($this->row['uid'], $table).t3lib_BEfunc::deleteClause($table));
 
-			while($row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res))	{
-				$uids[] = $row['uid'];
+				while($row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res))	{
+					$uids[] = $row['uid'];
+				}
 			}
 		}
-		
+				
 		return $uids;	
 	}
 }
