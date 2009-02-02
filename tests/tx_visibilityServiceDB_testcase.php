@@ -85,7 +85,87 @@ class tx_visibilityServiceDB_testcase extends tx_phpunit_database_testcase {
 		}
 	}
 
+	/**
+	 * As discussed in issue 6863 an editor should be able to set the languagevisibility right
+	 * "force to no" in the overlay record. 
+	 *
+	 * @param void
+	 * @return void
+	 * @see tx_languagevisibility_visibilityService
+	 * @author Timo Schmidt
+	 */
+	function test_visibility_ttcontentOverlayForceToNoAffectsVisibility(){
+		$language = $this->_getLang(1);
+		
+		/**
+		 * The xml structure is used to to create a fixture tt_content element 
+		 * with the visibility "yes" for all languages. For the same element
+		 * an overlay in language 1 exists with the setting "force to no".
+		 * In this case the "force to no" setting in the overlay should overwrite
+		 * the "yes" setting in the content element. Therefore the element should not be
+		 * visible. 
+		 */
+		
+		$element 			= $this->_getContent('tt_content',4);
+		
+		//set visibility to true to ensure it is set to false by the service call
+		$visibilityResult 	= true;
+		
+		$service			= new tx_languagevisibility_visibilityService();	
+		$visibilityResult 	= $service->isVisible($language,$element);
+		
+		$this->assertFalse($visibilityResult,'tt-content element is visible, but should not be visible');
+	}
+	
+	/**
+	 * This testcase does exactly the same as the previos testcase (test_visibility_ttcontentOverlayForceToNoAffectsVisibility)
+	 * but uses page elements.
+	 * 
+	 * @param void
+	 * @return void
+	 * @see tx_languagevisibility_visibilityService
+	 * @return 
+	 */
+	function test_visibility_pagesOverlayForceToNoAffectsVisibility(){
+		$language 			= $this->_getLang(1);	
+		$element			= $this->_getContent('pages',4);
+		$visibilityResult	= true;
+		$service			= new tx_languagevisibility_visibilityService();	
 
+		$visibilityResult 	= $service->isVisible($language,$element);
+		
+		$this->assertFalse($visibilityResult,'page element is visible, but should not be visible');
+	}
+	
+	/**
+	 * This testcase is used to test if an "force to no"-setting  in an overlay record in the workspace
+	 * affects the original element in the workspace.
+	 *  
+	 * @return 
+	 */
+	function test_visibility_ttcontentOverlayForceToNoAffectsVisibilityAlsoInWorkspaces(){
+		$this->_fakeWorkspaceContext(4711);
+		
+		$language 			= $this->_getLang(1);	
+		$element			= $this->_getContent('tt_content',8);
+		$visibilityResult	= true;
+		
+		$service			= new tx_languagevisibility_visibilityService();	
+
+		$visibilityResult 	= $service->isVisible($language,$element);
+		
+		$this->assertFalse($visibilityResult,'page element is visible, but should not be visible');
+	}
+	
+
+	function _loadWorkspaces(){
+		$this->importDataSet(dirname(__FILE__). '/fixtures/dbDefaultWorkspaces.xml');
+	}
+	
+	function _fakeWorkspaceContext($uid){
+		$GLOBALS['BE_USER']->workspace = $uid;
+	}
+	
 	function _getLang($uid) {
 		if(!$this->_langImport) {
 			$this->_langImport=true;
@@ -102,17 +182,17 @@ class tx_visibilityServiceDB_testcase extends tx_phpunit_database_testcase {
 		}
 		$dao=new tx_languagevisibility_daocommon;
 		$factoryClass=t3lib_div::makeInstanceClassName('tx_languagevisibility_elementFactory');
+		
 		$factory=new $factoryClass($dao);
 		return $factory->getElementForTable($table,$uid);
 	}
-
-
 
 	function setUp() {
 		$this->createDatabase();
 		$db = $this->useTestDatabase();
 		// order of extension-loading is important !!!!
 		$this->importExtensions(array('corefake','cms','languagevisibility'));
+		$this->_loadWorkspaces();
 	}
 
 	function tearDown() {

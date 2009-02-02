@@ -92,6 +92,11 @@ class tx_languagevisibility_visibilityService {
 	*	 If nothing is set the hardcoded default "t" (translated) is returned
 	*/
 	function getVisibilitySetting(tx_languagevisibility_language $language,$element) {
+		/*$global=$element->getGlobalVisibilitySetting($language->getUid());
+		
+		if ($global !='' && $global !='-') {
+			return $global;
+		}*/
 		$local=$element->getLocalVisibilitySetting($language->getUid());
 		if ($local !='' && $local !='-') {
 			return $local;
@@ -101,7 +106,7 @@ class tx_languagevisibility_visibilityService {
 				return 'yes';
 			}
 
-			if($element->isMonolithicTranslated()) {
+			if ($element->isMonolithicTranslated()) {
 				return $element->languageEquals($language)?'yes':'no';
 			}
 
@@ -120,8 +125,6 @@ class tx_languagevisibility_visibilityService {
 				return $global;
 		}
 	}
-
-
 }
 
 ?>

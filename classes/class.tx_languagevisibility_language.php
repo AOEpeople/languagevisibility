@@ -107,17 +107,17 @@ class tx_languagevisibility_language {
 		return $path;
 	}
 
-
 	/**
 	* checks if the given languageid is part of the fallback of this language
 	* (used for permission options in the backend)
+	* 
+	* @param int uid
+	* @return boolean
 	**/
 	function isLanguageUidInFallbackOrder($uid) {
 		$fallbacks=$this->getFallbackOrder();
 		return in_array($uid,$fallbacks);
 	}
-
-
 }
 
 ?>

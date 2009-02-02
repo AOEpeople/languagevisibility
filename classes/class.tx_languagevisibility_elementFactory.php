@@ -116,8 +116,7 @@ class tx_languagevisibility_elementFactory {
 		}
 		return $DS;
 		
-	}
-	
+	}	
 }
 
 ?>

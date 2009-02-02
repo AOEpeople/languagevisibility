@@ -5,16 +5,37 @@ require_once(t3lib_extMgm::extPath("languagevisibility").'classes/class.tx_langu
 
 class tx_languagevisibility_recordelement extends tx_languagevisibility_element {
 
+	/**
+	 * Variable to store the tablename of the record element. 
+	 *
+	 * @var string
+	 */
 	protected $table;
 
+	/**
+	 * Method to set the tablename of the recordelement.
+	 *
+	 * @param string $table
+	 */
 	function setTable($table) {
 		$this->table=$table;
 	}
 	
+	
+	/**
+	 * Method to get the tablename
+	 *
+	 * @return string
+	 */
 	protected function getTable(){
 		return $this->table;
 	}
 
+	/**
+	 * Enter description here...
+	 *
+	 * @return string
+	 */
 	public function getElementDescription(){
 		return 'TYPO3-Record';
 	}
@@ -56,17 +77,19 @@ class tx_languagevisibility_recordelement extends tx_languagevisibility_element 
 					'1'
 				);
 
-				$olrow = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res);
-				if (is_object($GLOBALS['TSFE']->sys_page)) {
-					$GLOBALS['TSFE']->sys_page->versionOL($table,$olrow);
-				}
-				else {
-					t3lib_BEfunc::workspaceOL($table,$olrow);
-				}
-				return 	$olrow;
+			$olrow = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res);
+			$olrow = $this->getContextIndependentWorkspaceOverlay($table,$olrow);
+			
+			
+			return 	$olrow;
 	}
 
 
+	/**
+	 * This method is used to check if this element has any translation in any workspace.
+	 *
+	 * @return boolean
+	 */
 	function hasOverLayRecordForAnyLanguageInAnyWorkspace(){
 		global $TCA;
 		$table=$this->table;

@@ -35,6 +35,7 @@ class ux_t3lib_TCEmain extends t3lib_TCEmain	{
 		$res = 0;
 		if ($TCA[$table] && intval($id)>0)	{
 			if (isset($this->recUpdateAccessCache[$table][$id]))	{	// If information is cached, return it
+
 				return $this->recUpdateAccessCache[$table][$id];
 				// Check if record exists and 1) if 'pages' the page may be edited, 2) if page-content the page allows for editing
 			} elseif ($this->doesRecordExist($table,$id,'edit'))	{
@@ -53,56 +54,22 @@ class ux_t3lib_TCEmain extends t3lib_TCEmain	{
 						}
 					}
 				}
-				
 			}
+
 			$this->recUpdateAccessCache[$table][$id]=$res;	// Cache the result
 		}
+
 		return $res;
 	}
 
+	
 	/**
-	 * Wrapper function for process_cmdmap in tce main, checks if the user wants 
-	 * to move or copy a page
+	 * This method is used to extend the tce_main process_cmdmap function. It provides the functionallity to
+	 * disallow users to move, cut or copy any element which has an overlay. Moving and Cutting of elements
+	 * with overlays is dangerous because the extisting overlays may also need to be moved.
+	 * 
 	 *
 	 */
-//	function process_cmdmap(){
-//		if (t3lib_extMgm::isLoaded('languagevisibility')) {
-//	
-//			require_once(t3lib_extMgm::extPath("languagevisibility").'patch/lib/class.tx_languagevisibility_commandMap.php');
-//			require_once(t3lib_extMgm::extPath("languagevisibility").'patch/lib/class.tx_languagevisibility_beUser.php');
-//			
-//			$be_user 		= t3lib_div::makeInstance('tx_languagevisibility_beUser');
-//	
-//			if($be_user->allowCutMoveDelete() || $be_user->isAdmin() ){				
-//				//nothing to user hase rights to move, cut or delete items
-//
-//			}else{
-//				//user has no rights to cut move copy or delete, therefore the commands need to be filtered
-//				$command_map 	= t3lib_div::makeInstance('tx_languagevisibility_commandMap');		
-//				$command_map->setMap($this->cmdmap);
-//
-//				$elements = $command_map->getElementsByCommands(array('cut','move','copy','delete'));
-//				if(is_array($elements)){
-//					foreach($elements as $element){						
-//
-//						require_once(t3lib_extMgm::extPath("languagevisibility").'class.tx_languagevisibility_beservices.php');
-//						$hastranslation = tx_languagevisibility_beservices::hasElementTranslationInAnyLanguageAndAnyWorkspace($element['uid'],$element['table']);
-//
-//						if($hastranslation){
-//							$command_map->removeElement($element);	
-//							$this->newlog('You have no rights to apply the command '.$element['cmd'].' on elements with overlays',1);								
-//						}
-//					}
-//				}
-//				//overwrite the internal map an process the base tce_main method
-//				$this->cmdmap = $command_map->getMap();
-//			}
-//
-//		}
-//				
-//		parent::process_cmdmap();
-//	}
-	
 	function process_cmdmap(){
 		if (t3lib_extMgm::isLoaded('languagevisibility')) {	
 			require_once(t3lib_extMgm::extPath("languagevisibility").'patch/lib/class.tx_languagevisibility_commandMap.php');
@@ -115,11 +82,14 @@ class ux_t3lib_TCEmain extends t3lib_TCEmain	{
 			if(is_array($command_elements)){
 				foreach($command_elements as $command_element){							
 					try{
-						$elementObj = tx_languagevisibility_beservices::getElement($command_element['uid'],$command_element['table']);
-						$command = $command_element['cmd'];
-						 
-						if(!$elementObj->isOrigElement()){
-							//current element is an overlay -> restrict cut copy and move in general -> filter the command map
+						 //get row 
+						$table	= $command_element['table'];
+						$uid	= $command_element['uid'];	
+						$row 	= tx_languagevisibility_daocommon::getRecord($uid,$table); 
+						$command = $command_element['cmd'];		
+												
+						if(tx_languagevisibility_beservices::isOverlayRecord($row,$table)){
+							//current element is an overlay -> restrict cut copy and move in general -> filter the command map		
 							if($command == 'move' || $command == 'cut'|| $command == 'copy'){
 								$this->newlog('The command '.$command.' can not be applied on overlays',1);	
 								//overlay records should no be move,copy or cutable but it should be possible to delete them
@@ -130,7 +100,8 @@ class ux_t3lib_TCEmain extends t3lib_TCEmain	{
 							//current element is no overlay
 							if(!tx_languagevisibility_beservices::canCurrrentUserCutCopyMoveDelete()){
 								//if the record has any translation disallow move, cut, copy and delete
-
+								$elementObj = tx_languagevisibility_beservices::getElement($uid,$table);
+								
 								if($elementObj->hasAnyTranslationInAnyWorkspace()){
 									$command_map->removeElement($command_element);	
 									$this->newlog('You have no rights to apply the command '.$command.' on elements with overlays',1);								
@@ -142,20 +113,14 @@ class ux_t3lib_TCEmain extends t3lib_TCEmain	{
 					}	
 				}
 			}
-			
-			
+					
 			//overwrite the internal map an process the base tce_main method
 			$this->cmdmap = $command_map->getMap();	
 		}
-				
+
+		//process parent method to use basic functionallity
 		parent::process_cmdmap();
 	}
-	
-	function isOverlay($element){
-		$record = t3lib_BEfunc::getRecord($element['table'],$element['uid'],$fields='l18n_parent',$where='',$useDeleteClause=true);
-		return ($record['l18n_parent'] != 0);
-	}
-	
 }
 
 ?>

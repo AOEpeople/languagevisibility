@@ -20,6 +20,12 @@ CREATE TABLE pages (
 	tx_languagevisibility_visibility text NOT NULL
 );
 
+#
+# Table structure for table 'pages_language_overlay'
+#
+CREATE TABLE pages_language_overlay (
+	tx_languagevisibility_visibility text NOT NULL
+);
 
 
 #

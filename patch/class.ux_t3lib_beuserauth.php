@@ -23,7 +23,6 @@ class ux_t3lib_beUserAuth extends t3lib_beUserAuth {
 
 				// Always return true for Admin users.
 			if ($this->isAdmin())	return TRUE;
-
 				// Fetching the record if the $idOrRow variable was not an array on input:
 			if (!is_array($idOrRow))	{
 				$idOrRow = t3lib_BEfunc::getRecord($table, $idOrRow);
@@ -39,7 +38,9 @@ class ux_t3lib_beUserAuth extends t3lib_beUserAuth {
 				if (isset($idOrRow[$TCA[$table]['ctrl']['languageField']]))	{	// Language field must be found in input row - otherwise it does not make sense.					
 					$skipLanguageErrorMessage=FALSE;
 					//danielp allow default language for creating new elements as well as editing if languagevisibility allows it
+					
 					if (!$this->checkLanguageAccess($idOrRow[$TCA[$table]['ctrl']['languageField']])) {
+												
 						if ($idOrRow[$TCA[$table]['ctrl']['languageField']] ==0) {		
 												
 							$editingIsAllowed=FALSE;
