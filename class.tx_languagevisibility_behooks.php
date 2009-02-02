@@ -105,7 +105,6 @@ class tx_languagevisibility_behooks {
 			break;
 		}
 	}
-
 }
 
 ?>

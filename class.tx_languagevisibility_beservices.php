@@ -8,7 +8,7 @@ require_once (t3lib_extMgm::extPath ( "languagevisibility" ) . 'patch/lib/class.
 
 class tx_languagevisibility_beservices {
 	
-	function getVisibleFlagsForElement($uid, $table) {
+	public static function getVisibleFlagsForElement($uid, $table) {
 		$dao = t3lib_div::makeInstance ( 'tx_languagevisibility_daocommon' );
 		$elementfactoryName = t3lib_div::makeInstanceClassName ( 'tx_languagevisibility_elementFactory' );
 		$elementfactory = new $elementfactoryName ( $dao );
@@ -25,12 +25,11 @@ class tx_languagevisibility_beservices {
 		$visibleFlags = array ();
 		foreach ( $languageList as $language ) {
 			if ($visibility->isVisible ( $language, $element )) {
-				$visibleFlags [] = $language->getFlagImg ( $this->pageId );
+				$visibleFlags [] = $language->getFlagImg (0);
 			}
 		}
 		
 		return implode ( '', $visibleFlags );
-	
 	}
 	
 	/**
@@ -133,7 +132,7 @@ class tx_languagevisibility_beservices {
 	 * @param string $table
 	 * @return boolean
 	 */
-	function isSupportedTable($table) {
+	public static function isSupportedTable($table) {
 		$supported = array ('tt_news', 'tt_content', 'pages' );
 		if (in_array ( $table, $supported )) {
 			return true;
@@ -149,7 +148,7 @@ class tx_languagevisibility_beservices {
 	 * @param string $table
 	 * @return boolean.
 	 */
-	function hasTranslationInAnyLanguage($uid, $table) {
+	public static function hasTranslationInAnyLanguage($uid, $table) {
 		$dao = t3lib_div::makeInstance ( 'tx_languagevisibility_daocommon' );
 		$elementfactoryName = t3lib_div::makeInstanceClassName ( 'tx_languagevisibility_elementFactory' );
 		$elementfactory = new $elementfactoryName ( $dao );
@@ -182,7 +181,7 @@ class tx_languagevisibility_beservices {
 	 *			b.1) also if the languages taht are visibile and falls back to allowed languages
 	 *			c) delete: same as for edit (only if user has access to all visible languages)
 	 **/
-	function hasUserAccessToPageRecord($id, $cmd = 'edit') {
+	public static function hasUserAccessToPageRecord($id, $cmd = 'edit') {
 		
 		global $BE_USER;
 		if ($cmd == 'new') {
@@ -195,7 +194,7 @@ class tx_languagevisibility_beservices {
 		$languages = $rep->getLanguages ();
 		foreach ( $languages as $language ) {
 			//echo 'check '.$language->getUid();
-			if ($this->isVisible ( $id, 'pages', $language->getUid () )) {
+			if ( self::isVisible ( $id, 'pages', $language->getUid () )) {
 				if (! $BE_USER->checkLanguageAccess ( $language->getUid () )) {
 					//no access to a visible language: check fallbacks
 					$isInFallback = FALSE;
@@ -220,7 +219,7 @@ class tx_languagevisibility_beservices {
 	 *			a) new page created -> always because then the languagevisibility is set to never for all languages where the user has no access
 	 *			b) edit page record: only if the record is only visible in languages where the user has access to
 	 **/
-	function hasUserAccessToEditRecord($table, $id) {
+	public static function hasUserAccessToEditRecord($table, $id) {
 		global $BE_USER;
 	
 		if (! is_numeric ( $id )) {
@@ -271,7 +270,7 @@ class tx_languagevisibility_beservices {
 	 * @param tx_languagevisibility_language $language
 	 * @return array
 	 */
-	function getAvailableOptionsForLanguage(tx_languagevisibility_language $language, $isOverlay=false) {
+	public static function getAvailableOptionsForLanguage(tx_languagevisibility_language $language, $isOverlay=false) {
 		$uid = $language->getUid ();
 		$select = array ();
 		
@@ -333,7 +332,7 @@ class tx_languagevisibility_beservices {
 	 *
 	 * @return array
 	 */
-	function getDefaultVisibilityArray() {
+	public static function getDefaultVisibilityArray() {
 		$languageRep = t3lib_div::makeInstance ( 'tx_languagevisibility_languagerepository' );
 		$languageList = $languageRep->getLanguages ();
 		$default = array ();
