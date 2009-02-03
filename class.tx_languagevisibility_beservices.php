@@ -225,7 +225,7 @@ class tx_languagevisibility_beservices {
 		if (! is_numeric ( $id )) {
 			return false;
 		}
-		if (! $this->isSupportedTable ( $table )) {
+		if (! self::isSupportedTable ( $table )) {
 			return true;
 		}
 
@@ -234,7 +234,7 @@ class tx_languagevisibility_beservices {
 		$row = $dao->getRecord ( $id, $table );
 		
 		//@TODO check TCA for languagefield
-		if ($this->isOverlayRecord ( $row, $table )) {
+		if (self::isOverlayRecord ( $row, $table )) {
 		
 			if ($BE_USER->checkLanguageAccess ( $row ['sys_language_uid'] ))
 				return true;

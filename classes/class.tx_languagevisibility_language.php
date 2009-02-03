@@ -1,24 +1,32 @@
 <?php
 
 require_once(t3lib_extMgm::extPath("languagevisibility").'classes/class.tx_languagevisibility_languagerepository.php');
-
 require_once(t3lib_extMgm::extPath("languagevisibility").'classes/dao/class.tx_languagevisibility_daocommon.php');
 
-
 class tx_languagevisibility_language {
-	var $row;
+	private $row;
 
 	function setData($row)    {
 		$this->row=$row;
 	}
 
-	function getFallbackOrder() {
+	/**
+	 * Returns the fallback order of this language as array.
+	 *
+	 * @return array
+	 */
+	public function getFallbackOrder() {
 		//unfortunatly defaultlangauge is 999 instead of 0 (reason in formrendering of typo3):
 		$tx_languagevisibility_fallbackorder=str_replace('999','0',$this->row['tx_languagevisibility_fallbackorder']);
 		return t3lib_div::trimExplode(',',$tx_languagevisibility_fallbackorder);
 	}
 
-	function getFallbackOrderElement() {
+	/**
+	 * Returns the fallback order for this language for elements
+	 *
+	 * @return array
+	 */
+	public function getFallbackOrderElement() {
         if($this->usesComplexFallbackSettings()) {
 		    $tx_languagevisibility_fallbackorderel=str_replace('999','0',$this->row['tx_languagevisibility_fallbackorderel']);
 		    return t3lib_div::trimExplode(',',$tx_languagevisibility_fallbackorderel);
@@ -27,7 +35,12 @@ class tx_languagevisibility_language {
         }
 	}
 
-	function getFallbackOrderTTNewsElement() {
+	/**
+	 * Returns the fallback order for news elements as array
+	 *
+	 * @return array
+	 */
+	public function getFallbackOrderTTNewsElement() {
         if($this->usesComplexFallbackSettings()) {
 		    $tx_languagevisibility_fallbackorderttnewel=str_replace('999','0',$this->row['tx_languagevisibility_fallbackorderttnewsel']);
 		    return t3lib_div::trimExplode(',',$tx_languagevisibility_fallbackorderttnewel);
@@ -36,32 +49,58 @@ class tx_languagevisibility_language {
         }
 	}
     
-    function usesComplexFallbackSettings() {
+	/**
+	 * Method to check if complex fallback settings should be used.
+	 *
+	 * @return boolean
+	 */
+	public function usesComplexFallbackSettings() {
         return intval($this->row['tx_languagevisibility_complexfallbacksetting']) > 0;
     }
 
-	function getDefaultVisibilityForPage() {
+    /**
+     * Method to read the defaultVisibility setting of pages.
+     *
+     * @return string
+     */
+	public function getDefaultVisibilityForPage() {
 		return $this->row['tx_languagevisibility_defaultvisibility'];
 	}
 
-	function getDefaultVisibilityForElement() {
+	/**
+	 * Method to read the defaultVisibility for elements
+	 *
+	 * @return string
+	 */
+	public function getDefaultVisibilityForElement() {
         return $this->row['tx_languagevisibility_defaultvisibilityel'];
 	}
 
+	/**
+	 * Method to read the visibility for tt news Elements.
+	 *
+	 * @return boolean
+	 */
 	function getDefaultVisibilityForTTNewsElement() {
         return $this->row['tx_languagevisibility_defaultvisibilityttnewsel'];
 	}
     
+	/**
+	 * Method to get the primary key of the language record.
+	 *
+	 * @return int
+	 */
 	function getUid() {
 		return $this->row['uid'];
 	}
+	
 	function getIsoCode() {
 		// Finding the ISO code:
 		$result = $GLOBALS['TYPO3_DB']->exec_SELECTquery('lg_iso_2', 'static_languages', 'uid='.intval($this->row['static_lang_isocode']),'','');
-    $static_languages_row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($result);
+    	$static_languages_row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($result);
 		return $static_languages_row['lg_iso_2'];
-
 	}
+	
 	function getTitle($pidForDefault='') {
 		if ($this->getUid()=='0') {
 			if ($pidForDefault=='')
