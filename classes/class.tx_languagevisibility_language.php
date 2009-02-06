@@ -138,7 +138,7 @@ class tx_languagevisibility_language {
 				$pidForDefault=$this->_guessCurrentPid();
 			}
 			$sharedTSconfig = t3lib_BEfunc::getModTSconfig($pidForDefault, 'mod.SHARED');
-			$img=strlen($sharedTSconfig['properties']['defaultLanguageFlag']) && @is_file($flagAbsPath.$sharedTSconfig['properties']['defaultLanguageFlag']) ? $flagIconPath.$sharedTSconfig['properties']['defaultLanguageFlag'] : null;
+			$path=strlen($sharedTSconfig['properties']['defaultLanguageFlag']) && @is_file($flagAbsPath.$sharedTSconfig['properties']['defaultLanguageFlag']) ? $flagIconPath.$sharedTSconfig['properties']['defaultLanguageFlag'] : null;
 		}
 		else {
 			$path=$flagIconPath.$this->row['flag'];
