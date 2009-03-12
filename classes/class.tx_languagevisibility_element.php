@@ -46,12 +46,6 @@ abstract class tx_languagevisibility_element {
 	 */
 	private $overlayVisibilitySetting;
 	
-	/**
-	 * Merged visibility
-	 *
-	 * @var array
-	 */
-	private $allVisibilitySetting;
 	
 	public function __construct($row) {
 		
@@ -65,6 +59,11 @@ abstract class tx_languagevisibility_element {
 		if (! is_array ( $this->localVisibilitySetting )) {
 			$this->localVisibilitySetting = array ();
 		}
+		
+		if (! is_array ( $this->overlayVisibilitySetting )) {
+			$this->overlayVisibilitySetting = array ();
+		}
+		
 		$this->initialisations ();
 	}
 	
@@ -163,7 +162,7 @@ abstract class tx_languagevisibility_element {
 	 **/
 	public function getLocalVisibilitySetting($languageid) {
 		$overlayVisibility = $this->getVisibilitySettingStoredInOverlayRecord($languageid);
-		if($overlayVisibility  != '' && $overlayVisibility  != '-'){
+		if($overlayVisibility  == 'no'){
 			$res = $overlayVisibility ;
 		}else{
 			$local 	= $this->getVisibilitySettingStoredInDefaultRecord($languageid);		
@@ -181,14 +180,16 @@ abstract class tx_languagevisibility_element {
 	public function getVisibilitySettingStoredInOverlayRecord($languageid){
 		//if global visibility has not been determined, determine and cache it
 		
-		if(!isset($this->overlayVisibilitySetting [$languageid])){
-			$overlay 					= $this->getOverLayRecordForCertainLanguage($languageid);
-			$overlayVisibilitySettings 	= @unserialize ($overlay ['tx_languagevisibility_visibility'] );
-						
-			if(is_array($overlayVisibilitySettings)){
-				$this->overlayVisibilitySetting [$languageid] = $overlayVisibilitySettings[$languageid];
-			}else{
-				$this->overlayVisibilitySetting [$languageid] = '';
+		if(is_array($this->overlayVisibilitySetting)){
+			if(!isset($this->overlayVisibilitySetting [$languageid])){
+				$overlay 					= $this->getOverLayRecordForCertainLanguage($languageid);
+				$overlayVisibilitySettings 	= @unserialize ($overlay ['tx_languagevisibility_visibility'] );
+							
+				if(is_array($overlayVisibilitySettings)){
+					$this->overlayVisibilitySetting [$languageid] = $overlayVisibilitySettings[$languageid];
+				}else{
+					$this->overlayVisibilitySetting [$languageid] = '-';
+				}
 			}
 		}
 				

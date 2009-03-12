@@ -44,8 +44,8 @@ class tx_languagevisibility_beservices {
 		$dao=t3lib_div::makeInstance('tx_languagevisibility_daocommon');
 		$elementfactoryName= t3lib_div::makeInstanceClassName('tx_languagevisibility_elementFactory');		
 		$elementfactory=new $elementfactoryName($dao);		
-    	$element=$elementfactory->getElementForTable($table,$uid,$overlay_ids);        
-    	return $element;
+		$element=$elementfactory->getElementForTable($table,$uid,$overlay_ids);
+		return $element;
 	}
 		
 	/**
@@ -374,7 +374,12 @@ class tx_languagevisibility_beservices {
 		global $TCA;	 		
 		t3lib_div::loadTCA($table);
 		
-		return $row[$TCA[$table]['ctrl']['transOrigPointerField']];
+
+		if(is_array($row) && is_array($TCA)){
+			return $row[$TCA[$table]['ctrl']['transOrigPointerField']];
+		}else{
+			return 0;
+		}
 	}
 }
 ?>

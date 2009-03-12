@@ -5,7 +5,6 @@
 		<uid>1</uid>
 		<pid>0</pid>
 		<title>Page without overlays</title>
-		<hidden>0</hidden>
 		<deleted>0</deleted>
 		<tx_languagevisibility_visibility>a:3:{i:0;s:1:"-";i:1;s:1:"-";i:2;s:1:"-";}</tx_languagevisibility_visibility>
 	</pages>
@@ -14,7 +13,6 @@
 		<uid>2</uid>
 		<pid>0</pid>
 		<title>Page with overlays</title>
-		<hidden>0</hidden>
 		<deleted>0</deleted>
 		<tx_languagevisibility_visibility>a:3:{i:0;s:1:"-";i:1;s:1:"-";i:2;s:1:"-";}</tx_languagevisibility_visibility>
 	</pages>
@@ -22,7 +20,6 @@
 	<pages>
 		<uid>4</uid>
 		<pid>1</pid>
-		<hidden>0</hidden>
 		<deleted>0</deleted>		
 		<tx_languagevisibility_visibility>a:3:{i:0;s:3:"yes";i:1;s:3:"yes";i:2;s:3:"yes";}</tx_languagevisibility_visibility>
 	
@@ -32,7 +29,6 @@
 		<uid>5</uid>
 		<pid>4</pid>
 		<sys_language_uid>1</sys_language_uid>
-		<hidden>0</hidden>
 		<deleted>0</deleted>
 		<tx_languagevisibility_visibility>a:1:{i:1;s:2:"no";}</tx_languagevisibility_visibility>		
 	</pages_language_overlay>
@@ -164,5 +160,32 @@
 			<l18n_parent>6</l18n_parent>
 			<!-- The visibility for this element is "forced to no" for this element -->			
 			<tx_languagevisibility_visibility>a:1:{i:1;s:2:"no";}</tx_languagevisibility_visibility>
+		</tt_content>
+		
+	<!-- Test to check if "force to yes" in overlay takes NOT effect -->
+		<tt_content>
+			<uid>10</uid>
+			<pid>2</pid>
+			<header>Original Element</header>
+			<hidden>0</hidden>
+			<deleted>0</deleted>
+			<t3ver_wsid>0</t3ver_wsid>
+			<l18n_parent>0</l18n_parent>
+			<l18n_diffsource>0</l18n_diffsource>
+			<sys_language_uid>0</sys_language_uid>
+			<tx_languagevisibility_visibility>a:3:{i:0;s:3:"yes";i:1;s:2:"no";i:2;s:3:"yes";}</tx_languagevisibility_visibility>
+		</tt_content>
+	
+		<tt_content>
+			<uid>11</uid>
+			<pid>2</pid>
+			<header>Overlay Element</header>
+			<hidden>0</hidden>
+			<deleted>0</deleted>
+			<t3ver_wsid>0</t3ver_wsid>
+			<l18n_parent>10</l18n_parent>
+			<l18n_diffsource>0</l18n_diffsource>
+			<sys_language_uid>1</sys_language_uid>
+			<tx_languagevisibility_visibility>a:1:{i:1;s:3:"yes";}</tx_languagevisibility_visibility>
 		</tt_content>
 </dataset>

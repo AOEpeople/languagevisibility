@@ -50,7 +50,9 @@ class tx_languagevisibility_elementFactory {
 				$row=$this->dao->getRecord($uid,$table);
 			}
 		}
-				
+
+		//@todo isSupported table
+		
 		switch ($table) {
 				case 'pages':
 					require_once(t3lib_extMgm::extPath("languagevisibility").'classes/class.tx_languagevisibility_pageelement.php');

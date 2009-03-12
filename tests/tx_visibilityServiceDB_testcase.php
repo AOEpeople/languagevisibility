@@ -157,6 +157,24 @@ class tx_visibilityServiceDB_testcase extends tx_phpunit_database_testcase {
 		$this->assertFalse($visibilityResult,'page element is visible, but should not be visible');
 	}
 	
+	
+	/**
+	 * The visibility setting in an overlay should only overwrite the visibility 
+	 * when it is set to "force to no" a "force to yes" setting should not affect the orginal record.
+	 *
+	 */
+	function test_visibility_ttcontentOverlayForceToYesNotAffectsVisibility(){
+		$language = $this->_getLang(1);
+		$element 			= $this->_getContent('tt_content',10);
+		
+		//set visibility to true to ensure it is set to false by the service call
+		$visibilityResult 	= true;
+		
+		$service			= new tx_languagevisibility_visibilityService();	
+		$visibilityResult 	= $service->isVisible($language,$element);	
+
+		$this->assertFalse($visibilityResult,'visibility setting in overlay makes orginal element visible');
+	}
 
 	function _loadWorkspaces(){
 		$this->importDataSet(dirname(__FILE__). '/fixtures/dbDefaultWorkspaces.xml');

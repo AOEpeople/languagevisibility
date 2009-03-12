@@ -121,7 +121,7 @@ class user_tx_languagevisibility_fieldvisibility {
 			$currentOptionsForUserAndLanguage = tx_languagevisibility_beservices::getAvailableOptionsForLanguage ( $language , $isOverlay);	
 			
 			if($currentSetting == '' || isset ( $currentOptionsForUserAndLanguage [$currentSetting] )) {
-				//here the visibility setting of the normal record has to be used because it should not be changed in the default record
+	
 				if ($isOverlay){
 					$defaultSelect		= $changeableElement->getVisibilitySettingStoredInOverlayRecord($language->getUid ());
 					
@@ -243,6 +243,7 @@ class user_tx_languagevisibility_fieldvisibility {
 			return '<img src="../typo3conf/ext/languagevisibility/res/nok.gif">';
 		}
 	}
+	
 	function _link_edit($table, $id) {
 		global $BACK_PATH;
 		$params = '&table=' . $table . '&edit[' . $table . '][' . $id . ']=edit';
