@@ -175,6 +175,20 @@ class tx_visibilityServiceDB_testcase extends tx_phpunit_database_testcase {
 
 		$this->assertFalse($visibilityResult,'visibility setting in overlay makes orginal element visible');
 	}
+	
+	function test_visibility_ttcontentOverlayCorruptedNotAffectsVisibilits(){
+		$language = $this->_getLang(1);
+		$element 			= $this->_getContent('tt_content',12);
+		
+		//set visibility to true to ensure it is set to false by the service call
+		$visibilityResult 	= false;
+		
+		$service			= new tx_languagevisibility_visibilityService();	
+		$visibilityResult 	= $service->isVisible($language,$element);	
+
+		$this->assertTrue($visibilityResult,'corrupted element forces visibility to no');
+		
+	}
 
 	function _loadWorkspaces(){
 		$this->importDataSet(dirname(__FILE__). '/fixtures/dbDefaultWorkspaces.xml');

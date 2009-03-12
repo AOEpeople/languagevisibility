@@ -188,4 +188,33 @@
 			<sys_language_uid>1</sys_language_uid>
 			<tx_languagevisibility_visibility>a:1:{i:1;s:3:"yes";}</tx_languagevisibility_visibility>
 		</tt_content>
+		
+	<!--Test to check if a corrupted setting does not affect the visibility -->
+	
+		<tt_content>
+			<uid>12</uid>
+			<pid>2</pid>
+			<header>Original Element</header>
+			<hidden>0</hidden>
+			<deleted>0</deleted>
+			<t3ver_wsid>0</t3ver_wsid>
+			<l18n_parent>0</l18n_parent>
+			<l18n_diffsource>0</l18n_diffsource>
+			<sys_language_uid>0</sys_language_uid>
+			<tx_languagevisibility_visibility>a:3:{i:0;s:3:"yes";i:1;s:3:"yes";i:2;s:3:"yes";}</tx_languagevisibility_visibility>
+		</tt_content>
+	
+		<tt_content>
+			<uid>13</uid>
+			<pid>2</pid>
+			<header>Overlay Element</header>
+			<hidden>0</hidden>
+			<deleted>0</deleted>
+			<t3ver_wsid>0</t3ver_wsid>
+			<l18n_parent>12</l18n_parent>
+			<l18n_diffsource>0</l18n_diffsource>
+			<sys_language_uid>1</sys_language_uid>
+			<tx_languagevisibility_visibility>s:188:"s:179:"a:14:{i:0;s:1:"-";i:1;s:2:"no";i:2;s:1:"-";i:3;s:1:"-";i:4;s:1:"-";i:5;s:1:"-";i:6;s:1:"-";i:7;s:1:"-";i:8;s:1:"-";i:9;s:1:"-";i:10;s:1:"-";i:11;s:1:"-";i:12;s:1:"-";i:13;s:1:"-";}";";</tx_languagevisibility_visibility>
+		</tt_content>
+		
 </dataset>
