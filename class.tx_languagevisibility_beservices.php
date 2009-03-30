@@ -28,7 +28,6 @@ class tx_languagevisibility_beservices {
 				$visibleFlags [] = $language->getFlagImg (0);
 			}
 		}
-		
 		return implode ( '', $visibleFlags );
 	}
 	
@@ -84,6 +83,7 @@ class tx_languagevisibility_beservices {
 		//current element is no overlay -> if user has rights to cutMoveDelete or is an admin don't filter commants
 		$be_user 		= t3lib_div::makeInstance('tx_languagevisibility_beUser');
 		if($be_user->allowCutCopyMoveDelete() || $be_user->isAdmin() ){				
+			
 			return true;								
 		}else{
 			return false;

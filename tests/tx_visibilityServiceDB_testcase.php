@@ -190,6 +190,14 @@ class tx_visibilityServiceDB_testcase extends tx_phpunit_database_testcase {
 		
 	}
 
+	function test_visibility_ttcontentHasTranslationInAnyWorkspace(){
+		$element 			= $this->_getContent('tt_content',14);
+		$hasTranslation 	= true;
+		$hasTranslation		= $element->hasAnyTranslationInAnyWorkspace();
+		
+		$this->assertFalse($hasTranslation,'Element without translation is determined as element with translation.');
+	}
+	
 	function _loadWorkspaces(){
 		$this->importDataSet(dirname(__FILE__). '/fixtures/dbDefaultWorkspaces.xml');
 	}
@@ -222,6 +230,7 @@ class tx_visibilityServiceDB_testcase extends tx_phpunit_database_testcase {
 	function setUp() {
 		$this->createDatabase();
 		$db = $this->useTestDatabase();
+		
 		// order of extension-loading is important !!!!
 		$this->importExtensions(array('corefake','cms','languagevisibility'));
 		$this->_loadWorkspaces();
@@ -229,7 +238,7 @@ class tx_visibilityServiceDB_testcase extends tx_phpunit_database_testcase {
 
 	function tearDown() {
 		$this->cleanDatabase();
-   		$this->dropDatabase();
+		$this->dropDatabase();
 		$GLOBALS['TYPO3_DB']->sql_select_db(TYPO3_db);
 	}
 
