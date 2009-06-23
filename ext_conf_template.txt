@@ -1,3 +1,6 @@
 
   # cat=basic//10; type=boolean; label= Add PATCH to TemplaVoila PageModul
 applyPatchTV = 1
+
+  # cat=basic//20; type=boolean; label= Enable inherited settings for pages
+inheritanceEnabled = 0

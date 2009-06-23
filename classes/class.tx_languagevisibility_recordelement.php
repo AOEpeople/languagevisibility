@@ -79,7 +79,7 @@ class tx_languagevisibility_recordelement extends tx_languagevisibility_element 
 
 			$olrow = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res);
 			$olrow = $this->getContextIndependentWorkspaceOverlay($table,$olrow);
-			
+			$GLOBALS['TYPO3_DB']->sql_free_result($res);
 			
 			return 	$olrow;
 	}

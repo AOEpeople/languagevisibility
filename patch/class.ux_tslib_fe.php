@@ -12,7 +12,7 @@ require_once(t3lib_extMgm::extPath("languagevisibility").'class.tx_languagevisib
 	 * @return	void
 	 * @access private
 	 */
-	function settingLanguage()	{
+	function settingLanguage()	{			
 			// Get values from TypoScript:
 			$lUid=intval($this->config['config']['sys_language_uid']);
 			
@@ -26,8 +26,6 @@ require_once(t3lib_extMgm::extPath("languagevisibility").'class.tx_languagevisib
 			//overlay of current page is handled in ux_t3lib_pageSelect::getPageOverlay
 			parent::settingLanguage();
 			
-			
-				
 	}
 
 }

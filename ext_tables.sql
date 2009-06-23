@@ -17,14 +17,18 @@ CREATE TABLE sys_language (
 # Table structure for table 'pages'
 #
 CREATE TABLE pages (
-	tx_languagevisibility_visibility text NOT NULL
+	tx_languagevisibility_visibility text NOT NULL,
+	tx_languagevisibility_inheritanceflag_original bool DEFAULT '0' NOT NULL,
+	tx_languagevisibility_inheritanceflag_overlayed bool DEFAULT '0' NOT NULL,
 );
 
 #
 # Table structure for table 'pages_language_overlay'
 #
 CREATE TABLE pages_language_overlay (
-	tx_languagevisibility_visibility text NOT NULL
+	tx_languagevisibility_visibility text NOT NULL,
+	tx_languagevisibility_inheritanceflag_overlayed bool DEFAULT '0' NOT NULL
+
 );
 
 

@@ -46,7 +46,9 @@ class ux_tx_templavoila_api extends tx_templavoila_api {
 					$attachedLocalizations[$olrow['sys_language_uid']] = $olrow['uid'];
 				}
 			}
-
+			$TYPO3_DB-> sql_free_result($res);
+		
+			
 				// Traverse the available languages of the page (not default and [All])
 			if (is_array($this->allSystemWebsiteLanguages) && is_array($this->allSystemWebsiteLanguages['rows'])) {
 				foreach(array_keys($this->allSystemWebsiteLanguages['rows']) as $sys_language_uid)	{

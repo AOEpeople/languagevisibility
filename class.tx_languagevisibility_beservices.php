@@ -265,27 +265,43 @@ class tx_languagevisibility_beservices {
 	}
 	
 	/**
+	 * Method to check if the inheritance is enabled or not
+	 * 
+	 * @return boolean
+	 */
+	protected function isInheritanceEnabled(){
+		$confArr = unserialize($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf']['languagevisibility']);
+		if(is_array($confArr)){
+			return ($confArr['inheritanceEnabled'] == 1);
+		}else{
+			return false;
+		}
+	}
+	
+	/**
 	 * returns array with the visibility options that are allowed for the current user.
 	 *
 	 * @param tx_languagevisibility_language $language
 	 * @return array
 	 */
-	public static function getAvailableOptionsForLanguage(tx_languagevisibility_language $language, $isOverlay=false) {
+	public static function getAvailableOptionsForLanguage(tx_languagevisibility_language $language, $isOverlay=false,$elementSupportsInheritance=false) {
 		$uid = $language->getUid ();
 		$select = array ();
-		
+		$useInheritance = ($elementSupportsInheritance && self::isInheritanceEnabled());
+			
 		if(!$isOverlay){
 			if ($uid == 0) {
 				$select ['-'] = '-';
 				$select ['yes'] = 'yes';
 				$select ['no'] = 'no';
+				if($useInheritance){ $select ['no+'] = 'no+'; }
 			} else {
 				$select ['-'] = '-';
 				$select ['yes'] = 'yes';
 				$select ['no'] = 'no';
+				if($useInheritance){ $select ['no+'] = 'no+'; }
 				$select ['t'] = 't';
 				$select ['f'] = 'f';
-			
 			}
 	
 			//check permissions, if user has no permission only no for the language is allowed
@@ -306,13 +322,16 @@ class tx_languagevisibility_beservices {
 				}
 				
 				$select ['no'] = 'no';
+				if($useInheritance){ $select ['no+'] = 'no+'; }
 			}
 		}else{
-			//overlays elements can only have "force to no"
+			//overlays elements can only have "force to no" or "force to no inherited"
 			$select ['-'] = '-';
 			$select ['no'] = 'no';
-		}
+			if($useInheritance){ $select ['no+'] = 'no+'; }
+		}		
 
+		
 		/**
 		 * Get translations of labels from the locallang file
 		 */

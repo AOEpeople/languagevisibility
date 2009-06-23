@@ -103,7 +103,89 @@ class tx_languagevisibility_elementFactory {
 		}
 	}
 	
-	function _getTVDS($srcPointer) {
+	/**
+	 * This method is used to retrieve all parent elements (an parent elements needs to
+	 * have the flag 'tx_languagevisibility_inheritanceflag_original' or
+	 * needs to be orverlayed with a record, that has the field 'tx_languagevisibility_inheritanceflag_overlayed'
+	 * configured 
+	 * 
+	 * @param tx_languagevisibility_element $element
+	 * @return array $elements (collection of tx_languagevisibility_element)
+	 */
+	public function getParentElementsFromElement(tx_languagevisibility_element $element,$language){
+		$elements = array();
+
+		if($element instanceof tx_languagevisibility_pageelement){
+			/* @var $sys_page t3lib_pageSelect */
+			$rootline = $this->getOverlayedRootLine($element->getUid(),$language->getUid());
+			
+			if(is_array($rootline)){
+				foreach($rootline as $rootlineElement){			
+					if(	$rootlineElement['tx_languagevisibility_inheritanceflag_original'] == 1 ||
+						$rootlineElement['tx_languagevisibility_inheritanceflag_overlayed'] == 1){
+						$elements[] = self::getElementForTable('pages',$rootlineElement['uid']);
+					}
+				}
+			}
+		}	
+				
+		return $elements;
+	}	
+	
+	/**
+	 * This method is needed because the getRootline method from t3lib_pageSelect causes an error when
+	 * getRootline is called be cause getRootline internally uses languagevisibility to determine the
+	 * visibility during the rootline calculation. This results in an unlimited recursion.
+	 * 
+	 * @param	integer		The page uid for which to seek back to the page tree root.
+	 * @see tslib_fe::getPageAndRootline()
+	 */
+	function getOverlayedRootLine($uid,$languageid) {
+		$sys_page=t3lib_div::makeInstance('t3lib_pageSelect');
+		$sys_page->sys_language_uid = $languageid;
+		
+		$uid = intval($uid);
+
+			// Initialize:
+		$selFields = t3lib_div::uniqueList('pid,uid,t3ver_oid,t3ver_wsid,t3ver_state,t3ver_swapmode,title,alias,nav_title,media,layout,hidden,starttime,endtime,fe_group,extendToSubpages,doktype,TSconfig,storage_pid,is_siteroot,mount_pid,mount_pid_ol,fe_login_mode,'.$GLOBALS['TYPO3_CONF_VARS']['FE']['addRootLineFields']);
+
+		$loopCheck = 0;
+		$theRowArray = Array();
+
+		while ($uid!=0 && $loopCheck<20)	{	// Max 20 levels in the page tree.
+			$res = $GLOBALS['TYPO3_DB']->exec_SELECTquery($selFields, 'pages', 'uid='.intval($uid).' AND pages.deleted=0 AND pages.doktype!=255');
+			$row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res);
+			$GLOBALS['TYPO3_DB']->sql_free_result($res);
+			if ($row)	{
+				$sys_page->versionOL('pages',$row, FALSE, TRUE);
+				$sys_page->fixVersioningPid('pages',$row);
+	
+				if (is_array($row))	{
+					// Mount Point page types are allowed ONLY a) if they are the outermost record in rootline and b) if the overlay flag is not set:
+					$uid = $row['pid'];	// Next uid
+				}
+					// Add row to rootline with language overlaid:
+
+				$theRowArray[] = $sys_page->_original_getPageOverlay($row,$languageid);
+			} else {
+				return array();	// broken rootline.
+			}
+
+			$loopCheck++;
+		}
+
+			// Create output array (with reversed order of numeric keys):
+		$output = Array();
+		$c = count($theRowArray);
+		foreach($theRowArray as $key => $val)	{
+			$c--;
+			$output[$c] = $val;
+		}
+
+		return $output;	
+	}		
+	
+	protected function _getTVDS($srcPointer) {
 	
 		$sys_page=t3lib_div::makeInstance('t3lib_pageSelect');		
 		$DS=array();

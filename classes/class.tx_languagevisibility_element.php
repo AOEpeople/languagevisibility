@@ -161,17 +161,21 @@ abstract class tx_languagevisibility_element {
 	 * @return string
 	 **/
 	public function getLocalVisibilitySetting($languageid) {
-		$overlayVisibility = $this->getVisibilitySettingStoredInOverlayRecord($languageid);
-		if($overlayVisibility  == 'no'){
-			$res = $overlayVisibility ;
-		}else{
-			$local 	= $this->getVisibilitySettingStoredInDefaultRecord($languageid);		
-			$res 	= $local;
+		$overlayVisibility 	= $this->getVisibilitySettingStoredInOverlayRecord($languageid);
+		$localVisibility 	= $this->getVisibilitySettingStoredInDefaultRecord($languageid);
+
+		if($overlayVisibility == 'no+' || $localVisibility == 'no+'){
+			$res = 'no+';
+		}
+		elseif($overlayVisibility  == 'no'){
+			$res 	= $overlayVisibility ;
+		}else{		
+			$res 	= $localVisibility;
 		}
 		
 		return $res;
 	}
-	
+	//make protected?
 	/**
 	 * Returns the global visibility setting for the element (saved in the overlay)
 	 * 
@@ -208,7 +212,8 @@ abstract class tx_languagevisibility_element {
 	
 	
 	/**
-	 * Enter description here...
+	 * This method returns an overlay of a record, independent from 
+	 * a frontend or backend context
 	 *
 	 * @param string $table
 	 * @param string $olrow
@@ -262,6 +267,8 @@ abstract class tx_languagevisibility_element {
 				while ( $row = $GLOBALS ['TYPO3_DB']->sql_fetch_assoc ( $res ) ) {
 					$uids [] = $row ['uid'];
 				}
+				
+				$GLOBALS['TYPO3_DB']->sql_free_result($res);
 			}
 		}
 		
@@ -325,8 +332,9 @@ abstract class tx_languagevisibility_element {
 	}
 	
 	/**
-	 * Compare element-language and foreign language
-	 *
+	 * Compare element-language and foreign language.
+	 * 
+	 * @todo make this method work for pages
 	 * @return boolean
 	 */
 	public function languageEquals(tx_languagevisibility_language $language) {
@@ -436,6 +444,16 @@ abstract class tx_languagevisibility_element {
 		return 'TYPO3 Element';
 	}
 	
+	/**
+	 * By default no element supports inheritance
+	 * 
+	 * @param void
+	 * @return boolean
+	 */
+	public function supportsInheritance(){
+		return false;
+	}
+	
 	################
 	# ABSTRACT METHODS
 	################
@@ -454,13 +472,16 @@ abstract class tx_languagevisibility_element {
 	 * @param int $onlyUid
 	 */
 	abstract public function getOverLayRecordForCertainLanguage($languageId, $onlyUid = FALSE);
-	
+
+		
 	/**
 	 * Abstract method to determine the table, where the element is located in the database
 	 *
 	 * @return string
 	 */
 	abstract protected function getTable();
+	
+
 }
 
 ?>

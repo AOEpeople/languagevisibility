@@ -198,6 +198,217 @@ class tx_visibilityServiceDB_testcase extends tx_phpunit_database_testcase {
 		$this->assertFalse($hasTranslation,'Element without translation is determined as element with translation.');
 	}
 	
+	/**
+	 * This testcase ensures that the state "force to no inherited" affects the visibility of a page in
+	 * it's rootline.
+	 * 
+	 * We have the following pages
+	 * 
+	 * uid: 5 (has n+ for the language uk)
+	 * uid 6 (pid 6) simple page for fixture rootline
+	 * uid 7 (pid 7) is used to evaluate the visibility	and has no local visibility 
+	 * 
+	 * @test 
+	 * @param void
+	 * @return void
+	 * @author Timo Schmidt <timo.schmidt@aoemedia.de>
+	 */
+	public function inheritanceForceToNoAffectsSubpage(){
+		$this->importDataSet(dirname(__FILE__).'/fixtures/inheritanceForceToNoAffectsSubpage.xml');
+		$language 			= $this->_getLang(1);
+		$service			= new tx_languagevisibility_visibilityService();
+		$service->setUseInheritance();
+		
+		$dao				= new tx_languagevisibility_daocommon;
+		$factoryClass		= t3lib_div::makeInstanceClassName('tx_languagevisibility_elementFactory');
+		$factory			= new $factoryClass($dao);		
+		
+		$visibilityResult 	= true;
+		
+		$element  = $factory->getElementForTable('pages',6);
+		$visibilityResult 	= $service->isVisible($language,$element);	
+		
+		$this->assertFalse($visibilityResult,'element should be invisible because  a page in the rootline has an inherited no+ setting');
+
+		$element  = $factory->getElementForTable('pages',7);
+		$visibilityResult 	= $service->isVisible($language,$element);	
+
+		$this->assertFalse($visibilityResult,'element should be invisible because a page in the rootline has an inherited no+ setting');
+	}
+	
+	
+	/**
+	 * The force to no inheritance (no+) setting should only affect subpages if
+	 * the flag is also set without the flag the setting should not be evaluated.
+	 * 
+	 * We have the following pages
+	 * 
+	 * uid: 5 (has n+ for the language uk) BUT NO inheritance flag
+	 * uid 6 (pid 6) simple page for fixture rootline
+	 * uid 7 (pid 7) is used to evaluate the visibility	and has no local visibility 
+	 * 
+	 * @test
+	 * @param void
+	 * @return void
+	 * @author Timo Schmidt <timo.schmidt@aoemedia.de>
+	 */
+	public function inheritanceForceToNoDoesNotAffectSubpageWithoutAGivenInheritanceFlag(){
+		$this->importDataSet(dirname(__FILE__).'/fixtures/inheritanceForceToNoDoesNotAffectSubpageWithoutAGivenInheritanceFlag.xml');
+		
+		$language 			= $this->_getLang(1);
+		$service			= new tx_languagevisibility_visibilityService();
+		$service->setUseInheritance();
+		
+		$dao				= new tx_languagevisibility_daocommon;
+		$factoryClass		= t3lib_div::makeInstanceClassName('tx_languagevisibility_elementFactory');
+		$factory			= new $factoryClass($dao);		
+		
+		$visibilityResult 	= true;
+		
+		$element  = $factory->getElementForTable('pages',6);
+		$visibilityResult 	= $service->isVisible($language,$element);	
+		
+		$this->assertTrue($visibilityResult,'element should be visible because  a page in the rootline has an inherited no+ setting but no inheritance flag');
+
+		$element  = $factory->getElementForTable('pages',7);
+		$visibilityResult 	= $service->isVisible($language,$element);	
+
+		$this->assertTrue($visibilityResult,'element should be visible because a page in the rootline has an inherited no+ setting but no inheritance flag');		
+	}
+	
+	/**
+	 * The no+ should also only affect pages in the language it has been configured for in the following 
+	 * testcase we have a page with a no+ setting for the australian language but we evaluate it for uk
+	 * therefore the no+ setting should not have any impact on the visibility of the element.
+	 * We have the following pages
+	 * 
+	 * uid: 5 (has n+ for the language aus) and also the inheritance flag
+	 * uid 6 (pid 6) simple page for fixture rootline
+	 * uid 7 (pid 7) is used to evaluate the visibility	and has no local visibility 
+	 * 
+	 * @test
+	 * @param void
+	 * @return void
+	 * @author Timo Schmidt <timo.schmidt@aoemedia.de>
+	 */
+	public function inheritanceForceToNoInOtherLanguageDoesNotAffectRecordInCurrentLanguage(){
+		$this->importDataSet(dirname(__FILE__).'/fixtures/inheritanceForceToNoInOtherLanguageDoesNotAffectRecordInCurrentLanguage.xml');
+
+		$language 			= $this->_getLang(1);
+		$service			= new tx_languagevisibility_visibilityService();	
+		$service->setUseInheritance();
+		
+		$dao				= new tx_languagevisibility_daocommon;
+		$factoryClass		= t3lib_div::makeInstanceClassName('tx_languagevisibility_elementFactory');
+		$factory			= new $factoryClass($dao);		
+
+		$visibilityResult 	= true;
+		
+		$element  = $factory->getElementForTable('pages',6);
+		$visibilityResult 	= $service->isVisible($language,$element);	
+		
+		$this->assertTrue($visibilityResult,'element should be visible because  a page in the rootline has an inherited no+ setting but in another language');
+
+		$element  = $factory->getElementForTable('pages',7);
+		$visibilityResult 	= $service->isVisible($language,$element);	
+
+		$this->assertTrue($visibilityResult,'element should be visible because  a page in the rootline has an inherited no+ setting but in another language');			
+	}
+	
+	/**
+	 * When an element has the setting yes and an element in the rootline has the setting no+ (inherited no)
+	 * the element should be visible (rootline should not be evaluated for inherited settings).
+	 * 
+	 * uid: 5 (has n+ for the language uk) and also the inheritance flag
+	 * uid 6 (pid 6) simple page for fixture rootline
+	 * uid 7 (pid 7) is used to evaluate the visibility and has the visibility setting "yes"
+	 * 
+	 * @test
+	 * @param void
+	 * @return void
+	 * @author Timo Schmidt <timo.schmidt@aoemedia.de>
+	 * 	 * 
+	 */
+	public function yesInPageAnnulatesInheritedForceToNoOfRootlineRecord(){
+		$this->importDataSet(dirname(__FILE__).'/fixtures/yesInPageAnnulatesInheritedForceToNoOfRootlineRecord.xml');
+
+		$language 			= $this->_getLang(1);
+		$service			= new tx_languagevisibility_visibilityService();	
+		$service->setUseInheritance();
+		
+		$dao				= new tx_languagevisibility_daocommon;
+		$factoryClass		= t3lib_div::makeInstanceClassName('tx_languagevisibility_elementFactory');
+		$factory			= new $factoryClass($dao);		
+
+		$visibilityResult 	= true;		
+
+		$element  = $factory->getElementForTable('pages',6);
+		$visibilityResult 	= $service->isVisible($language,$element);	
+		
+		$this->assertFalse($visibilityResult,'element should be invisible because  a page in the rootline has an inherited no+ setting there is no local overwriting setting');
+
+		$element  = $factory->getElementForTable('pages',7);
+		$visibilityResult 	= $service->isVisible($language,$element);	
+
+		$this->assertTrue($visibilityResult,'element should be visible because  a page in the rootline has an inherited no+ setting but the local setting is forced to yes');
+	}
+	
+	/**
+	 * The inheritance of the languagevisibility is controlled by a visibility flag 
+	 * 
+	 * @test
+	 */
+	public function overlayOverwritesInheritingVisibilityOfPageElements(){
+		$this->importDataSet(dirname(__FILE__).'/fixtures/overlayOverwritesInheritingVisibilityOfPageElements.xml');
+		
+		$language 			= $this->_getLang(1);
+		$service			= new tx_languagevisibility_visibilityService();	
+		$service->setUseInheritance();
+		
+		$dao				= new tx_languagevisibility_daocommon;
+		$factoryClass		= t3lib_div::makeInstanceClassName('tx_languagevisibility_elementFactory');
+		$factory			= new $factoryClass($dao);
+		
+		
+		$element  = $factory->getElementForTable('pages',6);
+		$visibilityResult 	= $service->isVisible($language,$element);	
+
+		$this->assertFalse($visibilityResult,'element should be invisible because overlay overwrites inheriting visibility on page 5');
+
+		$element  = $factory->getElementForTable('pages',7);
+		$visibilityResult 	= $service->isVisible($language,$element);	
+
+		$this->assertFalse($visibilityResult,'element should be invisible because overlay overwrites inheriting visibility on page 5');
+	}
+	
+	/**
+	 * Every element can be tested if it is visible for a given language. In addition a
+	 * description can be delivered why an element is visible or not.
+	 * 
+	 * @param void
+	 * @return void
+	 * @author Timo Schmidt <schmidt@aoemedia.de>
+	 * @test
+	 */
+	public function canGetCorrectVisiblityDescriptionForElementWithInheritedVisibility(){
+		$this->importDataSet(dirname(__FILE__).'/fixtures/canGetCorrectVisiblityDescriptionForElementWithInheritedVisibility.xml');
+		
+		$language 			= $this->_getLang(1);
+		$service			= new tx_languagevisibility_visibilityService();
+		$service->setUseInheritance();
+		
+		$dao				= new tx_languagevisibility_daocommon;
+		$factoryClass		= t3lib_div::makeInstanceClassName('tx_languagevisibility_elementFactory');
+		$factory			= new $factoryClass($dao);
+		
+		/* @var $element tx_languagevisibility_pageelement*/
+		$element  				= $factory->getElementForTable('pages',7);
+		$visibilityDescription 	= $service->getVisibilityDescription($language,$element);
+
+		$this->assertEquals('force to no (inherited from uid 5)',$visibilityDescription,'invalid visibility description of element with inheritance');
+	}
+	
+	
 	function _loadWorkspaces(){
 		$this->importDataSet(dirname(__FILE__). '/fixtures/dbDefaultWorkspaces.xml');
 	}
@@ -230,9 +441,14 @@ class tx_visibilityServiceDB_testcase extends tx_phpunit_database_testcase {
 	function setUp() {
 		$this->createDatabase();
 		$db = $this->useTestDatabase();
+		$this->importStdDB();
+
+		$GLOBALS["TYPO3_CONF_VARS"]["FE"]["addRootLineFields"] = "tx_languagevisibility_inheritanceflag_original,tx_languagevisibility_inheritanceflag_overlayed";
+		$GLOBALS["TYPO3_CONF_VARS"]["FE"]["pageOverlayFields"] = "uid,title,subtitle,nav_title,media,keywords,description,abstract,author,author_email,sys_language_uid,tx_languagevisibility_inheritanceflag_overlayed";
+		
 		
 		// order of extension-loading is important !!!!
-		$this->importExtensions(array('corefake','cms','languagevisibility'));
+		$this->importExtensions(array('cms','languagevisibility'));
 		$this->_loadWorkspaces();
 	}
 

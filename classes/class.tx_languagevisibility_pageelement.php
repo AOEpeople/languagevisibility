@@ -83,6 +83,7 @@ class tx_languagevisibility_pageelement extends tx_languagevisibility_element {
 		
 		$olrow 	= $GLOBALS ['TYPO3_DB']->sql_fetch_assoc ( $result );	
 		$olrow 	= $this->getContextIndependentWorkspaceOverlay($table,$olrow);
+		$GLOBALS['TYPO3_DB']->sql_free_result($result);
 		
 		return $olrow;
 	}
@@ -120,6 +121,16 @@ class tx_languagevisibility_pageelement extends tx_languagevisibility_element {
 		$anz = $rows [0] ['anz'];
 		
 		return ($anz > 0);
+	}
+	
+	/**
+	 * The page elements supports inheritance.
+	 * 
+	 * @param void
+	 * @return boolean
+	 */
+	public function supportsInheritance(){
+		return true;
 	}
 }
 ?>

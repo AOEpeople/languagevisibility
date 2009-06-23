@@ -81,6 +81,10 @@ class tx_language_testcase extends tx_phpunit_testcase {
 		$this->assertEquals(array('0','1','2'), $language->getFallbackOrderElement(), "wrong getFallbackOrder - complex applied where normal is excepted");
 		$this->assertEquals(array('0','1','2'), $language->getFallbackOrderTTNewsElement(), "wrong getFallbackOrder - complex applied where normal is excepted");		// Create the Array fixture.
         
+		$this->assertTrue($language->isLanguageUidInFallbackOrder(0));
+		$this->assertTrue($language->isLanguageUidInFallbackOrder(2));
+		$this->assertFalse($language->isLanguageUidInFallbackOrder(4711));
+		
 		$fixture = array('uid'=>1
                         ,'tx_languagevisibility_complexfallbacksetting'=>'1'
 						,'tx_languagevisibility_fallbackorder'=>'0,1,2'

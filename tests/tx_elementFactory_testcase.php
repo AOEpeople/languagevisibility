@@ -116,14 +116,14 @@ class tx_elementFactory_testcase extends tx_phpunit_testcase {
 		$this->assertTrue ( $element instanceof tx_languagevisibility_element, "not object of type tx_languagevisibility_element returned!" );
 		$this->assertTrue ( $element instanceof tx_languagevisibility_ttnewselement, "not object of type tx_languagevisibility_ttnewselement returned!" );
 	}
-
+	
 	/**
 	 * Records elements store theire translation in the same table. The factory class should
 	 * not allow to get an element from this table which is an overlay.
 	 * 
 	 * @return 
 	 */
-	public function test_canNotGetElementForOverlayElement(){
+	public function test_canNotGetElementForOverlayElement() {
 		//create fixture element
 		$fixture = array ('uid' => 1, 'title' => 'overlay', 'sys_language_uid' => 1, 'l18n_parent' => 12 );
 		$daostub = new tx_languagevisibility_daocommon_stub ( );
@@ -135,13 +135,13 @@ class tx_elementFactory_testcase extends tx_phpunit_testcase {
 		$exceptionCatched = false;
 		
 		//try instanciation an catch expected exception
-		try{
+		try {
 			$element = $factory->getElementForTable ( $_table, $_uid );
-		}catch(Exception $e){
+		} catch ( Exception $e ) {
 			$exceptionCatched = true;
 		}
 		
-		$this->assertTrue($exceptionCatched,'Error: Factory can create instance of overlay element');
+		$this->assertTrue ( $exceptionCatched, 'Error: Factory can create instance of overlay element' );
 	}
 	
 	/**
@@ -149,8 +149,8 @@ class tx_elementFactory_testcase extends tx_phpunit_testcase {
 	 * @todo
 	 */
 	
-	public function test_canNotGetElementOfUnsupportedTable(){
-		
+	public function test_canNotGetElementOfUnsupportedTable() {
+	
 	}
 }
 ?>

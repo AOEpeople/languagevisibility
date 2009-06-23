@@ -9,7 +9,8 @@ class tx_languagevisibility_celement extends tx_languagevisibility_recordelement
 	**/
 	protected function initialisations() {
 		$this->setTable('tt_content');
-	}	
+	}
+
 }
 
 ?>

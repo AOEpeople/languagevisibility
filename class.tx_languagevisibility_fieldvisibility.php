@@ -87,10 +87,6 @@ class user_tx_languagevisibility_fieldvisibility {
 		return '<div id="fieldvisibility">' . $content . '<a href="#" onclick="resetSelectboxes()">reset</a></div>' . $this->_javascript ();
 	}
 	
-	function _getSelectOptionsForLanguage($language, $isOverlay) {
-		return tx_languagevisibility_beservices::getAvailableOptionsForLanguage ( $language, $isOverlay );
-	}
-	
 	/**
 	 * This methid is used to generate an infostructur array, which will be 
 	 * renderd as a Form
@@ -113,13 +109,13 @@ class user_tx_languagevisibility_fieldvisibility {
 									'languageFlag' 		=> $language->getFlagImg ( $this->pageId ), 
 									'hasTranslation' 	=> $changeableElement->hasTranslation ( $language->getUid () ), 
 									'isTranslation'		=> $isOverlay,
-									'isVisible' 		=> $visibility->isVisible ( $language, $changeableElement ) );
+									'isVisible' 		=> $visibility->isVisible ( $language, $changeableElement ),
+									'visibilityDescription' => $visibility->getVisibilityDescription($language, $changeableElement) );
 			
 			//if there is no access to language - and localsettings exist, then do not show select box
 			//this is to not be able as an translator to override languagesetting
-			$currentSetting = $changeableElement->getLocalVisibilitySetting ( $language->getUid () );			
-			$currentOptionsForUserAndLanguage = tx_languagevisibility_beservices::getAvailableOptionsForLanguage ( $language , $isOverlay);	
-			
+			$currentSetting 					= $changeableElement->getLocalVisibilitySetting ( $language->getUid () );			
+			$currentOptionsForUserAndLanguage 	= tx_languagevisibility_beservices::getAvailableOptionsForLanguage( $language , $isOverlay,$changeableElement->supportsInheritance());	
 			if($currentSetting == '' || isset ( $currentOptionsForUserAndLanguage [$currentSetting] )) {
 	
 				if ($isOverlay){
@@ -139,7 +135,7 @@ class user_tx_languagevisibility_fieldvisibility {
 						$defaultSelect = $this->modTSconfig ['language.'] [$language->getUid () . '.'] ['defaultVisibilityOnCreate'];
 					}
 				}
-				$selectBox = $this->_getSelectBox ( $language->getUid (), $this->_getSelectOptionsForLanguage ( $language, $isOverlay ), $defaultSelect, $itemFormElName );
+				$selectBox = $this->_getSelectBox ( $language->getUid (), $currentOptionsForUserAndLanguage, $defaultSelect, $itemFormElName );
 			} else {
 				$selectBox = '<input type="hidden" name="' . $itemFormElName . '[' . $language->getUid () . ']" value="' . $currentSetting . '" ></input>(' . $currentSetting . ')';
 			}
@@ -171,7 +167,7 @@ class user_tx_languagevisibility_fieldvisibility {
 		if (count ( $select ) == 1){
 			$addClassName = ' oneitem';
 		}
-		
+
 		$content .= '<select class="fieldvisibility_selects' . $addClassName . '" name="' . $name . '[' . $languageid . ']">';
 		foreach ( $select as $skey => $svalue ) {
 			if ($current == $skey) {
@@ -179,11 +175,34 @@ class user_tx_languagevisibility_fieldvisibility {
 			} else {
 				$selected = '';
 			}
-			$content .= '<option class="' . $skey . '" value="' . $skey . '"' . $selected . '>' . $svalue . '</option>';
+			$content .= '<option class="' . $this->getCSSClassFromVisibilityKey($skey) . '" value="' . $skey . '"' . $selected . '>' . $svalue . '</option>';
 		}
 		$content .= '</select>';
 		return $content;
 	
+	}
+	
+	/**
+	 * This method is used to determine a css class for the diffrent visiblity modes
+	 * 
+	 * @param string
+	 * @return string
+	 * @author Timo Schmidt <timo.schmidt@aoemedia.de>
+	 */
+	protected function getCSSClassFromVisibilityKey($key){
+		switch($key){
+			case 'yes':
+			case 'no':
+			case 't':
+			case 'f':
+				$res = $key;
+			break;
+			case 'no+';
+				$res = 'no_inherited';
+			break;
+		}
+		
+		return $res;
 	}
 	
 	function _renderLanguageInfos($infosStruct) {
@@ -194,12 +213,13 @@ class user_tx_languagevisibility_fieldvisibility {
 		.visibilitytable  .lastcell {background-color: #DEEAB5}
 		.visibilitytable  .bgColor .lastcell {background-color: #E8EAB5}
 		.visibilitytable  .bgColor4 .lastcell {border-bottom: 1px solid #333333; background-color: #C9B88B}
-		.visibilitytable th {padding: 2px 5px 2px 2px; text-align: left}
+		.visibilitytable th {padding: 2px 5px 2px 2px; text-align: left; font-size: 12px;}
 		.visibilitytable select {width: 100px}
 		.visibilitytable select.oneitem {background-color: #999999}
 		.visibilitytable select option {background-color: #83FF73}
 		.visibilitytable select .yes {background-color: #E0FF81}
 		.visibilitytable select .no {background-color: #FFCE81}
+		.visibilitytable select .no_inherited {background-color: #FF8881}
 		.visibilitytable select .t {background-color: #BFFFB7}
 		.visibilitytable select .f {background-color: #BFFFB7}
 		.visibilitytable td {padding: 0 5px 2px 2px}
@@ -211,7 +231,7 @@ class user_tx_languagevisibility_fieldvisibility {
 						'<th >' . $this->getLLL ( 'visibility_in_default' ) . '</th>'.
 						'<th >' . $this->getLLL ( 'visibility_in_overlay' ) . '</th>'.
 						'<th>'  . $this->getLLL ( 'hastranslation' ) . '</th>'.
-						'<th class="lastcell">' . $this->getLLL ( 'isshown' ) . '</th>'.
+						'<th>'  . $this->getLLL ( 'isshown' ) . '</th>'.
 					'</tr>';
 		
 		foreach ( $infosStruct as $info ) {
@@ -223,8 +243,8 @@ class user_tx_languagevisibility_fieldvisibility {
 								'<td>' . $info ['languageFlag'] . $info ['languageTitle'] . '</td>'.
 								'<td>' . $info ['originalVisibility'] . '</td>'.
 								'<td>' . $info ['overlayVisibility'] .'</td>'.
-								'<td style="text-align: center">' . $this->_getStatusImage ( $info ['hasTranslation'] ||  $info ['isTranslation']) . '</td>'.
-								'<td style="text-align: center"  class="lastcell">' . $this->_getStatusImage ( $info ['isVisible'] ) . '</td>'.
+								'<td style="text-align: center">' . $this->_getStatusImage ( $info ['hasTranslation'] ||  $info ['isTranslation'],'') . '</td>'.
+								'<td style="text-align: center"  class="lastcell">' . $this->_getStatusImage ( $info ['isVisible'], $info['visibilityDescription']) . '</td>'.
 							'</tr>';
 		}
 		
@@ -236,11 +256,17 @@ class user_tx_languagevisibility_fieldvisibility {
 		return $GLOBALS ['LANG']->sl ( 'LLL:EXT:languagevisibility/locallang_db.xml:' . $key );
 	}
 	
-	function _getStatusImage($stat) {
+	/**
+	 * Generated a little status icon 
+	 * 
+	 * @param boolean positive or negative state
+	 * @return html tag to include the state image
+	 */
+	protected function _getStatusImage($stat, $title='') {
 		if ($stat) {
-			return '<img src="../typo3conf/ext/languagevisibility/res/ok.gif">';
+			return '<img src="../typo3conf/ext/languagevisibility/res/ok.gif" title="'.htmlspecialchars($title).'">';
 		} else {
-			return '<img src="../typo3conf/ext/languagevisibility/res/nok.gif">';
+			return '<img src="../typo3conf/ext/languagevisibility/res/nok.gif" title="'.htmlspecialchars($title).'">';
 		}
 	}
 	

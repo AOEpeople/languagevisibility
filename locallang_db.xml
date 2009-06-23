@@ -17,6 +17,7 @@
 			<label index="sys_language.tx_languagevisibility_complexfallbacksetting">Use multiple fallbacks for Pages/Elements/TTNews</label>
 			<label index="tx_languagevisibility_visibility.I.yes">forced to YES</label>
 			<label index="tx_languagevisibility_visibility.I.no">forced to NO</label>
+			<label index="tx_languagevisibility_visibility.I.no+">forced to NO inherited</label>
 			<label index="tx_languagevisibility_visibility.I.f">if translation in fallback</label>
 			<label index="tx_languagevisibility_visibility.I.t">if translated</label>
 			<label index="tabname">Language</label>

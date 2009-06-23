@@ -59,6 +59,14 @@ class tx_languagevisibility_behooks {
 				 * NOTE: This code does not affect new records because the field 'tx_languagevisibility_visibility' is not set
 				 */
 				if (isset ( $incomingFieldArray ['tx_languagevisibility_visibility'] ) && is_array ( $incomingFieldArray ['tx_languagevisibility_visibility'] )) {
+					
+					if($table == 'pages'){
+
+						 $incomingFieldArray ['tx_languagevisibility_inheritanceflag_original'] = (in_array('no+',$incomingFieldArray ['tx_languagevisibility_visibility'])) ? '1' : '0';
+					}elseif($table == 'pages_language_overlay'){
+						$incomingFieldArray ['tx_languagevisibility_inheritanceflag_overlayed'] = (in_array('no+',$incomingFieldArray ['tx_languagevisibility_visibility'])) ? '1' : '0';
+					}
+
 					$incomingFieldArray ['tx_languagevisibility_visibility'] = serialize ( $incomingFieldArray ['tx_languagevisibility_visibility'] );
 				}
 					

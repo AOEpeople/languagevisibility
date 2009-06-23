@@ -112,6 +112,7 @@ $tempColumns = Array (
 			"type" => "check"
 		)
 	),
+	
 );
 
 
@@ -127,6 +128,22 @@ $tempColumns = Array (
 			"type" => "user",
 			"size" => "30",
 			"userFunc" => 'user_tx_languagevisibility_fieldvisibility->user_fieldvisibility',
+		)
+	),
+	"tx_languagevisibility_inheritanceflag_original" => Array (
+		"exclude" => 1,
+		"label" => "LLL:EXT:l10nmgr/locallang_db.xml:pages.tx_languagevisibility_visibility",
+		"config" => Array (
+			"type" => "check",
+			"default" => "0"
+		)
+	),
+	"tx_languagevisibility_inheritanceflag_overlayed" => Array (
+		"exclude" => 1,
+		"label" => "LLL:EXT:l10nmgr/locallang_db.xml:pages.tx_languagevisibility_visibility",
+		"config" => Array (
+			"type" => "check",
+			"default" => "0"
 		)
 	),
 );
