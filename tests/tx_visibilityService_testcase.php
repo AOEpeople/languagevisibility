@@ -112,9 +112,21 @@ class tx_visibilityService_testcase extends tx_phpunit_testcase {
 		$this->assertEquals ( 0, $visibility->getOverlayLanguageIdForLanguageAndElement ( $language, $element ), "default record should be overlay" );
 	}
 	
+	public function test_visibility_fixture_news(){
+		$language = $this->_fixture_getLanguageOneWithDefaultFallback ();
+		$element = $this->_fixture_getNewsElementWithDefaultVisibility ();
+		
+		$visibility = t3lib_div::makeInstance ( 'tx_languagevisibility_visibilityService' );
+		
+		$this->assertEquals ( '-', $element->getLocalVisibilitySetting ( 1 ), "setting d expected" );
+		$this->assertEquals ( 'f', $visibility->getVisibilitySetting ( $language, $element ), "setting f expected (because default is used)" );
+		$this->assertEquals ( true, $visibility->isVisible ( $language, $element ), "default lang should be visible" );
+		
+	}
+	
 	function _fixture_getLanguageOneWithDefaultFallback() {
 		// Create the language object fixture.
-		$fixture = array ('uid' => 1, 'tx_languagevisibility_fallbackorder' => '0,1', 'tx_languagevisibility_fallbackorderel' => '0,1', 'tx_languagevisibility_defaultvisibility' => 'f', 'tx_languagevisibility_defaultvisibilityel' => 'f' );
+		$fixture = array ('uid' => 1, 'tx_languagevisibility_fallbackorder' => '0,1', 'tx_languagevisibility_fallbackorderel' => '0,1', 'tx_languagevisibility_defaultvisibility' => 'f', 'tx_languagevisibility_defaultvisibilityel' => 'f','tx_languagevisibility_defaultvisibilityttnewsel' => 'f' );
 		$language1 = new tx_languagevisibility_language ( );
 		$language1->setData ( $fixture );
 		return $language1;
@@ -235,69 +247,19 @@ class tx_visibilityService_testcase extends tx_phpunit_testcase {
 		return $element;
 	}
 	
-/*
-	public function test_visibilityTestDB()
-	{
-
-		// Create the language object.
-			$rep=t3lib_div::makeInstance('tx_languagevisibility_languagerepository');
-			$language0=$rep->getLanguageById(0);
-			$language1=$rep->getLanguageById(1);
-			$language2=$rep->getLanguageById(2);
-			$language3=$rep->getLanguageById(3);
-
-			//Create the element object fixture.
-			$_table='pages';
-
-
-			$dao=t3lib_div::makeInstance('tx_languagevisibility_daocommon');
-			$factoryClass=t3lib_div::makeInstanceClassName('tx_languagevisibility_elementFactory');
-			$factory=new $factoryClass($dao);
-
-			//get element from factory:
-	    $element_subpage3=$factory->getElementForTable($_table,'208');
-	    $element_subpage2=$factory->getElementForTable($_table,'209');
-	    $element_subpage1=$factory->getElementForTable($_table,'210');
-	    $element_subpage4=$factory->getElementForTable($_table,'820');
-
-			//test
-			$visibility=t3lib_div::makeInstance('tx_languagevisibility_visibilityService');
-
-			// language 1 should be set local to "t"
-			$this->assertEquals(false, $visibility->getOverlayLanguageIdForLanguageAndElement($language1,$element_subpage3), "208 is not translated");
-
-			$this->assertEquals(0, $visibility->getOverlayLanguageIdForLanguageAndElement($language1,$element_subpage1), "210 should fallback to 0");
-
-			$this->assertEquals(1, $visibility->getOverlayLanguageIdForLanguageAndElement($language1,$element_subpage2), "209 is  translated in 1");
-			$this->assertEquals(1, $visibility->getOverlayLanguageIdForLanguageAndElement($language2,$element_subpage2), "209 is  translated in 1 should fallback");
-			$this->assertEquals(false, $visibility->getOverlayLanguageIdForLanguageAndElement($language3,$element_subpage2), "209 is  translated in 1 should fallback");
-
-			$this->assertEquals(false, $visibility->getOverlayLanguageIdForLanguageAndElement($language0,$element_subpage4), "820 not visible in default");
-
+	function _fixture_getNewsElementWithDefaultVisibility() {
+		//Create the element object fixture.
+		$_table = 'tt_news';
+		$_uid = 99999;
+		$visibility = array ('0' => '-', '1' => '-', '2' => '-' );
+		$fixture = array ('uid' => $_uid, 'tx_languagevisibility_visibility' => serialize ( $visibility ) , 'tx_languagevisibility_inheritanceflag_original' => 0,'tx_languagevisibility_inheritanceflag_overlayed' => 0);
+		$daostub = new tx_languagevisibility_daocommon_stub ( );
+		$daostub->stub_setRow ( $fixture, $_table );
+		$factoryClass = t3lib_div::makeInstanceClassName ( 'tx_languagevisibility_elementFactory' );
+		$factory = new $factoryClass ( $daostub );
+		//get element from factory:
+		$element = $factory->getElementForTable ( $_table, $_uid );
+		return $element;
 	}
-
-	public function test_visibility_testfce_db()
-	{
-		$dao=t3lib_div::makeInstance('tx_languagevisibility_daocommon');
-			$factoryClass=t3lib_div::makeInstanceClassName('tx_languagevisibility_elementFactory');
-			$factory=new $factoryClass($dao);
-		$rep=t3lib_div::makeInstance('tx_languagevisibility_languagerepository');
-			$language=$rep->getLanguageById(3);
-			$element=$factory->getElementForTable('tt_content','4948');
-
-
-		//test
-		$visibility=t3lib_div::makeInstance('tx_languagevisibility_visibilityService');
-
-		// language 1 should be set local to "t"
-		$this->assertEquals('-', $element->getLocalVisibilitySetting(1), "setting default (-) expected");
-		$this->assertEquals('f', $visibility->getVisibilitySetting($language,$element), "setting f expected (because default is used)");
-		$this->assertEquals(true, $visibility->isVisible($language,$element), "in aust it should be visible");
-		$this->assertEquals(1, $visibility->getOverlayLanguageIdForLanguageAndElement($language,$element), "default should be overlay");
-	}
-
-
-	*/
-
 }
 ?>

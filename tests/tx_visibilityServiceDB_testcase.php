@@ -148,8 +148,7 @@ class tx_visibilityServiceDB_testcase extends tx_phpunit_database_testcase {
 		
 		$language 			= $this->_getLang(1);	
 		$element			= $this->_getContent('tt_content',8);
-		$visibilityResult	= true;
-		
+		$visibilityResult	= true;	
 		$service			= new tx_languagevisibility_visibilityService();	
 
 		$visibilityResult 	= $service->isVisible($language,$element);
