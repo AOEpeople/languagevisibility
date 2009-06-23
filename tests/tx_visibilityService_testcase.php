@@ -106,6 +106,7 @@ class tx_visibilityService_testcase extends tx_phpunit_testcase {
 		$visibility = t3lib_div::makeInstance ( 'tx_languagevisibility_visibilityService' );
 		
 		// language 1 should be set local to "t"
+		$this->assertTrue ($element instanceof tx_languagevisibility_pageelement,'factory return instance of wrong type');
 		$this->assertEquals ( '-', $element->getLocalVisibilitySetting ( 1 ), "setting d expected" );
 		$this->assertEquals ( 'f', $visibility->getVisibilitySetting ( $language, $element ), "setting f expected (because default is used)" );
 		$this->assertEquals ( true, $visibility->isVisible ( $language, $element ), "default lang should be visible" );
@@ -116,8 +117,10 @@ class tx_visibilityService_testcase extends tx_phpunit_testcase {
 		$language = $this->_fixture_getLanguageOneWithDefaultFallback ();
 		$element = $this->_fixture_getNewsElementWithDefaultVisibility ();
 		
+		
 		$visibility = t3lib_div::makeInstance ( 'tx_languagevisibility_visibilityService' );
 		
+		$this->assertTrue ($element instanceof tx_languagevisibility_ttnewselement,'factory returned instance of wrong type');
 		$this->assertEquals ( '-', $element->getLocalVisibilitySetting ( 1 ), "setting d expected" );
 		$this->assertEquals ( 'f', $visibility->getVisibilitySetting ( $language, $element ), "setting f expected (because default is used)" );
 		$this->assertEquals ( true, $visibility->isVisible ( $language, $element ), "default lang should be visible" );
