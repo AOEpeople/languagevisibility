@@ -41,7 +41,6 @@ class tx_languagerepository_testcase extends tx_phpunit_database_testcase {
 
 	public function test_getLanguages()
 	{
-
 		// Create the Array fixture.
 		$fixture = array('uid'=>1);
 
@@ -71,8 +70,9 @@ class tx_languagerepository_testcase extends tx_phpunit_database_testcase {
 	function setUp() {
 		$this->createDatabase();
 		$db = $this->useTestDatabase();
+		$this->importStdDB();
 		// order of extension-loading is important !!!!
-		$this->importExtensions(array('corefake','cms','languagevisibility'));
+		$this->importExtensions(array('cms','languagevisibility'));
 
 		$this->importDataSet(dirname(__FILE__). '/fixtures/dbDefaultLangs.xml');
 	}
