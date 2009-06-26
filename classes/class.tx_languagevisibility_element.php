@@ -302,10 +302,11 @@ abstract class tx_languagevisibility_element {
 	 * @return unknown
 	 */
 	function isLanguageSetToAll() {
-		if ($this->row ['sys_language_uid'] == '-1')
+		if ($this->row ['sys_language_uid'] == '-1'){
 			return true;
-		
-		return false;
+		}else{
+			return false;
+		}
 	}
 	
 	/**

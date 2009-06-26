@@ -119,8 +119,20 @@ $tempColumns = Array (
 t3lib_div::loadTCA("sys_language");
 t3lib_extMgm::addTCAcolumns("sys_language",$tempColumns,1);
 t3lib_extMgm::addToAllTCAtypes("sys_language","tx_languagevisibility_defaultvisibility, tx_languagevisibility_fallbackorder;;;;1-1-1,tx_languagevisibility_complexfallbacksetting, tx_languagevisibility_defaultvisibilityttnewsel, tx_languagevisibility_fallbackorderttnewsel;;;;1-1-1, tx_languagevisibility_defaultvisibilityel, tx_languagevisibility_fallbackorderel;;;;1-1-1");
+$tempColumnsElements = Array (
+	"tx_languagevisibility_visibility" => Array (
+		"exclude" => 1,
+		"label" => "LLL:EXT:languagevisibility/locallang_db.xml:pages.tx_languagevisibility_visibility",
+		"config" => Array (
+			"type" => "user",
+			"size" => "30",
+			"userFunc" => 'user_tx_languagevisibility_fieldvisibility->user_fieldvisibility',
+		)
+	)
+);
 
-$tempColumns = Array (
+
+$tempColumnsPages = Array (
 	"tx_languagevisibility_visibility" => Array (
 		"exclude" => 1,
 		"label" => "LLL:EXT:languagevisibility/locallang_db.xml:pages.tx_languagevisibility_visibility",
@@ -150,20 +162,20 @@ $tempColumns = Array (
 
 
 t3lib_div::loadTCA("pages");
-t3lib_extMgm::addTCAcolumns("pages",$tempColumns,1);
+t3lib_extMgm::addTCAcolumns("pages",$tempColumnsPages,1);
 t3lib_extMgm::addToAllTCAtypes("pages","--div--;LLL:EXT:languagevisibility/locallang_db.xml:tabname,tx_languagevisibility_visibility;;;;1-1-1");
 
 t3lib_div::loadTCA("pages_language_overlay");
-t3lib_extMgm::addTCAcolumns("pages_language_overlay",$tempColumns,1);
+t3lib_extMgm::addTCAcolumns("pages_language_overlay",$tempColumnsPages,1);
 t3lib_extMgm::addToAllTCAtypes("pages_language_overlay","--div--;LLL:EXT:languagevisibility/locallang_db.xml:tabname,tx_languagevisibility_visibility;;;;1-1-1");
 
 t3lib_div::loadTCA("tt_news");
-t3lib_extMgm::addTCAcolumns("tt_news",$tempColumns,1);
+t3lib_extMgm::addTCAcolumns("tt_news",$tempColumnsElements,1);
 t3lib_extMgm::addToAllTCAtypes("tt_news","--div--;LLL:EXT:languagevisibility/locallang_db.xml:tabname,tx_languagevisibility_visibility;;;;1-1-1");
 
 
 t3lib_div::loadTCA("tt_content");
-t3lib_extMgm::addTCAcolumns("tt_content",$tempColumns,1);
+t3lib_extMgm::addTCAcolumns("tt_content",$tempColumnsElements,1);
 t3lib_extMgm::addToAllTCAtypes('tt_content', "--div--;LLL:EXT:languagevisibility/locallang_db.xml:tabname,tx_languagevisibility_visibility;;;;1-1-1,sys_language_uid,l18n_parent", '', 'before:sys_language_uid');
 
 //remove language related fields from pallete (instead show them in language tab)

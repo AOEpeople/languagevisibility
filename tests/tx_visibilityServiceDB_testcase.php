@@ -191,10 +191,42 @@ class tx_visibilityServiceDB_testcase extends tx_phpunit_database_testcase {
 
 	function test_visibility_ttcontentHasTranslationInAnyWorkspace(){
 		$element 			= $this->_getContent('tt_content',14);
+		
 		$hasTranslation 	= true;
 		$hasTranslation		= $element->hasAnyTranslationInAnyWorkspace();
 		
+		$this->assertFalse($element->supportsInheritance());
 		$this->assertFalse($hasTranslation,'Element without translation is determined as element with translation.');
+	}
+	
+	/**
+	 * When an element has configured -1 as sys_language_uid it is configured to be
+	 * visible in all languages. This testcase should ensure that this is evaluated 
+	 * correctly.
+	 * 
+	 * @test
+	 * @param void
+	 * @return void
+	 * @author Timo Schmidt
+	 */
+	public function canDetermineCorrectVisiblityForContentelementWithLanguageSetToAll(){
+		$this->importDataSet(dirname(__FILE__).'/fixtures/canDetermineCorrectVisiblityForContentelementWithLanguageSetToAll.xml');
+		$service			= new tx_languagevisibility_visibilityService();
+		$language 			= $this->_getLang(1);
+				
+		$dao				= new tx_languagevisibility_daocommon;
+		$factoryClass		= t3lib_div::makeInstanceClassName('tx_languagevisibility_elementFactory');
+		$factory			= new $factoryClass($dao);		
+		
+		$visibilityResult 	= true;
+		/* @var $element tx_languagevisibility_pageelement  */
+		$element  = $factory->getElementForTable('tt_content',1111);
+		$visibilityResult 	= $service->isVisible($language,$element);	
+		
+		$this->assertTrue($visibilityResult,'An element with language set to all is not visible');
+		$this->assertTrue($element->isLanguageSetToAll());
+		$this->assertFalse( $element->isLanguageSetToDefault());
+		$this->assertTrue($element->isLiveWorkspaceElement());
 	}
 	
 	/**
@@ -224,12 +256,15 @@ class tx_visibilityServiceDB_testcase extends tx_phpunit_database_testcase {
 		
 		$visibilityResult 	= true;
 		
+		/* @var $element tx_languagevisibility_pageelement */
 		$element  = $factory->getElementForTable('pages',6);
 		$visibilityResult 	= $service->isVisible($language,$element);	
 		
+		$this->assertTrue($element->supportsInheritance());
 		$this->assertFalse($visibilityResult,'element should be invisible because  a page in the rootline has an inherited no+ setting');
 
 		$element  = $factory->getElementForTable('pages',7);
+		$this->assertTrue($element->supportsInheritance());
 		$visibilityResult 	= $service->isVisible($language,$element);	
 
 		$this->assertFalse($visibilityResult,'element should be invisible because a page in the rootline has an inherited no+ setting');
