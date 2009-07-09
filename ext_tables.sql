@@ -27,6 +27,7 @@ CREATE TABLE pages (
 #
 CREATE TABLE pages_language_overlay (
 	tx_languagevisibility_visibility text NOT NULL,
+	tx_languagevisibility_inheritanceflag_original bool DEFAULT '0' NOT NULL,
 	tx_languagevisibility_inheritanceflag_overlayed bool DEFAULT '0' NOT NULL
 
 );
