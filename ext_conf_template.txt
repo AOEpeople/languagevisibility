@@ -1,6 +1,9 @@
 
-  # cat=basic//10; type=boolean; label= Add PATCH to TemplaVoila PageModul
+  # cat=basic//10; type=boolean; label=Apply Patch: Add PATCH to TemplaVoila PageModul
 applyPatchTV = 1
 
-  # cat=basic//20; type=boolean; label= Enable inherited settings for pages
+  # cat=basic//20; type=boolean; label=Inheritance: Enable inherited settings for pages
 inheritanceEnabled = 0
+
+  # cat=basic//30; type=boolean; label=Restrict Cut Copy and Move: This option disables cut, copy and move for elements with overlays
+  restrictCutCopyMoveForOverlays = 1

@@ -62,6 +62,19 @@ class ux_t3lib_TCEmain extends t3lib_TCEmain	{
 		return $res;
 	}
 
+	/**
+	 * Method to check if cut copy or move is restricted for overlays
+	 * 
+	 * @return boolean
+	 */
+	protected function isCutCopyAndMoveRestrictedForOverlays(){
+		$confArr = unserialize($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf']['languagevisibility']);
+		if(is_array($confArr)){
+			return ($confArr['restrictCutCopyMoveForOverlays'] == 1);
+		}else{
+			return false;
+		}
+	}
 	
 	/**
 	 * This method is used to extend the tce_main process_cmdmap function. It provides the functionallity to
@@ -90,11 +103,13 @@ class ux_t3lib_TCEmain extends t3lib_TCEmain	{
 												
 						if(tx_languagevisibility_beservices::isOverlayRecord($row,$table)){
 							//current element is an overlay -> restrict cut copy and move in general -> filter the command map		
-							if($command == 'move' || $command == 'cut'|| $command == 'copy'){
-								$this->newlog('The command '.$command.' can not be applied on overlays',1);	
-								//overlay records should no be move,copy or cutable but it should be possible to delete them
-								//therefore we remove all elements which have the comment cut, copy or move
-								$command_map->removeElement($command_element);	
+							if(	($command == 'move' || $command == 'cut'|| $command == 'copy') 
+								&& $this->isCutCopyAndMoveRestrictedForOverlays()){
+									
+									$this->newlog('The command '.$command.' can not be applied on overlays',1);	
+									//overlay records should no be move,copy or cutable but it should be possible to delete them
+									//therefore we remove all elements which have the comment cut, copy or move
+									$command_map->removeElement($command_element);	
 							}	
 						}else{
 							//current element is no overlay
