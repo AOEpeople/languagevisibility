@@ -43,4 +43,7 @@ $rootlinefields .= (empty($rootlinefields))? $NewRootlinefields : ','.$NewRootli
 $pagesOverlayfields = &$GLOBALS["TYPO3_CONF_VARS"]["FE"]["pagesOverlayFields"]; 
 $NewPagesOverlayfields = "tx_languagevisibility_inheritanceflag_overlayed";
 $pagesOverlayfields .= (empty($pagesOverlayfields)) ? $NewPagesOverlayfields : ','.$NewPagesOverlayfields;
+
+$GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['phpunit']['importExtensions_additionalDatabaseFiles'][] = 'EXT:languagevisibility/ext_tables.sql';
+
 ?>
