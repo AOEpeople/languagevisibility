@@ -113,6 +113,42 @@ class tx_languagevisibility_behooks {
 			break;
 		}
 	}
+
+	/**
+	 * Alternative diff implementation
+	 *
+	 * @param array params
+	 * @return array element
+	 * @author Fabrizio Branca <fabrizio.branca@aoemedia.de>
+	 */
+	public function aoewspreview_createDiff(array $params) {
+		$element = $params['element'];
+		if (/* ($params['table'] == 'tt_content') && */ ($params['fieldName'] == 'tx_languagevisibility_visibility')) {
+			$diff = array();
+
+			$recordNew = unserialize($params['record1'][$params['fieldName']]);
+			$recordOld = unserialize($params['record2'][$params['fieldName']]);
+
+			$recordNew = is_array($recordNew) ? $recordNew : array();
+			$recordOld = is_array($recordOld) ? $recordOld : array();
+
+			foreach(array_keys(array_diff_assoc($recordNew, $recordOld)) as $key) {
+				if (empty($recordOld[$key]) && ($recordNew[$key] == '-')) {
+					// this is equal, too!
+				} else {
+					$diff[] = sprintf('Visibility changed from "%s" to "%s" in language "%s"', $recordOld[$key], $recordNew[$key], $key);
+				}
+			}
+
+			if (count($diff) > 0) {
+				$element['diffResult'] = implode('<br />', $diff);
+			} else {
+				// element will be removed when returning "false"
+				$element = false;
+			}
+		}
+		return $element;
+	}
 }
 
 ?>
