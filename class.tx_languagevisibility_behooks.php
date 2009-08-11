@@ -1,19 +1,19 @@
 <?php
 /***************************************************************
  *  Copyright notice
- *  
+ *
  *  (c) 2007 Daniel P?tzinger (poetzinger@aoemedia.de)
  *  All rights reserved
  *
- *  This script is part of the TYPO3 project. The TYPO3 project is 
+ *  This script is part of the TYPO3 project. The TYPO3 project is
  *  free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation; either version 2 of the License, or
  *  (at your option) any later version.
- * 
+ *
  *  The GNU General Public License can be found at
  *  http://www.gnu.org/copyleft/gpl.html.
- * 
+ *
  *  This script is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -21,7 +21,7 @@
  *
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
-/** 
+/**
  * Class/Function which manipulates the item-array for the  listing (see piFlexform).
  *
  * @author	Daniel P?tzinger <poetzinger@aoemedia.de>
@@ -29,12 +29,12 @@
 
 /**
  * SELECT box processing
- * 
+ *
  */
 class tx_languagevisibility_behooks {
-	
+
 	private static $updateLanguagevisibilityIds;
-	
+
 	/**
 	 * This function is called my TYPO each time an element is saved in the backend
 	 *
@@ -45,10 +45,10 @@ class tx_languagevisibility_behooks {
 	 */
 	function processDatamap_preProcessFieldArray(&$incomingFieldArray, $table, $id, &$reference) {
 		$data = $incomingFieldArray;
-		
+
 		if (! is_array ( $data ))
 			return; /* some strange DB situation */
-		
+
 		switch ($table) {
 			case 'pages' :
 			case 'tt_content' :
@@ -59,7 +59,7 @@ class tx_languagevisibility_behooks {
 				 * NOTE: This code does not affect new records because the field 'tx_languagevisibility_visibility' is not set
 				 */
 				if (isset ( $incomingFieldArray ['tx_languagevisibility_visibility'] ) && is_array ( $incomingFieldArray ['tx_languagevisibility_visibility'] )) {
-					
+
 					if($table == 'pages'){
 
 						 $incomingFieldArray ['tx_languagevisibility_inheritanceflag_original'] = (in_array('no+',$incomingFieldArray ['tx_languagevisibility_visibility'])) ? '1' : '0';
@@ -69,14 +69,14 @@ class tx_languagevisibility_behooks {
 
 					$incomingFieldArray ['tx_languagevisibility_visibility'] = serialize ( $incomingFieldArray ['tx_languagevisibility_visibility'] );
 				}
-					
+
 			break;
 			default :
 				return;
 			break;
 		}
 	}
-	
+
 	/**
 	 * This method is used to initialize new Elements with the default
 	 *
@@ -96,18 +96,18 @@ class tx_languagevisibility_behooks {
 			case 'tt_content' :
 			case 'tt_news' :
 			case 'pages_language_overlay' :
-				
+
 				if ($status == 'new') {
 					$row ['uid'] = $reference->substNEWwithIDs [$id];
-					
+
 					if ($fieldArray ['pid'] == '-1') {
 						$row = t3lib_BEfunc::getWorkspaceVersionOfRecord ( $fieldArray ['t3ver_wsid'], $table, $row ['uid'], $fields = '*' );
 					}
-					
+
 					require_once (t3lib_extMgm::extPath ( "languagevisibility" ) . 'class.tx_languagevisibility_beservices.php');
 					$row ['tx_languagevisibility_visibility'] 	= serialize ( tx_languagevisibility_beservices::getDefaultVisibilityArray () );
 					$where 										= "tx_languagevisibility_visibility = '' AND uid=" . $row ['uid'];
-			
+
 					$GLOBALS ['TYPO3_DB']->exec_UPDATEquery ( $table, $where, $row );
 				}
 			break;
@@ -126,8 +126,8 @@ class tx_languagevisibility_behooks {
 		if (/* ($params['table'] == 'tt_content') && */ ($params['fieldName'] == 'tx_languagevisibility_visibility')) {
 			$diff = array();
 
-			$recordNew = unserialize($params['record1'][$params['fieldName']]);
-			$recordOld = unserialize($params['record2'][$params['fieldName']]);
+			$recordNew = unserialize($params['newRecord'][$params['fieldName']]);
+			$recordOld = unserialize($params['oldRecord'][$params['fieldName']]);
 
 			$recordNew = is_array($recordNew) ? $recordNew : array();
 			$recordOld = is_array($recordOld) ? $recordOld : array();
@@ -136,7 +136,12 @@ class tx_languagevisibility_behooks {
 				if (empty($recordOld[$key]) && ($recordNew[$key] == '-')) {
 					// this is equal, too!
 				} else {
-					$diff[] = sprintf('Visibility changed from "%s" to "%s" in language "%s"', $recordOld[$key], $recordNew[$key], $key);
+
+					$diff[] = sprintf('%s Visibility changed from <span class="diff-r">%s</span> to <span class="diff-g">%s</span>',
+						tx_mvc_common_typo3::getLanguageFlag($key, $params['newRecord']['pid']),
+						$GLOBALS['LANG']->sL('LLL:EXT:languagevisibility/locallang_db.xml:tx_languagevisibility_visibility.I.'.$recordOld[$key]),
+						$GLOBALS['LANG']->sL('LLL:EXT:languagevisibility/locallang_db.xml:tx_languagevisibility_visibility.I.'.$recordNew[$key])
+					);
 				}
 			}
 
