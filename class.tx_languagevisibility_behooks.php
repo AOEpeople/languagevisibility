@@ -135,6 +135,13 @@ class tx_languagevisibility_behooks {
 			foreach(array_keys(array_diff_assoc($recordNew, $recordOld)) as $key) {
 				if (empty($recordOld[$key]) && ($recordNew[$key] == '-')) {
 					// this is equal, too!
+					//we need to inform the user what happens because he doesn't understand
+					//what happend if the field tx_languagevisibility_visibility was configured as critical field
+					//and if was just initialized with default values.
+					$diff[] = sprintf('%s Visibility was initialized with the default value (%s)',
+						tx_mvc_common_typo3::getLanguageFlag($key, $params['newRecord']['pid']),
+						$recordNew[$key]
+					);
 				} else {
 
 					$diff[] = sprintf('%s Visibility changed from <span class="diff-r">%s</span> to <span class="diff-g">%s</span>',
