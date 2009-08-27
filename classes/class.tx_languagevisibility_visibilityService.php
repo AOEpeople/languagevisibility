@@ -7,28 +7,49 @@ class tx_languagevisibility_visibilityService {
 	/**
 	 * @var boolean holds the state if inheritance is enabled or not
 	 */
-	protected $useInheritance;
+	protected static $useInheritance;
 	
+	/**
+	 * Holds a cache for visibility settings of a record.
+	 * 
+	 * @var array
+	 */
+	protected static $visibilitySettingCache;
 	
-	public function __construct(){
-		$confArr = unserialize($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf']['languagevisibility']);
-		if($confArr['inheritanceEnabled']){
-			$this->setUseInheritance();	
+	public function __construct(){		
+		if(!isset(self::$useInheritance)){
+			$confArr = unserialize($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf']['languagevisibility']);
+			if(is_array($confArr) && $confArr['inheritanceEnabled']){
+				self::setUseInheritance();	
+			}
 		}
 	}
 	
 	/**
+	 * Method to clear the internal cache.
+	 * 
+	 * @param void
+	 * @return void
+	 */
+	public function flushCache(){
+		self::$visibilitySettingCache = array();
+	}
+	
+	/**
+	 * This method returns the configuration of the inheritance flag. If an inheritance flag is set
+	 * this method can be used to read it.
+	 * 
 	 * @return boolean
 	 */
-	public function getUseInheritance() {
-		return $this->useInheritance;
+	public static function getUseInheritance() {
+		return self::$useInheritance;
 	}
 	
 	/**
 	 * @param boolean $useInheritance
 	 */
-	public function setUseInheritance($useInheritance=true) {
-		$this->useInheritance = $useInheritance;
+	public static function setUseInheritance($useInheritance=true) {
+		self::$useInheritance = $useInheritance;
 	}
 	
 	/**
@@ -60,55 +81,62 @@ class tx_languagevisibility_visibilityService {
 	/**
 	* Returns true or false wether the element is visible in the certain language.
 	*  (sets for internal access only $this->_relevantOverlayLanguageId which holds the overlay languageid)
+	*  
+	*  @param tx_languagevisibility_language $language
+	*  @param 
 	**/
 	public function isVisible(tx_languagevisibility_language $language,$element)    {
-			$this->_relevantOverlayLanguageId=$language->getUid();
-			$visibility=$this->getVisibilitySetting($language,$element);
-
-			if ($visibility=='yes') {
-					return true;
-			}
-			elseif($visibility == 'no+'){
-				return false;
-			}
-			elseif ($visibility=='no') {
-				return false;
-			}
-			elseif ($visibility=='t') {
-				if ($element->hasTranslation($language->getUid())) {
-					return true;
-				}
-				else {
-					return false;
-				}
-			}
-			elseif ($visibility=='f') {
-				if ($element->hasTranslation($language->getUid())) {
-					return true;
-				}
-				else {
-					//there is no direct translation for this element, therefore check languages in fallback
-					$fallBackOrder=$element->getFallbackOrder($language);
-					if(!is_array($fallBackOrder)) throw new Exception(print_r($element,true));
-
-					foreach ($fallBackOrder as $languageid) {
-						if ( $element->hasTranslation($languageid) ) {							
-							$this->_relevantOverlayLanguageId=$languageid;
-							return true;
-						}
-					}
-
-					return false;
-				}
+		$this->_relevantOverlayLanguageId=$language->getUid();
+		
+		$visibility=$this->getVisibilitySetting($language,$element);
+	
+		if ($visibility=='yes') {
+			$result = true;
+		}
+		elseif($visibility == 'no+'){
+			$result = false;
+		}
+		elseif ($visibility=='no') {
+			$result = false;
+		}
+		elseif ($visibility=='t') {
+			if ($element->hasTranslation($language->getUid())) {
+				$result = true;
 			}
 			else {
-				//no setting or default:		
-				if ($language->getUid() == '0'){
-					return true;
-				}else{
-					return false;
+				$result = false;
+			}
+		}
+		elseif ($visibility=='f') {
+			if ($element->hasTranslation($language->getUid())) {
+				$result = true;
+			}
+			else {
+				$result = false;
+					
+				//there is no direct translation for this element, therefore check languages in fallback
+				$fallBackOrder=$element->getFallbackOrder($language);
+				if(!is_array($fallBackOrder)) throw new Exception(print_r($element,true));
+	
+				foreach ($fallBackOrder as $languageid) {
+					if ( $element->hasTranslation($languageid) ) {							
+						$this->_relevantOverlayLanguageId=$languageid;
+						$result = true;
+						break;
+					}
 				}
 			}
+		}
+		else {
+			//no setting or default:		
+			if ($language->getUid() == '0'){
+				$result = true;
+			}else{
+				$result = false;
+			}
+		}
+
+		return $result;
 	}
 	
 	/**
@@ -125,7 +153,7 @@ class tx_languagevisibility_visibilityService {
 		$dao = t3lib_div::makeInstance ( 'tx_languagevisibility_daocommon' );
 		$elementfactoryName = t3lib_div::makeInstanceClassName ( 'tx_languagevisibility_elementFactory' );
 		$elementfactory = new $elementfactoryName ( $dao );
-;
+
 		$elements = $elementfactory->getParentElementsFromElement($element,$language);
 
 		if(is_array($elements) && count($elements) > 0){
@@ -157,7 +185,11 @@ class tx_languagevisibility_visibilityService {
 	* @return string
 	*/
 	public function getVisibilitySetting(tx_languagevisibility_language $language,$element) {
-		return $this->getVisibility($language,$element)->getVisibilityString();
+		if(!isset(self::$visibilitySettingCache[$language->getUid().'_'.$element->getUid().'_'.$element->getTable()])){
+			self::$visibilitySettingCache[$language->getUid().'_'.$element->getUid().'_'.$element->getTable()] = $this->getVisibility($language,$element)->getVisibilityString();
+		}
+		
+		return self::$visibilitySettingCache[$language->getUid().'_'.$element->getUid().'_'.$element->getTable()];
 	}
 	
 	
@@ -179,8 +211,7 @@ class tx_languagevisibility_visibilityService {
 	* @param tx_languagevisibility_element $element
 	* @return tx_languagevisibility_visibility
 	*/
-	protected function getVisibility(tx_languagevisibility_language $language,$element){
-
+	protected function getVisibility(tx_languagevisibility_language $language,$element){		
 		$visibility 	= new tx_languagevisibility_visibility();
 		$local			=	$element->getLocalVisibilitySetting($language->getUid());
 			

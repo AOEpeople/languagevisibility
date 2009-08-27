@@ -6,6 +6,8 @@ require_once (t3lib_extMgm::extPath ( "languagevisibility" ) . 'classes/dao/clas
 class tx_languagevisibility_language {
 	private $row;
 	
+	protected static $flagCache;
+	
 	function setData($row) {
 		$this->row = $row;
 	}
@@ -123,13 +125,19 @@ class tx_languagevisibility_language {
 	function getFlagImg($pidForDefault = '') {
 		global $BACK_PATH;
 		
-		return '<img src="' . $this->getFlagImgPath ( $pidForDefault, $BACK_PATH ) . '" title="' . $this->getTitle ( $pidForDefault ) . '-' . $this->getIsoCode () . ' [' . $this->getUid () . ']">';
+		$cache_key = 'pid:'.$pidForDefault.'uid:'.$this->getUid();
+		if(!isset(self::$flagCache[$cache_key])){
+			self::$flagCache[$cache_key] = '<img src="' . $this->getFlagImgPath ( $pidForDefault, $BACK_PATH ) . '" title="' . $this->getTitle ( $pidForDefault ) . '-' . $this->getIsoCode () . ' [' . $this->getUid () . ']">';
+		}
+		
+		return self::$flagCache[$cache_key];
 	}
 	
 	/**
 	 * @param Optional the pid of the page. This can be used to get the correct flagpath for default language (which is set in tsconfig)
 	 **/
 	function getFlagImgPath($pidForDefault = '', $BACK_PATH = '') {
+		
 		$flagAbsPath = t3lib_div::getFileAbsFileName ( $GLOBALS ['TCA'] ['sys_language'] ['columns'] ['flag'] ['config'] ['fileFolder'] );
 		
 		$flagIconPath = $BACK_PATH . '../' . substr ( $flagAbsPath, strlen ( PATH_site ) );

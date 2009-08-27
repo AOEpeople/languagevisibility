@@ -5,5 +5,8 @@ applyPatchTV = 1
   # cat=basic//20; type=boolean; label=Inheritance: Enable inherited settings for pages
 inheritanceEnabled = 0
 
+  # cat=basic//30; type=boolean; label=Dao Precache: Enable this option to use the refetching of records (less db querys, more memory usage)
+useDaoPrecache = 0
+
   # cat=basic//30; type=boolean; label=Restrict Cut Copy and Move: This option disables cut, copy and move for elements with overlays
-  restrictCutCopyMoveForOverlays = 1
+ restrictCutCopyMoveForOverlays = 1

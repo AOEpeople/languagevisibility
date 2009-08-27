@@ -20,7 +20,7 @@ class tx_languagevisibility_pageelement extends tx_languagevisibility_element {
 	 *
 	 * @return string
 	 */
-	protected function getTable() {
+	public function getTable() {
 		return 'pages';
 	}
 	

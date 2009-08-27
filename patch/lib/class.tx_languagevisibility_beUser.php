@@ -15,9 +15,7 @@ class tx_languagevisibility_beUser{
 	 * @return unknown
 	 */
 	function allowCutCopyMoveDelete(){
-		$this->be_user->fetchGroupData();
-		$res = false;
-		
+		$res = false;	
 		if(is_array($this->be_user->userGroups)){
 			foreach($this->be_user->userGroups as $group){
 				if($group['tx_languagevisibility_allow_movecutdelete_foroverlays']){
@@ -26,12 +24,23 @@ class tx_languagevisibility_beUser{
 				}
 			}
 		}
+		
 		return $res;
 	}
 	
 	
-	function isAdmin(){
+	public function isAdmin(){
 		return $this->be_user->isAdmin();
 	}
+	
+	/**
+	 * This method returns the userId of the current backend user.
+	 * 
+	 * @return int userId of the backend user
+	 */
+	public function getUid(){
+		return $this->be_user->user[uid];
+	}
+	
 }
 ?>

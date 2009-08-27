@@ -22,7 +22,7 @@ class tx_languagevisibility_fceelement extends tx_languagevisibility_element {
 		$this->disabledIsVisible = $DS ['meta'] ['disabledIsVisible'] ? 1 : 0;
 	}
 	
-	protected function getTable() {
+	public function getTable() {
 		return 'tt_content';
 	}
 	
@@ -46,7 +46,7 @@ class tx_languagevisibility_fceelement extends tx_languagevisibility_element {
 	}
 	
 	function _hasOverlayRecordForLanguage($id) {
-		$languageRep = t3lib_div::makeInstance ( 'tx_languagevisibility_languagerepository' );
+		$languageRep = tx_languagevisibility_languagerepository::makeInstance();
 		$language = $languageRep->getLanguageById ( $id );
 		$this->langIsoCodeForFlexFormCallback = strtoupper ( $language->getIsoCode () );
 		$this->_callBackFoundOverlay = FALSE;

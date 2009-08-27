@@ -1,8 +1,56 @@
 <?php
 
 class tx_languagevisibility_daocommon {
+	protected static $recordCache;
 	
-	function getRecord($uid, $table) {
+	protected static $useDaoPreCaching;
+	
+	/**
+	 * Returns a record by table and uid.
+	 * 
+	 * @param $uid
+	 * @param $table
+	 * @return array
+	 */
+	function getRecord($uid, $table) {	
+		if($this->useDaoPrecache()){
+			if(!isset(self::$recordCache[$table][$uid])){
+				$row = $this->getRequestedRecord($uid,$table);
+				if($row){
+					self::$recordCache[$table][$uid] = $row;
+					$this->loadSimilarRecordsIntoCache($row,$table);
+				}
+			}
+			return self::$recordCache[$table][$uid];
+		}else{
+			return $this->getRequestedRecord($uid,$table);	
+		}
+	}
+	
+	/**
+	 * Method to determine if preCaching should be used or not.
+	 * 
+	 * @return boolean
+	 */
+	protected function useDaoPrecache(){
+		if(!isset(self::$useDaoPreCaching)){
+			$confArr = unserialize($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf']['languagevisibility']);
+			if(is_array($confArr) && $confArr['useDaoPrecache']){
+				self::$useDaoPreCaching = ($confArr['useDaoPrecache'] == 1);
+			}
+		}	
+		
+		return self::$useDaoPreCaching;
+	}
+	
+	/**
+	 * Returns the single Requested Record
+	 * 
+	 * @param $uid
+	 * @param $table
+	 * @return array
+	 */
+	protected function getRequestedRecord($uid,$table){
 		// fix settings
 		$fields = '*';
 		$table = $table;
@@ -14,9 +62,34 @@ class tx_languagevisibility_daocommon {
 		$row = $GLOBALS ['TYPO3_DB']->sql_fetch_assoc ( $result );
 		$GLOBALS['TYPO3_DB']-> sql_free_result($result);
 		
-		return $row;	
+		return $row;			
 	}
 
+	/**
+	 * Method trys to load similar records into the cache which will maybe requested in the future.
+	 * Requires more memory usage, but reduces the amount of querys.
+	 * 
+	 * @param $row
+	 * @param $table
+	 * @return unknown_type
+	 */
+	protected function loadSimilarRecordsIntoCache($row,$table){
+		$fields = '*';
+		$tablename = $table;
+		$orderBy = '';
+		
+		$uidsInCache 	= implode(',',array_keys(self::$recordCache[$table]));
+		$where 			= 'uid !='.$row['uid'].' AND pid = '.$row['pid'].' AND t3ver_wsid = '.$row['t3ver_wsid'].' AND deleted = 0 AND hidden = 0 AND uid NOT IN ('.$uidsInCache.')';
+		$limit 			= 1000;			
+
+		$result 	= $GLOBALS ['TYPO3_DB']->exec_SELECTquery ( $fields, $tablename, $where, $groupBy, $orderBy,$limit );
+
+		while($row = $GLOBALS ['TYPO3_DB']->sql_fetch_assoc ( $result )){
+			self::$recordCache[$table][$row['uid']] = $row;
+		}
+		
+		$GLOBALS['TYPO3_DB']-> sql_free_result($result);
+	}
 }
 
 ?>

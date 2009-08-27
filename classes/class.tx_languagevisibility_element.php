@@ -47,6 +47,12 @@ abstract class tx_languagevisibility_element {
 	private $overlayVisibilitySetting;
 	
 	
+	/**
+	 * Cache for live version of records
+	 * @var array
+	 */
+	protected static $liveRecordCache;
+	
 	public function __construct($row) {
 		
 		if(!$this->isRowOriginal($row)){
@@ -401,15 +407,24 @@ abstract class tx_languagevisibility_element {
 	 * @param array $row
 	 * @param string $table
 	 */
-	protected function _getLiveRowIfWorkspace($row, $table) {
+	protected function _getLiveRowIfWorkspace($row, $table, $fields = '*') {
 		if (! isset ( $row ['pid'] ) || ! isset ( $row ['uid'] )) {
 			return false;
 		}
-		if ($row ['pid'] == - 1) {
-			return t3lib_BEfunc::getLiveVersionOfRecord ( $table, $row ['uid'] );
-		}
 		
-		return $row;
+		if(!isset(self::$liveRecordCache[$table.' '.$row['uid'].' '.$fields])){
+			if ($row ['pid'] == - 1) {
+				$result = t3lib_BEfunc::getLiveVersionOfRecord ( $table, $row ['uid'] , $fields);
+			}else{
+				$result = $row;		
+			}
+									
+			self::$liveRecordCache[$table.' '.$row['uid'].' '.$fields] = $result;
+		}else{
+			
+			$result = self::$liveRecordCache[$table.' '.$row['uid'].' '.$fields];
+		}
+		return $result;
 	}
 	
 	/**
@@ -480,7 +495,7 @@ abstract class tx_languagevisibility_element {
 	 *
 	 * @return string
 	 */
-	abstract protected function getTable();
+	abstract public function getTable();
 	
 
 }

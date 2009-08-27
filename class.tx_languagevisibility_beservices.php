@@ -8,27 +8,43 @@ require_once (t3lib_extMgm::extPath ( "languagevisibility" ) . 'patch/lib/class.
 
 class tx_languagevisibility_beservices {
 	
+	protected static $cache_canBeUserCopyDelete = array();
+	
+	protected static $visibleFlagsCache = array();
+	
+	/**
+	 * 
+	 * @param $uid
+	 * @param $table
+	 * @return string
+	 */
 	public static function getVisibleFlagsForElement($uid, $table) {
-		$dao = t3lib_div::makeInstance ( 'tx_languagevisibility_daocommon' );
-		$elementfactoryName = t3lib_div::makeInstanceClassName ( 'tx_languagevisibility_elementFactory' );
-		$elementfactory = new $elementfactoryName ( $dao );
-		try {
-			$element = $elementfactory->getElementForTable ( $table, $uid );
-		} catch ( Exception $e ) {
-			return '-';
-		}
+		$cacheKey = $uid.':'.$table;
 		
-		$languageRep 	= t3lib_div::makeInstance ( 'tx_languagevisibility_languagerepository' );
-		$languageList 	= $languageRep->getLanguages ();
-		$visibility 	= t3lib_div::makeInstance ( 'tx_languagevisibility_visibilityService' );
-		
-		$visibleFlags = array ();
-		foreach ( $languageList as $language ) {
-			if ($visibility->isVisible ( $language, $element )) {
-				$visibleFlags [] = $language->getFlagImg (0);
+		if(!isset(self::$visibleFlagsCache[$cacheKey])){
+			$dao = t3lib_div::makeInstance ( 'tx_languagevisibility_daocommon' );
+			$elementfactoryName = t3lib_div::makeInstanceClassName ( 'tx_languagevisibility_elementFactory' );
+			$elementfactory = new $elementfactoryName ( $dao );
+			try {
+				$element = $elementfactory->getElementForTable ( $table, $uid );
+			} catch ( Exception $e ) {
+				return '-';
 			}
+			
+			$languageRep 	= t3lib_div::makeInstance ( 'tx_languagevisibility_languagerepository' );
+			$languageList 	= $languageRep->getLanguages ();
+			$visibility 	= t3lib_div::makeInstance ( 'tx_languagevisibility_visibilityService' );
+			
+			$visibleFlags = array ();
+			foreach ( $languageList as $language ) {
+				if ($visibility->isVisible ( $language, $element )) {
+					$visibleFlags [] = $language->getFlagImg (0);
+				}
+			}
+			self::$visibleFlagsCache[$cacheKey] =  implode ( '', $visibleFlags );
 		}
-		return implode ( '', $visibleFlags );
+		
+		return self::$visibleFlagsCache[$cacheKey];
 	}
 	
 	/**
@@ -56,7 +72,7 @@ class tx_languagevisibility_beservices {
 	 * @return boolean
 	 */
 	public static function isVisible($uid, $table, $languageUid) {
-		$rep 		= t3lib_div::makeInstance ( 'tx_languagevisibility_languagerepository' );
+		$rep 		= tx_languagevisibility_languagerepository::makeInstance();
 		$language 	= $rep->getLanguageById ( $languageUid );
 		
 		$dao = t3lib_div::makeInstance ( 'tx_languagevisibility_daocommon' );
@@ -81,13 +97,22 @@ class tx_languagevisibility_beservices {
 	 */
 	public static function canCurrrentUserCutCopyMoveDelete(){
 		//current element is no overlay -> if user has rights to cutMoveDelete or is an admin don't filter commants
-		$be_user 		= t3lib_div::makeInstance('tx_languagevisibility_beUser');
-		if($be_user->allowCutCopyMoveDelete() || $be_user->isAdmin() ){				
+		/* @var $be_user tx_languagevisibility_beUser */
+		$be_user 	= t3lib_div::makeInstance('tx_languagevisibility_beUser');
+		$userId 	= $be_user->getUid();
+		
+		if(!isset(self::$cache_canBeUserCopyDelete[$userId])){
+			if($be_user->allowCutCopyMoveDelete() || $be_user->isAdmin() ){				
+				$result = true;								
+			}else{
+				$result = false;
+			}
 			
-			return true;								
-		}else{
-			return false;
+			self::$cache_canBeUserCopyDelete[$userId] = $result;
 		}
+		
+		
+		return self::$cache_canBeUserCopyDelete[$userId];
 	}
 
 	/**
@@ -99,18 +124,10 @@ class tx_languagevisibility_beservices {
 	 */
 	public static function isOverlayRecord($row, $table) {
 		switch($table){
-			case 'pages_language_overlay':
-				return true;
-			break;
-			case 'pages':
-				return false;	
-			break;
-			
 			case 'tt_news':
 			case 'tt_content':
 				global $TCA;	 		
-				t3lib_div::loadTCA($table);
-								
+				t3lib_div::loadTCA($table);						
 				$tanslationIdField = $TCA[$table]['ctrl']['transOrigPointerField'];
 
 				if($tanslationIdField != ''){
@@ -122,6 +139,13 @@ class tx_languagevisibility_beservices {
 					//if no translation field exists this is not an overlay
 					return false;
 				}
+			break;
+			
+			case 'pages_language_overlay':
+				return true;
+			break;
+			case 'pages':
+				return false;	
 			break;
 		}
 	}

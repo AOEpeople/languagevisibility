@@ -27,7 +27,7 @@ class tx_languagevisibility_recordelement extends tx_languagevisibility_element 
 	 *
 	 * @return string
 	 */
-	protected function getTable(){
+	public function getTable(){
 		return $this->table;
 	}
 
