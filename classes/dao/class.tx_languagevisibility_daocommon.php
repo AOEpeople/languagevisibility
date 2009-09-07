@@ -13,7 +13,7 @@ class tx_languagevisibility_daocommon {
 	 * @return array
 	 */
 	public static function getRecord($uid, $table) {	
-		if(tx_languagevisibility_daocommon::useDaoPrecache()){
+		if(self::useDaoPrecache()){
 			if(!isset(self::$recordCache[$table][$uid])){
 				$row = self::getRequestedRecord($uid,$table);
 				if($row){
