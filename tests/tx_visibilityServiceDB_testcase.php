@@ -41,8 +41,11 @@ class tx_visibilityServiceDB_testcase extends tx_phpunit_database_testcase {
 	function test_visibility_ce() {
 		$language = $this->_getLang(1);
 		$visibility=t3lib_div::makeInstance('tx_languagevisibility_visibilityService');
-
+		/* since we use the same uids in testcases to test diffrent behaviour we need to flush the cache*/
+		$visibility->flushCache();
+		
 		$fixturesWithoutOverlay = array('tt_content'=>1,'pages'=>1);
+		
 		foreach($fixturesWithoutOverlay as $table=>$uid) {
 			$element = $this->_getContent($table,$uid);
 			$this->assertEquals('-', $element->getLocalVisibilitySetting(1), "setting d expected");
@@ -54,7 +57,9 @@ class tx_visibilityServiceDB_testcase extends tx_phpunit_database_testcase {
 	function test_visibility_overlayCe() {
 		$element = $this->_getContent('tt_content',2 /* element with L1 overlay */);
 		$visibility=t3lib_div::makeInstance('tx_languagevisibility_visibilityService');
-
+		/* since we use the same uids in testcases to test diffrent behaviour we need to flush the cache*/
+		$visibility->flushCache();
+		
 		$expectedResults=array(1=>1,2=>1,3=>0,4=>1);
 		foreach($expectedResults as $langUid=>$expectedResult) {
 			$language = $this->_getLang($langUid);
@@ -67,7 +72,10 @@ class tx_visibilityServiceDB_testcase extends tx_phpunit_database_testcase {
 	function test_visibility_overlayPage() {
 		$language = $this->_getLang(1);
 		$element = $this->_getContent('pages','2');
+		
 		$visibility=t3lib_div::makeInstance('tx_languagevisibility_visibilityService');
+		/* since we use the same uids in testcases to test diffrent behaviour we need to flush the cache*/
+		$visibility->flushCache();
 
 		$this->assertEquals(true, $visibility->isVisible($language,$element), "page should be visible");
 		$this->assertEquals(1, $visibility->getOverlayLanguageIdForLanguageAndElement($language,$element), "Page-Overlay should be defined for lang 1 ...");
@@ -76,6 +84,9 @@ class tx_visibilityServiceDB_testcase extends tx_phpunit_database_testcase {
 	function test_visibility_complexOverlay() {
 		$language = $this->_getLang(3);
 		$visibility=t3lib_div::makeInstance('tx_languagevisibility_visibilityService');
+		/* since we use the same uids in testcases to test diffrent behaviour we need to flush the cache*/
+		$visibility->flushCache();
+		
 		$fixtures = array(	'tt_content'	=>array('uid'=>2,'result'=>0),
 						 	'pages'		=>array('uid'=>2,'result'=>1)
 						 );
@@ -112,6 +123,8 @@ class tx_visibilityServiceDB_testcase extends tx_phpunit_database_testcase {
 		$visibilityResult 	= true;
 		
 		$service			= new tx_languagevisibility_visibilityService();	
+		/* since we use the same uids in testcases to test diffrent behaviour we need to flush the cache*/
+		$service->flushCache();
 		$visibilityResult 	= $service->isVisible($language,$element);
 		
 		$this->assertFalse($visibilityResult,'tt-content element is visible, but should not be visible');
@@ -130,8 +143,11 @@ class tx_visibilityServiceDB_testcase extends tx_phpunit_database_testcase {
 		$language 			= $this->_getLang(1);	
 		$element			= $this->_getContent('pages',4);
 		$visibilityResult	= true;
+		
 		$service			= new tx_languagevisibility_visibilityService();	
-
+		/* since we use the same uids in testcases to test diffrent behaviour we need to flush the cache*/
+		$service->flushCache();
+		
 		$visibilityResult 	= $service->isVisible($language,$element);
 		
 		$this->assertFalse($visibilityResult,'page element is visible, but should not be visible');
@@ -150,7 +166,9 @@ class tx_visibilityServiceDB_testcase extends tx_phpunit_database_testcase {
 		$element			= $this->_getContent('tt_content',8);
 		$visibilityResult	= true;	
 		$service			= new tx_languagevisibility_visibilityService();	
-
+		/* since we use the same uids in testcases to test diffrent behaviour we need to flush the cache*/
+		$service->flushCache();
+		
 		$visibilityResult 	= $service->isVisible($language,$element);
 		
 		$this->assertFalse($visibilityResult,'page element is visible, but should not be visible');
@@ -170,6 +188,9 @@ class tx_visibilityServiceDB_testcase extends tx_phpunit_database_testcase {
 		$visibilityResult 	= true;
 		
 		$service			= new tx_languagevisibility_visibilityService();	
+		/* since we use the same uids in testcases to test diffrent behaviour we need to flush the cache*/
+		$service->flushCache();
+		
 		$visibilityResult 	= $service->isVisible($language,$element);	
 
 		$this->assertFalse($visibilityResult,'visibility setting in overlay makes orginal element visible');
@@ -183,6 +204,9 @@ class tx_visibilityServiceDB_testcase extends tx_phpunit_database_testcase {
 		$visibilityResult 	= false;
 		
 		$service			= new tx_languagevisibility_visibilityService();	
+		/* since we use the same uids in testcases to test diffrent behaviour we need to flush the cache*/
+		$service->flushCache();
+		
 		$visibilityResult 	= $service->isVisible($language,$element);	
 
 		$this->assertTrue($visibilityResult,'corrupted element forces visibility to no');
@@ -301,6 +325,7 @@ class tx_visibilityServiceDB_testcase extends tx_phpunit_database_testcase {
 		$service->flushCache();
 		
 		$dao				= new tx_languagevisibility_daocommon;
+		tx_languagevisibility_daocommon::clearCache();
 		$factoryClass		= t3lib_div::makeInstanceClassName('tx_languagevisibility_elementFactory');
 		$factory			= new $factoryClass($dao);		
 		
@@ -342,6 +367,7 @@ class tx_visibilityServiceDB_testcase extends tx_phpunit_database_testcase {
 		$service->flushCache();
 		
 		$dao				= new tx_languagevisibility_daocommon;
+		tx_languagevisibility_daocommon::clearCache();
 		$factoryClass		= t3lib_div::makeInstanceClassName('tx_languagevisibility_elementFactory');
 		$factory			= new $factoryClass($dao);		
 
@@ -382,6 +408,8 @@ class tx_visibilityServiceDB_testcase extends tx_phpunit_database_testcase {
 		$service->flushCache();
 		
 		$dao				= new tx_languagevisibility_daocommon;
+		tx_languagevisibility_daocommon::clearCache();
+				
 		$factoryClass		= t3lib_div::makeInstanceClassName('tx_languagevisibility_elementFactory');
 		$factory			= new $factoryClass($dao);		
 
@@ -413,6 +441,7 @@ class tx_visibilityServiceDB_testcase extends tx_phpunit_database_testcase {
 		$service->flushCache();
 		
 		$dao				= new tx_languagevisibility_daocommon;
+		tx_languagevisibility_daocommon::clearCache();
 		$factoryClass		= t3lib_div::makeInstanceClassName('tx_languagevisibility_elementFactory');
 		$factory			= new $factoryClass($dao);
 		
@@ -447,6 +476,8 @@ class tx_visibilityServiceDB_testcase extends tx_phpunit_database_testcase {
 		$service->flushCache();
 		
 		$dao				= new tx_languagevisibility_daocommon;
+		tx_languagevisibility_daocommon::clearCache();
+		
 		$factoryClass		= t3lib_div::makeInstanceClassName('tx_languagevisibility_elementFactory');
 		$factory			= new $factoryClass($dao);
 		
@@ -481,6 +512,8 @@ class tx_visibilityServiceDB_testcase extends tx_phpunit_database_testcase {
 			$this->importDataSet(dirname(__FILE__). '/fixtures/dbContentWithVisibilityTestdata.xml');
 		}
 		$dao=new tx_languagevisibility_daocommon;
+		tx_languagevisibility_daocommon::clearCache();
+		
 		$factoryClass=t3lib_div::makeInstanceClassName('tx_languagevisibility_elementFactory');
 		
 		$factory=new $factoryClass($dao);

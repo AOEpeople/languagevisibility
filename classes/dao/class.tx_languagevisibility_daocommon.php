@@ -21,10 +21,16 @@ class tx_languagevisibility_daocommon {
 					self::loadSimilarRecordsIntoCache($row,$table);
 				}
 			}
-			return self::$recordCache[$table][$uid];
+			$result = self::$recordCache[$table][$uid];
 		}else{
-			return self::getRequestedRecord($uid,$table);	
+			$result = self::getRequestedRecord($uid,$table);	
 		}
+
+		return $result;
+	}
+	
+	public static function clearCache(){
+		self::$recordCache = array();
 	}
 	
 	/**
