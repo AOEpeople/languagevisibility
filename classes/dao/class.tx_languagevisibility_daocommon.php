@@ -77,17 +77,28 @@ class tx_languagevisibility_daocommon {
 	 * 
 	 * @param $row
 	 * @param $table
-	 * @return unknown_type
+	 * @return void
 	 */
 	protected function loadSimilarRecordsIntoCache($row,$table){
 		$fields 		= '*';
 		$tablename 		= $table;
 		$orderBy 		= '';
+		$groupBy		= null;
 		
 		$uidsInCache 	= implode(',',array_keys(self::$recordCache[$table]));
-		$where 			= 'uid !='.$row['uid'].' AND pid = '.$row['pid'].' AND t3ver_wsid = '.$row['t3ver_wsid'].' AND deleted = 0 AND hidden = 0 AND uid NOT IN ('.$uidsInCache.')';
-		$limit 			= 1000;			
+		//get deleted hidden and workspace field from tca
 
+		global $TCA;
+		t3lib_div::loadTCA($table);
+
+		if(is_array($TCA[$table]['ctrl'])){
+			$deleteField = $TCA[$table]['ctrl']['delete'];
+		}
+		
+		$where 			= 'uid !='.$row['uid'].' AND pid = '.$row['pid'].' AND uid NOT IN ('.$uidsInCache.')';
+		if($deleteField != ''){ $where .= ' AND '.$deleteField.'=0'; }
+		
+		$limit 			= 1000;			
 		$result 		= $GLOBALS ['TYPO3_DB']->exec_SELECTquery ( $fields, $tablename, $where, $groupBy, $orderBy,$limit );
 
 		while($row = $GLOBALS ['TYPO3_DB']->sql_fetch_assoc ( $result )){
