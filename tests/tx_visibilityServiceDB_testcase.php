@@ -43,9 +43,9 @@ class tx_visibilityServiceDB_testcase extends tx_phpunit_database_testcase {
 		$visibility=t3lib_div::makeInstance('tx_languagevisibility_visibilityService');
 		/* since we use the same uids in testcases to test diffrent behaviour we need to flush the cache*/
 		$visibility->flushCache();
-		
+
 		$fixturesWithoutOverlay = array('tt_content'=>1,'pages'=>1);
-		
+
 		foreach($fixturesWithoutOverlay as $table=>$uid) {
 			$element = $this->_getContent($table,$uid);
 			$this->assertEquals('-', $element->getLocalVisibilitySetting(1), "setting d expected");
@@ -59,7 +59,7 @@ class tx_visibilityServiceDB_testcase extends tx_phpunit_database_testcase {
 		$visibility=t3lib_div::makeInstance('tx_languagevisibility_visibilityService');
 		/* since we use the same uids in testcases to test diffrent behaviour we need to flush the cache*/
 		$visibility->flushCache();
-		
+
 		$expectedResults=array(1=>1,2=>1,3=>0,4=>1);
 		foreach($expectedResults as $langUid=>$expectedResult) {
 			$language = $this->_getLang($langUid);
@@ -72,7 +72,7 @@ class tx_visibilityServiceDB_testcase extends tx_phpunit_database_testcase {
 	function test_visibility_overlayPage() {
 		$language = $this->_getLang(1);
 		$element = $this->_getContent('pages','2');
-		
+
 		$visibility=t3lib_div::makeInstance('tx_languagevisibility_visibilityService');
 		/* since we use the same uids in testcases to test diffrent behaviour we need to flush the cache*/
 		$visibility->flushCache();
@@ -86,7 +86,7 @@ class tx_visibilityServiceDB_testcase extends tx_phpunit_database_testcase {
 		$visibility=t3lib_div::makeInstance('tx_languagevisibility_visibilityService');
 		/* since we use the same uids in testcases to test diffrent behaviour we need to flush the cache*/
 		$visibility->flushCache();
-		
+
 		$fixtures = array(	'tt_content'	=>array('uid'=>2,'result'=>0),
 						 	'pages'		=>array('uid'=>2,'result'=>1)
 						 );
@@ -98,7 +98,7 @@ class tx_visibilityServiceDB_testcase extends tx_phpunit_database_testcase {
 
 	/**
 	 * As discussed in issue 6863 an editor should be able to set the languagevisibility right
-	 * "force to no" in the overlay record. 
+	 * "force to no" in the overlay record.
 	 *
 	 * @param void
 	 * @return void
@@ -107,127 +107,127 @@ class tx_visibilityServiceDB_testcase extends tx_phpunit_database_testcase {
 	 */
 	function test_visibility_ttcontentOverlayForceToNoAffectsVisibility(){
 		$language = $this->_getLang(1);
-		
+
 		/**
-		 * The xml structure is used to to create a fixture tt_content element 
+		 * The xml structure is used to to create a fixture tt_content element
 		 * with the visibility "yes" for all languages. For the same element
 		 * an overlay in language 1 exists with the setting "force to no".
 		 * In this case the "force to no" setting in the overlay should overwrite
 		 * the "yes" setting in the content element. Therefore the element should not be
-		 * visible. 
+		 * visible.
 		 */
-		
+
 		$element 			= $this->_getContent('tt_content',4);
-		
+
 		//set visibility to true to ensure it is set to false by the service call
 		$visibilityResult 	= true;
-		
-		$service			= new tx_languagevisibility_visibilityService();	
+
+		$service			= new tx_languagevisibility_visibilityService();
 		/* since we use the same uids in testcases to test diffrent behaviour we need to flush the cache*/
 		$service->flushCache();
 		$visibilityResult 	= $service->isVisible($language,$element);
-		
+
 		$this->assertFalse($visibilityResult,'tt-content element is visible, but should not be visible');
 	}
-	
+
 	/**
 	 * This testcase does exactly the same as the previos testcase (test_visibility_ttcontentOverlayForceToNoAffectsVisibility)
 	 * but uses page elements.
-	 * 
+	 *
 	 * @param void
 	 * @return void
 	 * @see tx_languagevisibility_visibilityService
-	 * @return 
+	 * @return
 	 */
 	function test_visibility_pagesOverlayForceToNoAffectsVisibility(){
-		$language 			= $this->_getLang(1);	
+		$language 			= $this->_getLang(1);
 		$element			= $this->_getContent('pages',4);
 		$visibilityResult	= true;
-		
-		$service			= new tx_languagevisibility_visibilityService();	
+
+		$service			= new tx_languagevisibility_visibilityService();
 		/* since we use the same uids in testcases to test diffrent behaviour we need to flush the cache*/
 		$service->flushCache();
-		
+
 		$visibilityResult 	= $service->isVisible($language,$element);
-		
+
 		$this->assertFalse($visibilityResult,'page element is visible, but should not be visible');
 	}
-	
+
 	/**
 	 * This testcase is used to test if an "force to no"-setting  in an overlay record in the workspace
 	 * affects the original element in the workspace.
-	 *  
-	 * @return 
+	 *
+	 * @return
 	 */
 	function test_visibility_ttcontentOverlayForceToNoAffectsVisibilityAlsoInWorkspaces(){
 		$this->_fakeWorkspaceContext(4711);
-		
-		$language 			= $this->_getLang(1);	
+
+		$language 			= $this->_getLang(1);
 		$element			= $this->_getContent('tt_content',8);
-		$visibilityResult	= true;	
-		$service			= new tx_languagevisibility_visibilityService();	
+		$visibilityResult	= true;
+		$service			= new tx_languagevisibility_visibilityService();
 		/* since we use the same uids in testcases to test diffrent behaviour we need to flush the cache*/
 		$service->flushCache();
-		
+
 		$visibilityResult 	= $service->isVisible($language,$element);
-		
+
 		$this->assertFalse($visibilityResult,'page element is visible, but should not be visible');
 	}
-	
-	
+
+
 	/**
-	 * The visibility setting in an overlay should only overwrite the visibility 
+	 * The visibility setting in an overlay should only overwrite the visibility
 	 * when it is set to "force to no" a "force to yes" setting should not affect the orginal record.
 	 *
 	 */
 	function test_visibility_ttcontentOverlayForceToYesNotAffectsVisibility(){
 		$language = $this->_getLang(1);
 		$element 			= $this->_getContent('tt_content',10);
-		
+
 		//set visibility to true to ensure it is set to false by the service call
 		$visibilityResult 	= true;
-		
-		$service			= new tx_languagevisibility_visibilityService();	
+
+		$service			= new tx_languagevisibility_visibilityService();
 		/* since we use the same uids in testcases to test diffrent behaviour we need to flush the cache*/
 		$service->flushCache();
-		
-		$visibilityResult 	= $service->isVisible($language,$element);	
+
+		$visibilityResult 	= $service->isVisible($language,$element);
 
 		$this->assertFalse($visibilityResult,'visibility setting in overlay makes orginal element visible');
 	}
-	
+
 	function test_visibility_ttcontentOverlayCorruptedNotAffectsVisibilits(){
 		$language = $this->_getLang(1);
 		$element 			= $this->_getContent('tt_content',12);
-		
+
 		//set visibility to true to ensure it is set to false by the service call
 		$visibilityResult 	= false;
-		
-		$service			= new tx_languagevisibility_visibilityService();	
+
+		$service			= new tx_languagevisibility_visibilityService();
 		/* since we use the same uids in testcases to test diffrent behaviour we need to flush the cache*/
 		$service->flushCache();
-		
-		$visibilityResult 	= $service->isVisible($language,$element);	
+
+		$visibilityResult 	= $service->isVisible($language,$element);
 
 		$this->assertTrue($visibilityResult,'corrupted element forces visibility to no');
-		
+
 	}
 
 	function test_visibility_ttcontentHasTranslationInAnyWorkspace(){
 		$element 			= $this->_getContent('tt_content',14);
-		
+
 		$hasTranslation 	= true;
 		$hasTranslation		= $element->hasAnyTranslationInAnyWorkspace();
-		
+
 		$this->assertFalse($element->supportsInheritance());
 		$this->assertFalse($hasTranslation,'Element without translation is determined as element with translation.');
 	}
-	
+
 	/**
 	 * When an element has configured -1 as sys_language_uid it is configured to be
-	 * visible in all languages. This testcase should ensure that this is evaluated 
+	 * visible in all languages. This testcase should ensure that this is evaluated
 	 * correctly.
-	 * 
+	 *
 	 * @test
 	 * @param void
 	 * @return void
@@ -238,35 +238,35 @@ class tx_visibilityServiceDB_testcase extends tx_phpunit_database_testcase {
 		$service			= new tx_languagevisibility_visibilityService();
 		/* since we use the same uids in testcases to test diffrent behaviour we need to flush the cache*/
 		$service->flushCache();
-		
+
 		$language 			= $this->_getLang(1);
-				
+
 		$dao				= new tx_languagevisibility_daocommon;
 		$factoryClass		= t3lib_div::makeInstanceClassName('tx_languagevisibility_elementFactory');
-		$factory			= new $factoryClass($dao);		
-		
+		$factory			= new $factoryClass($dao);
+
 		$visibilityResult 	= true;
 		/* @var $element tx_languagevisibility_pageelement  */
 		$element  = $factory->getElementForTable('tt_content',1111);
-		$visibilityResult 	= $service->isVisible($language,$element);	
-		
+		$visibilityResult 	= $service->isVisible($language,$element);
+
 		$this->assertTrue($visibilityResult,'An element with language set to all is not visible');
 		$this->assertTrue($element->isLanguageSetToAll());
 		$this->assertFalse( $element->isLanguageSetToDefault());
 		$this->assertTrue($element->isLiveWorkspaceElement());
 	}
-	
+
 	/**
 	 * This testcase ensures that the state "force to no inherited" affects the visibility of a page in
 	 * it's rootline.
-	 * 
+	 *
 	 * We have the following pages
-	 * 
+	 *
 	 * uid: 5 (has n+ for the language uk)
 	 * uid 6 (pid 6) simple page for fixture rootline
-	 * uid 7 (pid 7) is used to evaluate the visibility	and has no local visibility 
-	 * 
-	 * @test 
+	 * uid 7 (pid 7) is used to evaluate the visibility	and has no local visibility
+	 *
+	 * @test
 	 * @param void
 	 * @return void
 	 * @author Timo Schmidt <timo.schmidt@aoemedia.de>
@@ -278,38 +278,81 @@ class tx_visibilityServiceDB_testcase extends tx_phpunit_database_testcase {
 		$service->setUseInheritance();
 		/* since we use the same uids in testcases to test diffrent behaviour we need to flush the cache*/
 		$service->flushCache();
-		
+
 		$dao				= new tx_languagevisibility_daocommon;
 		$factoryClass		= t3lib_div::makeInstanceClassName('tx_languagevisibility_elementFactory');
-		$factory			= new $factoryClass($dao);		
-		
+		$factory			= new $factoryClass($dao);
+
 		$visibilityResult 	= true;
-		
+
 		/* @var $element tx_languagevisibility_pageelement */
 		$element  = $factory->getElementForTable('pages',6);
-		$visibilityResult 	= $service->isVisible($language,$element);	
-		
+		$visibilityResult 	= $service->isVisible($language,$element);
+
 		$this->assertTrue($element->supportsInheritance());
 		$this->assertFalse($visibilityResult,'element should be invisible because  a page in the rootline has an inherited no+ setting');
 
 		$element  = $factory->getElementForTable('pages',7);
 		$this->assertTrue($element->supportsInheritance());
-		$visibilityResult 	= $service->isVisible($language,$element);	
+		$visibilityResult 	= $service->isVisible($language,$element);
 
 		$this->assertFalse($visibilityResult,'element should be invisible because a page in the rootline has an inherited no+ setting');
 	}
-	
-	
+
+	/**
+	 * This testcase ensures that the state "force to no inherited" affects the visibility of a page in
+	 * it's rootline.
+	 *
+	 * We have the following pages
+	 *
+	 * uid: 5 (has n+ for the language uk)
+	 * uid 6 (pid 6) simple page for fixture rootline
+	 * uid 7 (pid 7) is used to evaluate the visibility	and has no local visibility
+	 *
+	 * @test
+	 * @param void
+	 * @return void
+	 * @author Timo Schmidt <timo.schmidt@aoemedia.de>
+	 */
+	public function inheritanceForceToNoInOverlayAffectsSubpage(){
+		$this->importDataSet(dirname(__FILE__).'/fixtures/inheritanceForceToNoInOverlayAffectsSubpage.xml');
+		$language 			= $this->_getLang(1);
+		$service			= new tx_languagevisibility_visibilityService();
+		$service->setUseInheritance();
+		/* since we use the same uids in testcases to test diffrent behaviour we need to flush the cache*/
+		$service->flushCache();
+
+		$dao				= new tx_languagevisibility_daocommon;
+		$factoryClass		= t3lib_div::makeInstanceClassName('tx_languagevisibility_elementFactory');
+		$factory			= new $factoryClass($dao);
+
+		$visibilityResult 	= true;
+
+		/* @var $element tx_languagevisibility_pageelement */
+		$element  = $factory->getElementForTable('pages',6);
+		$visibilityResult 	= $service->isVisible($language,$element);
+
+		$this->assertTrue($element->supportsInheritance());
+		$this->assertFalse($visibilityResult,'element should be invisible because  a page in the rootline has an inherited no+ setting');
+
+		$element  = $factory->getElementForTable('pages',7);
+		$this->assertTrue($element->supportsInheritance());
+		$visibilityResult 	= $service->isVisible($language,$element);
+
+		$this->assertFalse($visibilityResult,'element should be invisible because a page in the rootline has an inherited no+ setting');
+	}
+
+
 	/**
 	 * The force to no inheritance (no+) setting should only affect subpages if
 	 * the flag is also set without the flag the setting should not be evaluated.
-	 * 
+	 *
 	 * We have the following pages
-	 * 
+	 *
 	 * uid: 5 (has n+ for the language uk) BUT NO inheritance flag
 	 * uid 6 (pid 6) simple page for fixture rootline
-	 * uid 7 (pid 7) is used to evaluate the visibility	and has no local visibility 
-	 * 
+	 * uid 7 (pid 7) is used to evaluate the visibility	and has no local visibility
+	 *
 	 * @test
 	 * @param void
 	 * @return void
@@ -317,41 +360,41 @@ class tx_visibilityServiceDB_testcase extends tx_phpunit_database_testcase {
 	 */
 	public function inheritanceForceToNoDoesNotAffectSubpageWithoutAGivenInheritanceFlag(){
 		$this->importDataSet(dirname(__FILE__).'/fixtures/inheritanceForceToNoDoesNotAffectSubpageWithoutAGivenInheritanceFlag.xml');
-		
+
 		$language 			= $this->_getLang(1);
 		$service			= new tx_languagevisibility_visibilityService();
 		$service->setUseInheritance();
 		/* since we use the same uids in testcases to test diffrent behaviour we need to flush the cache*/
 		$service->flushCache();
-		
+
 		$dao				= new tx_languagevisibility_daocommon;
 		tx_languagevisibility_daocommon::clearCache();
 		$factoryClass		= t3lib_div::makeInstanceClassName('tx_languagevisibility_elementFactory');
-		$factory			= new $factoryClass($dao);		
-		
+		$factory			= new $factoryClass($dao);
+
 		$visibilityResult 	= true;
-		
+
 		$element  = $factory->getElementForTable('pages',6);
-		$visibilityResult 	= $service->isVisible($language,$element);	
-		
+		$visibilityResult 	= $service->isVisible($language,$element);
+
 		$this->assertTrue($visibilityResult,'element should be visible because  a page in the rootline has an inherited no+ setting but no inheritance flag');
 
 		$element  = $factory->getElementForTable('pages',7);
-		$visibilityResult 	= $service->isVisible($language,$element);	
+		$visibilityResult 	= $service->isVisible($language,$element);
 
-		$this->assertTrue($visibilityResult,'element should be visible because a page in the rootline has an inherited no+ setting but no inheritance flag');		
+		$this->assertTrue($visibilityResult,'element should be visible because a page in the rootline has an inherited no+ setting but no inheritance flag');
 	}
-	
+
 	/**
-	 * The no+ should also only affect pages in the language it has been configured for in the following 
+	 * The no+ should also only affect pages in the language it has been configured for in the following
 	 * testcase we have a page with a no+ setting for the australian language but we evaluate it for uk
 	 * therefore the no+ setting should not have any impact on the visibility of the element.
 	 * We have the following pages
-	 * 
+	 *
 	 * uid: 5 (has n+ for the language aus) and also the inheritance flag
 	 * uid 6 (pid 6) simple page for fixture rootline
-	 * uid 7 (pid 7) is used to evaluate the visibility	and has no local visibility 
-	 * 
+	 * uid 7 (pid 7) is used to evaluate the visibility	and has no local visibility
+	 *
 	 * @test
 	 * @param void
 	 * @return void
@@ -361,106 +404,106 @@ class tx_visibilityServiceDB_testcase extends tx_phpunit_database_testcase {
 		$this->importDataSet(dirname(__FILE__).'/fixtures/inheritanceForceToNoInOtherLanguageDoesNotAffectRecordInCurrentLanguage.xml');
 
 		$language 			= $this->_getLang(1);
-		$service			= new tx_languagevisibility_visibilityService();	
+		$service			= new tx_languagevisibility_visibilityService();
 		$service->setUseInheritance();
 		/* since we use the same uids in testcases to test diffrent behaviour we need to flush the cache*/
 		$service->flushCache();
-		
+
 		$dao				= new tx_languagevisibility_daocommon;
 		tx_languagevisibility_daocommon::clearCache();
 		$factoryClass		= t3lib_div::makeInstanceClassName('tx_languagevisibility_elementFactory');
-		$factory			= new $factoryClass($dao);		
+		$factory			= new $factoryClass($dao);
 
 		$visibilityResult 	= true;
-		
+
 		$element  = $factory->getElementForTable('pages',6);
-		$visibilityResult 	= $service->isVisible($language,$element);	
-		
+		$visibilityResult 	= $service->isVisible($language,$element);
+
 		$this->assertTrue($visibilityResult,'element should be visible because  a page in the rootline has an inherited no+ setting but in another language');
 
 		$element  = $factory->getElementForTable('pages',7);
-		$visibilityResult 	= $service->isVisible($language,$element);	
+		$visibilityResult 	= $service->isVisible($language,$element);
 
-		$this->assertTrue($visibilityResult,'element should be visible because  a page in the rootline has an inherited no+ setting but in another language');			
+		$this->assertTrue($visibilityResult,'element should be visible because  a page in the rootline has an inherited no+ setting but in another language');
 	}
-	
+
 	/**
 	 * When an element has the setting yes and an element in the rootline has the setting no+ (inherited no)
 	 * the element should be visible (rootline should not be evaluated for inherited settings).
-	 * 
+	 *
 	 * uid: 5 (has n+ for the language uk) and also the inheritance flag
 	 * uid 6 (pid 6) simple page for fixture rootline
 	 * uid 7 (pid 7) is used to evaluate the visibility and has the visibility setting "yes"
-	 * 
+	 *
 	 * @test
 	 * @param void
 	 * @return void
 	 * @author Timo Schmidt <timo.schmidt@aoemedia.de>
-	 * 	 * 
+	 * 	 *
 	 */
 	public function yesInPageAnnulatesInheritedForceToNoOfRootlineRecord(){
 		$this->importDataSet(dirname(__FILE__).'/fixtures/yesInPageAnnulatesInheritedForceToNoOfRootlineRecord.xml');
 
 		$language 			= $this->_getLang(1);
-		$service			= new tx_languagevisibility_visibilityService();	
+		$service			= new tx_languagevisibility_visibilityService();
 		$service->setUseInheritance();
 		/* since we use the same uids in testcases to test diffrent behaviour we need to flush the cache*/
 		$service->flushCache();
-		
+
 		$dao				= new tx_languagevisibility_daocommon;
 		tx_languagevisibility_daocommon::clearCache();
-				
-		$factoryClass		= t3lib_div::makeInstanceClassName('tx_languagevisibility_elementFactory');
-		$factory			= new $factoryClass($dao);		
 
-		$visibilityResult 	= true;		
+		$factoryClass		= t3lib_div::makeInstanceClassName('tx_languagevisibility_elementFactory');
+		$factory			= new $factoryClass($dao);
+
+		$visibilityResult 	= true;
 
 		$element  = $factory->getElementForTable('pages',6);
-		$visibilityResult 	= $service->isVisible($language,$element);	
-		
+		$visibilityResult 	= $service->isVisible($language,$element);
+
 		$this->assertFalse($visibilityResult,'element should be invisible because  a page in the rootline has an inherited no+ setting there is no local overwriting setting');
 
 		$element  = $factory->getElementForTable('pages',7);
-		$visibilityResult 	= $service->isVisible($language,$element);	
+		$visibilityResult 	= $service->isVisible($language,$element);
 
 		$this->assertTrue($visibilityResult,'element should be visible because  a page in the rootline has an inherited no+ setting but the local setting is forced to yes');
 	}
-	
+
 	/**
-	 * The inheritance of the languagevisibility is controlled by a visibility flag 
-	 * 
+	 * The inheritance of the languagevisibility is controlled by a visibility flag
+	 *
 	 * @test
 	 */
 	public function overlayOverwritesInheritingVisibilityOfPageElements(){
 		$this->importDataSet(dirname(__FILE__).'/fixtures/overlayOverwritesInheritingVisibilityOfPageElements.xml');
-		
+
 		$language 			= $this->_getLang(1);
-		$service			= new tx_languagevisibility_visibilityService();	
+		$service			= new tx_languagevisibility_visibilityService();
 		$service->setUseInheritance();
 		/* since we use the same uids in testcases to test diffrent behaviour we need to flush the cache*/
 		$service->flushCache();
-		
+
 		$dao				= new tx_languagevisibility_daocommon;
 		tx_languagevisibility_daocommon::clearCache();
 		$factoryClass		= t3lib_div::makeInstanceClassName('tx_languagevisibility_elementFactory');
 		$factory			= new $factoryClass($dao);
-		
-		
+
+
 		$element  = $factory->getElementForTable('pages',6);
-		$visibilityResult 	= $service->isVisible($language,$element);	
+		$visibilityResult 	= $service->isVisible($language,$element);
 
 		$this->assertFalse($visibilityResult,'element should be invisible because overlay overwrites inheriting visibility on page 5');
 
 		$element  = $factory->getElementForTable('pages',7);
-		$visibilityResult 	= $service->isVisible($language,$element);	
+		$visibilityResult 	= $service->isVisible($language,$element);
 
 		$this->assertFalse($visibilityResult,'element should be invisible because overlay overwrites inheriting visibility on page 5');
 	}
-	
+
 	/**
 	 * Every element can be tested if it is visible for a given language. In addition a
 	 * description can be delivered why an element is visible or not.
-	 * 
+	 *
 	 * @param void
 	 * @return void
 	 * @author Timo Schmidt <schmidt@aoemedia.de>
@@ -468,35 +511,35 @@ class tx_visibilityServiceDB_testcase extends tx_phpunit_database_testcase {
 	 */
 	public function canGetCorrectVisiblityDescriptionForElementWithInheritedVisibility(){
 		$this->importDataSet(dirname(__FILE__).'/fixtures/canGetCorrectVisiblityDescriptionForElementWithInheritedVisibility.xml');
-		
+
 		$language 			= $this->_getLang(1);
 		$service			= new tx_languagevisibility_visibilityService();
 		$service->setUseInheritance();
 		/* since we use the same uids in testcases to test diffrent behaviour we need to flush the cache*/
 		$service->flushCache();
-		
+
 		$dao				= new tx_languagevisibility_daocommon;
 		tx_languagevisibility_daocommon::clearCache();
-		
+
 		$factoryClass		= t3lib_div::makeInstanceClassName('tx_languagevisibility_elementFactory');
 		$factory			= new $factoryClass($dao);
-		
+
 		/* @var $element tx_languagevisibility_pageelement*/
 		$element  				= $factory->getElementForTable('pages',7);
 		$visibilityDescription 	= $service->getVisibilityDescription($language,$element);
 
 		$this->assertEquals('force to no (inherited from uid 5)',$visibilityDescription,'invalid visibility description of element with inheritance');
 	}
-	
-	
+
+
 	function _loadWorkspaces(){
 		$this->importDataSet(dirname(__FILE__). '/fixtures/dbDefaultWorkspaces.xml');
 	}
-	
+
 	function _fakeWorkspaceContext($uid){
 		$GLOBALS['BE_USER']->workspace = $uid;
 	}
-	
+
 	function _getLang($uid) {
 		if(!$this->_langImport) {
 			$this->_langImport=true;
@@ -513,9 +556,9 @@ class tx_visibilityServiceDB_testcase extends tx_phpunit_database_testcase {
 		}
 		$dao=new tx_languagevisibility_daocommon;
 		tx_languagevisibility_daocommon::clearCache();
-		
+
 		$factoryClass=t3lib_div::makeInstanceClassName('tx_languagevisibility_elementFactory');
-		
+
 		$factory=new $factoryClass($dao);
 		return $factory->getElementForTable($table,$uid);
 	}
@@ -527,8 +570,8 @@ class tx_visibilityServiceDB_testcase extends tx_phpunit_database_testcase {
 
 		$GLOBALS["TYPO3_CONF_VARS"]["FE"]["addRootLineFields"] = "tx_languagevisibility_inheritanceflag_original,tx_languagevisibility_inheritanceflag_overlayed";
 		$GLOBALS["TYPO3_CONF_VARS"]["FE"]["pageOverlayFields"] = "uid,title,subtitle,nav_title,media,keywords,description,abstract,author,author_email,sys_language_uid,tx_languagevisibility_inheritanceflag_overlayed";
-		
-		
+
+
 		// order of extension-loading is important !!!!
 		$this->importExtensions(array('cms','languagevisibility'));
 		$this->_loadWorkspaces();
