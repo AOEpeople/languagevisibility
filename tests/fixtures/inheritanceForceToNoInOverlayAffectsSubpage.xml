@@ -25,6 +25,7 @@
 		<uid>55</uid>
 		<pid>5</pid>
 		<sys_language_uid>1</sys_language_uid>
+		<tx_languagevisibility_inheritanceflag_original>0</tx_languagevisibility_inheritanceflag_original>
 		<tx_languagevisibility_inheritanceflag_overlayed>1</tx_languagevisibility_inheritanceflag_overlayed>
 		<tx_languagevisibility_visibility>a:3:{i:0;s:1:"-";i:1;s:3:"no+";i:2;s:1:"-";}</tx_languagevisibility_visibility>
 	</pages_language_overlay>

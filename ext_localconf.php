@@ -40,7 +40,7 @@ $rootlinefields = &$GLOBALS["TYPO3_CONF_VARS"]["FE"]["addRootLineFields"];
 $NewRootlinefields = "tx_languagevisibility_inheritanceflag_original, tx_languagevisibility_inheritanceflag_overlayed";
 $rootlinefields .= (empty($rootlinefields))? $NewRootlinefields : ','.$NewRootlinefields;
 
-$pagesOverlayfields = &$GLOBALS["TYPO3_CONF_VARS"]["FE"]["pagesOverlayFields"];
+$pagesOverlayfields = &$GLOBALS["TYPO3_CONF_VARS"]["FE"]["pageOverlayFields"];
 $NewPagesOverlayfields = "tx_languagevisibility_inheritanceflag_overlayed";
 $pagesOverlayfields .= (empty($pagesOverlayfields)) ? $NewPagesOverlayfields : ','.$NewPagesOverlayfields;
 
