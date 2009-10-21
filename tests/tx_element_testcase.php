@@ -37,7 +37,9 @@ require_once (t3lib_extMgm::extPath ( "languagevisibility" ) . 'classes/dao/clas
 // require_once (t3lib_extMgm::extPath('phpunit').'class.tx_phpunit_test.php');
 require_once (PATH_t3lib . 'class.t3lib_tcemain.php');
 
-class tx_element_testcase extends tx_phpunit_database_testcase {
+require_once(t3lib_extMgm::extPath("languagevisibility").'tests/tx_languagevisibility_databaseTestcase.php');
+
+class tx_element_testcase extends tx_languagevisibility_databaseTestcase {
 	
 	public function test_hasTranslation_pageelement() {
 		//this time data in DB is tested!
@@ -234,19 +236,11 @@ class tx_element_testcase extends tx_phpunit_database_testcase {
 	}
 	
 	function setUp() {
-		$this->createDatabase ();
-		$this->importStdDB();
-		$db = $this->useTestDatabase ();
-		
+		parent::setUp();
 		// order of extension-loading is important !!!!
 		$this->importExtensions ( array ( 'cms', 'static_info_tables', 'templavoila', 'languagevisibility', 'mwimagemap','aoe_xml2array' ) );
 	}
 	
-	function tearDown() {
-		$this->cleanDatabase ();
-		$this->dropDatabase ();
-		$GLOBALS ['TYPO3_DB']->sql_select_db ( TYPO3_db );
-	}
 
 }
 ?>

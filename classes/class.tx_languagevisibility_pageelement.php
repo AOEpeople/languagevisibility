@@ -16,15 +16,6 @@ class tx_languagevisibility_pageelement extends tx_languagevisibility_element {
 	}
 	
 	/**
-	 * Returns the name of the table.
-	 *
-	 * @return string
-	 */
-	public function getTable() {
-		return 'pages';
-	}
-	
-	/**
 	 * Returns a simple description of the element type.
 	 *
 	 * @return string
@@ -60,7 +51,7 @@ class tx_languagevisibility_pageelement extends tx_languagevisibility_element {
 	 * @param boolean $onlyUid
 	 * @return array return the database row
 	 */
-	function getOverLayRecordForCertainLanguage($id, $onlyUid = FALSE) {		
+	protected function getOverLayRecordForCertainLanguageImplementation($id) {		
 		##
 		# Ensure we have the live version
 		##
@@ -76,7 +67,7 @@ class tx_languagevisibility_pageelement extends tx_languagevisibility_element {
 		}
 		
 		$where 	= 'deleted = 0 AND hidden = 0 AND sys_language_uid=' . intval ( $id ) . ' AND pid=' . intval ( $useUid ) . $addWhere;
-		$fields = ($onlyUid) ? 'uid' : '*';
+		$fields = '*';
 		$table 	= 'pages_language_overlay';		
 			
 		$result = $GLOBALS ['TYPO3_DB']->exec_SELECTquery ( $fields, $table, $where, '', '' );
@@ -89,9 +80,9 @@ class tx_languagevisibility_pageelement extends tx_languagevisibility_element {
 	}
 	
 	/**
-	 *returns which field in the language should be used to read the default visibility
+	 * Returns which field in the language should be used to read the default visibility
 	 *
-	 *@return string (blank=default / page=page)
+	 * @return string (blank=default / page=page)
 	 **/
 	function getFieldToUseForDefaultVisibility() {
 		return 'page';
@@ -113,7 +104,7 @@ class tx_languagevisibility_pageelement extends tx_languagevisibility_element {
 		
 		// if a workspace record has an overlay, an overlay also exists in the livews with versionstate = 1
 		// therefore we have to look for any undeleted overlays of the live version 		
-		$fields = 'count(*) as anz';
+		$fields = 'count(uid) as anz';
 		$table = 'pages_language_overlay';
 		$where = 'deleted = 0 AND pid=' . $useUid;
 		

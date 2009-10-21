@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testdata>
+	<tt_content>
+		<uid>10</uid>
+		<pid>1</pid>
+	</tt_content>
+	
+	<tt_content>
+		<uid>11</uid>
+		<pid>-1</pid>
+		<t3ver_wsid>12</t3ver_wsid>
+		<t3ver_oid>10</t3ver_oid>
+		<t3_origuid>10</t3_origuid>
+	</tt_content>
+</testdata>

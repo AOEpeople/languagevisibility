@@ -27,6 +27,9 @@
  * @author	Daniel Poetzinger <poetzinger@aoemedia.de>
  */
 require_once (t3lib_extMgm::extPath ( "languagevisibility" ) . 'classes/class.tx_languagevisibility_languagerepository.php');
+
+require_once (t3lib_extMgm::extPath('languagevisibility') . 'classes/class.tx_languagevisibility_cacheManager.php');
+
 require_once (t3lib_extMgm::extPath ( "languagevisibility" ) . 'classes/exceptions/class.tx_languagevisibility_InvalidRowException.php');
 
 abstract class tx_languagevisibility_element {
@@ -48,11 +51,10 @@ abstract class tx_languagevisibility_element {
 	
 	
 	/**
-	 * Cache for live version of records
-	 * @var array
+	 * 
+	 * @param $row
+	 * @return void
 	 */
-	protected static $liveRecordCache;
-	
 	public function __construct($row) {
 		
 		if(!$this->isRowOriginal($row)){
@@ -72,6 +74,24 @@ abstract class tx_languagevisibility_element {
 		
 		$this->initialisations ();
 	}
+	
+	/**
+	 * Method to set the tablename of the recordelement.
+	 *
+	 * @param string $table
+	 */
+	function setTable($table) {
+		$this->table=$table;
+	}
+		
+	/**
+	 * Method to get the tablename
+	 *
+	 * @return string
+	 */
+	public function getTable(){
+		return $this->table;
+	}	
 	
 	/**
 	 * Method to deternmine that an Element will not be instanciated with
@@ -261,7 +281,7 @@ abstract class tx_languagevisibility_element {
 	 *
 	 * @return array
 	 */
-	function getWorkspaceVersionUids() {
+/*	protected function getWorkspaceVersionUids() {
 		$uids = array ();
 		
 		if ($this->isLiveWorkspaceElement ()) {
@@ -279,7 +299,7 @@ abstract class tx_languagevisibility_element {
 		}
 		
 		return $uids;
-	}
+	}*/
 	
 	################
 	# STATE METHODS
@@ -412,19 +432,23 @@ abstract class tx_languagevisibility_element {
 			return false;
 		}
 		
-		if(!isset(self::$liveRecordCache[$table.' '.$row['uid'].' '.$fields])){
+		$cacheManager 	= tx_languagevisibility_cacheManager::getInstance();
+		
+		$cacheData 		= $cacheManager->get('liveRecordCache');
+		$isCacheEnabled	= $cacheManager->isCacheEnabled();
+		
+		if(!$isCacheEnabled || !isset($cacheData[$table.' '.$row['uid'].' '.$fields])){
 			if ($row ['pid'] == - 1) {
 				$result = t3lib_BEfunc::getLiveVersionOfRecord ( $table, $row ['uid'] , $fields);
 			}else{
 				$result = $row;		
 			}
 									
-			self::$liveRecordCache[$table.' '.$row['uid'].' '.$fields] = $result;
-		}else{
-			
-			$result = self::$liveRecordCache[$table.' '.$row['uid'].' '.$fields];
+			$cacheData[$table.' '.$row['uid'].' '.$fields] = $result;	
+			$cacheManager->set('liveRecordCache',$cacheData);
 		}
-		return $result;
+		
+		return $cacheData[$table.' '.$row['uid'].' '.$fields];
 	}
 	
 	/**
@@ -482,22 +506,38 @@ abstract class tx_languagevisibility_element {
 	abstract public function hasOverLayRecordForAnyLanguageInAnyWorkspace();
 	
 	/**
-	 * Enter description here...
+	 * This method is used to retrieve an overlay record of a given record.
+	 * 
+	 * @param $languageId
+	 * @param $onlyUid
+	 * @return array 
+	 */
+	public function getOverLayRecordForCertainLanguage($languageId,$onlyUid=false){	
+		//get caching hints
+		$table		= $this->getTable();
+		$uid 		= $this->getUid();
+		$workspace	= intval($GLOBALS['BE_USER']->workspace);
+		
+		$cacheManager 	= tx_languagevisibility_cacheManager::getInstance();
+		
+		$cacheData 		= $cacheManager->get('overlayRecordCache');
+		$isCacheEnabled	= $cacheManager->isCacheEnabled();
+			
+		if(!$isCacheEnabled || !isset($cacheData[$table][$uid][$languageId][$workspace])){
+			$cacheData[$table][$uid][$languageId][$workspace] = $this->getOverLayRecordForCertainLanguageImplementation($languageId);
+			$cacheManager->set('overlayRecordCache',$cacheData);
+		}
+
+		return $cacheData[$table][$uid][$languageId][$workspace];
+	}
+	
+	/**
+	 * This method should provide the implementation to get the overlay of an element for a 
+	 * certain language. The result is cached be the method getOverLayRecordForCertainLanguage.
 	 *
 	 * @param int $languageId
 	 * @param int $onlyUid
 	 */
-	abstract public function getOverLayRecordForCertainLanguage($languageId, $onlyUid = FALSE);
-
-		
-	/**
-	 * Abstract method to determine the table, where the element is located in the database
-	 *
-	 * @return string
-	 */
-	abstract public function getTable();
-	
-
+	abstract protected function getOverLayRecordForCertainLanguageImplementation($languageId);
 }
-
 ?>

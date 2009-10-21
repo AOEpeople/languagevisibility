@@ -30,16 +30,22 @@
  *
  * @author	Daniel P�tzinger
  */
+require_once(t3lib_extMgm::extPath("languagevisibility").'tests/tx_languagevisibility_databaseTestcase.php');
 
 require_once (t3lib_extMgm::extPath ( "languagevisibility" ) . 'classes/class.tx_languagevisibility_elementFactory.php');
+require_once (t3lib_extMgm::extPath ( "languagevisibility" ) . 'classes/dao/class.tx_languagevisibility_daocommon.php');
 require_once (t3lib_extMgm::extPath ( "languagevisibility" ) . 'classes/dao/class.tx_languagevisibility_daocommon_stub.php');
 
 // require_once (t3lib_extMgm::extPath('phpunit').'class.tx_phpunit_test.php');
 require_once (PATH_t3lib . 'class.t3lib_tcemain.php');
 
-class tx_elementFactory_testcase extends tx_phpunit_testcase {
-	
-	public function test_getElementForTable_pageelement() {
+class tx_elementFactory_testcase extends tx_languagevisibility_databaseTestcase {
+		
+	/**
+	 * 
+	 * @test
+	 */
+	public function getElementForTable_pageelement() {
 		// Create the Array fixture.
 		$_uid = 1;
 		$_table = 'pages';
@@ -51,13 +57,17 @@ class tx_elementFactory_testcase extends tx_phpunit_testcase {
 		$factoryClass = t3lib_div::makeInstanceClassName ( 'tx_languagevisibility_elementFactory' );
 		$factory = new $factoryClass ( $daostub );
 		$element = $factory->getElementForTable ( $_table, $_uid );
-		
+
+		$this->assertEquals($element->getTable(),'pages');	
 		$this->assertTrue ( $element instanceof tx_languagevisibility_element, "not object of type tx_languagevisibility_element returned!" );
 		$this->assertTrue ( $element instanceof tx_languagevisibility_pageelement, "not object of type tx_languagevisibility_pageelement returned!" );
-	
 	}
 	
-	public function test_getElementForTable_celement() {
+	/**
+	 * 
+	 * @test
+	 */
+	public function getElementForTable_celement() {
 		// Create the Array fixture.
 		$_uid = 1;
 		$_table = 'tt_content';
@@ -71,12 +81,44 @@ class tx_elementFactory_testcase extends tx_phpunit_testcase {
 		
 		$element = $factory->getElementForTable ( $_table, $_uid );
 		
+		$this->assertEquals($element->getTable(),'tt_content');
 		$this->assertTrue ( $element instanceof tx_languagevisibility_element, "not object of type tx_languagevisibility_element returned!" );
-		$this->assertTrue ( $element instanceof tx_languagevisibility_celement, "not object of type tx_languagevisibility_celement returned!" );
-	
+		$this->assertTrue ( $element instanceof tx_languagevisibility_celement, "not object of type tx_languagevisibility_celement returned!" );	
 	}
 	
-	public function test_getElementForTable_fcelement() {
+	/**
+	 * 
+	 * @test
+	 */
+	public function canCreateDraftWorkspaceElementFromLiveWorkspaceUidInWorkspaceContext(){
+		$this->importDataSet(dirname(__FILE__). '/fixtures/getLiveWorkspaceElementFromWorkspaceUid.xml');	
+	
+		$dao 			= t3lib_div::makeInstance( 'tx_languagevisibility_daocommon' );
+		$factoryClass 	= t3lib_div::makeInstanceClassName ( 'tx_languagevisibility_elementFactory' );
+	
+		/* @var $factory tx_languagevisibility_elementFactory */
+		$factory = new $factoryClass ( $dao );
+
+		//store context
+		$oldWS = $GLOBALS['BE_USER']->workspace;
+		
+		$GLOBALS['BE_USER']->workspace = 12;
+		
+		/* @var $element tx_languagevisibility_celement */
+		$element = $factory->getElementForTable('tt_content',10);
+		
+		$this->assertEquals($element->getUid(),11,'Uid of element should be workspace uid in workspace context.');
+		$this->assertEquals($element->getPid(),-1,'Pid should be -1 because the content element is a workspace content element.');
+		
+		//restore context
+		$GLOBALS['BE_USER']->workspace = $oldWS;
+	}
+	
+	/**
+	 * 
+	 * @test
+	 */
+	public function getElementForTable_fcelement() {
 		// Create the Array fixture.
 		$_uid = 1;
 		$_table = 'tt_content';
@@ -89,7 +131,8 @@ class tx_elementFactory_testcase extends tx_phpunit_testcase {
 		$factory = new $factoryClass ( $daostub );
 		
 		$element = $factory->getElementForTable ( $_table, $_uid );
-		
+
+		$this->assertEquals($element->getTable(),'tt_content');
 		$this->assertTrue ( $element instanceof tx_languagevisibility_element, "not object of type tx_languagevisibility_element returned!" );
 		$this->assertTrue ( $element instanceof tx_languagevisibility_fceelement, "not object of type tx_languagevisibility_fcelement returned!" );
 	}
@@ -97,9 +140,9 @@ class tx_elementFactory_testcase extends tx_phpunit_testcase {
 	/**
 	 * Test to ensure the factory delivers an instance for a tt_news element.
 	 * 
-	 * @return 
+	 * @test
 	 */
-	public function test_canGetElementForTTNEWS() {
+	public function canGetElementForTTNEWS() {
 		// Create the Array fixture.
 		$_uid = 1;
 		$_table = 'tt_news';
@@ -111,8 +154,10 @@ class tx_elementFactory_testcase extends tx_phpunit_testcase {
 		$factoryClass = t3lib_div::makeInstanceClassName ( 'tx_languagevisibility_elementFactory' );
 		$factory = new $factoryClass ( $daostub );
 		
+		/* @var $element  tx_languagevisibility_ttnewselement */
 		$element = $factory->getElementForTable ( $_table, $_uid );
-		
+
+		$this->assertEquals($element->getTable(),'tt_news');
 		$this->assertTrue ( $element instanceof tx_languagevisibility_element, "not object of type tx_languagevisibility_element returned!" );
 		$this->assertTrue ( $element instanceof tx_languagevisibility_ttnewselement, "not object of type tx_languagevisibility_ttnewselement returned!" );
 	}
@@ -121,9 +166,12 @@ class tx_elementFactory_testcase extends tx_phpunit_testcase {
 	 * Records elements store theire translation in the same table. The factory class should
 	 * not allow to get an element from this table which is an overlay.
 	 * 
-	 * @return 
+	 * @test
 	 */
-	public function test_canNotGetElementForOverlayElement() {
+	public function canNotGetElementForOverlayElement() {
+		$_uid = 1;
+		$_table = 'tt_content';
+				
 		//create fixture element
 		$fixture = array ('uid' => 1, 'title' => 'overlay', 'sys_language_uid' => 1, 'l18n_parent' => 12 );
 		$daostub = new tx_languagevisibility_daocommon_stub ( );
@@ -145,12 +193,26 @@ class tx_elementFactory_testcase extends tx_phpunit_testcase {
 	}
 	
 	/**
+	 * This testcase is used to test that an element from an unsupported table can 
+	 * not be created.
 	 * 
-	 * @todo
+	 * @test
+	 * @expectedException UnexpectedValueException
 	 */
-	
-	public function test_canNotGetElementOfUnsupportedTable() {
-	
+	public function canNotGetElementOfUnsupportedTable() {
+		$_uid 	= 4711;
+		$_table	= 'tx_notexisting';
+		$fixture = array ('uid' => $_uid, 'title' => 'record' );
+		$daostub = new tx_languagevisibility_daocommon_stub ( );
+		$daostub->stub_setRow ( $fixture, 'tx_notexisting' );
+		
+		$factoryClass = t3lib_div::makeInstanceClassName ( 'tx_languagevisibility_elementFactory' );
+		/* @var $factory tx_languagevisibility_elementFactory */
+		$factory = new $factoryClass ( $daostub );
+		
+		$element = $factory->getElementForTable($_table, $_uid);
+		
+		$this->assertNull($element,'Element should be null');
 	}
 }
 ?>

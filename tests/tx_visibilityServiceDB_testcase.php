@@ -31,18 +31,17 @@
  * @author	Tolleiv Nietsch
  */
 
+require_once(t3lib_extMgm::extPath("languagevisibility").'tests/tx_languagevisibility_databaseTestcase.php');
+
 require_once(t3lib_extMgm::extPath("languagevisibility").'classes/class.tx_languagevisibility_language.php');
 
-// require_once (t3lib_extMgm::extPath('phpunit').'class.tx_phpunit_test.php');
 require_once (PATH_t3lib.'class.t3lib_tcemain.php');
 
-class tx_visibilityServiceDB_testcase extends tx_phpunit_database_testcase {
+class tx_visibilityServiceDB_testcase extends tx_languagevisibility_databaseTestcase {
 
 	function test_visibility_ce() {
 		$language = $this->_getLang(1);
 		$visibility=t3lib_div::makeInstance('tx_languagevisibility_visibilityService');
-		/* since we use the same uids in testcases to test diffrent behaviour we need to flush the cache*/
-		$visibility->flushCache();
 
 		$fixturesWithoutOverlay = array('tt_content'=>1,'pages'=>1);
 
@@ -57,8 +56,6 @@ class tx_visibilityServiceDB_testcase extends tx_phpunit_database_testcase {
 	function test_visibility_overlayCe() {
 		$element = $this->_getContent('tt_content',2 /* element with L1 overlay */);
 		$visibility=t3lib_div::makeInstance('tx_languagevisibility_visibilityService');
-		/* since we use the same uids in testcases to test diffrent behaviour we need to flush the cache*/
-		$visibility->flushCache();
 
 		$expectedResults=array(1=>1,2=>1,3=>0,4=>1);
 		foreach($expectedResults as $langUid=>$expectedResult) {
@@ -74,8 +71,6 @@ class tx_visibilityServiceDB_testcase extends tx_phpunit_database_testcase {
 		$element = $this->_getContent('pages','2');
 
 		$visibility=t3lib_div::makeInstance('tx_languagevisibility_visibilityService');
-		/* since we use the same uids in testcases to test diffrent behaviour we need to flush the cache*/
-		$visibility->flushCache();
 
 		$this->assertEquals(true, $visibility->isVisible($language,$element), "page should be visible");
 		$this->assertEquals(1, $visibility->getOverlayLanguageIdForLanguageAndElement($language,$element), "Page-Overlay should be defined for lang 1 ...");
@@ -84,8 +79,6 @@ class tx_visibilityServiceDB_testcase extends tx_phpunit_database_testcase {
 	function test_visibility_complexOverlay() {
 		$language = $this->_getLang(3);
 		$visibility=t3lib_div::makeInstance('tx_languagevisibility_visibilityService');
-		/* since we use the same uids in testcases to test diffrent behaviour we need to flush the cache*/
-		$visibility->flushCache();
 
 		$fixtures = array(	'tt_content'	=>array('uid'=>2,'result'=>0),
 						 	'pages'		=>array('uid'=>2,'result'=>1)
@@ -123,8 +116,7 @@ class tx_visibilityServiceDB_testcase extends tx_phpunit_database_testcase {
 		$visibilityResult 	= true;
 
 		$service			= new tx_languagevisibility_visibilityService();
-		/* since we use the same uids in testcases to test diffrent behaviour we need to flush the cache*/
-		$service->flushCache();
+
 		$visibilityResult 	= $service->isVisible($language,$element);
 
 		$this->assertFalse($visibilityResult,'tt-content element is visible, but should not be visible');
@@ -145,9 +137,6 @@ class tx_visibilityServiceDB_testcase extends tx_phpunit_database_testcase {
 		$visibilityResult	= true;
 
 		$service			= new tx_languagevisibility_visibilityService();
-		/* since we use the same uids in testcases to test diffrent behaviour we need to flush the cache*/
-		$service->flushCache();
-
 		$visibilityResult 	= $service->isVisible($language,$element);
 
 		$this->assertFalse($visibilityResult,'page element is visible, but should not be visible');
@@ -166,8 +155,6 @@ class tx_visibilityServiceDB_testcase extends tx_phpunit_database_testcase {
 		$element			= $this->_getContent('tt_content',8);
 		$visibilityResult	= true;
 		$service			= new tx_languagevisibility_visibilityService();
-		/* since we use the same uids in testcases to test diffrent behaviour we need to flush the cache*/
-		$service->flushCache();
 
 		$visibilityResult 	= $service->isVisible($language,$element);
 
@@ -188,8 +175,6 @@ class tx_visibilityServiceDB_testcase extends tx_phpunit_database_testcase {
 		$visibilityResult 	= true;
 
 		$service			= new tx_languagevisibility_visibilityService();
-		/* since we use the same uids in testcases to test diffrent behaviour we need to flush the cache*/
-		$service->flushCache();
 
 		$visibilityResult 	= $service->isVisible($language,$element);
 
@@ -204,8 +189,6 @@ class tx_visibilityServiceDB_testcase extends tx_phpunit_database_testcase {
 		$visibilityResult 	= false;
 
 		$service			= new tx_languagevisibility_visibilityService();
-		/* since we use the same uids in testcases to test diffrent behaviour we need to flush the cache*/
-		$service->flushCache();
 
 		$visibilityResult 	= $service->isVisible($language,$element);
 
@@ -236,8 +219,6 @@ class tx_visibilityServiceDB_testcase extends tx_phpunit_database_testcase {
 	public function canDetermineCorrectVisiblityForContentelementWithLanguageSetToAll(){
 		$this->importDataSet(dirname(__FILE__).'/fixtures/canDetermineCorrectVisiblityForContentelementWithLanguageSetToAll.xml');
 		$service			= new tx_languagevisibility_visibilityService();
-		/* since we use the same uids in testcases to test diffrent behaviour we need to flush the cache*/
-		$service->flushCache();
 
 		$language 			= $this->_getLang(1);
 
@@ -276,8 +257,7 @@ class tx_visibilityServiceDB_testcase extends tx_phpunit_database_testcase {
 		$language 			= $this->_getLang(1);
 		$service			= new tx_languagevisibility_visibilityService();
 		$service->setUseInheritance();
-		/* since we use the same uids in testcases to test diffrent behaviour we need to flush the cache*/
-		$service->flushCache();
+
 
 		$dao				= new tx_languagevisibility_daocommon;
 		$factoryClass		= t3lib_div::makeInstanceClassName('tx_languagevisibility_elementFactory');
@@ -319,8 +299,6 @@ class tx_visibilityServiceDB_testcase extends tx_phpunit_database_testcase {
 		$language 			= $this->_getLang(1);
 		$service			= new tx_languagevisibility_visibilityService();
 		$service->setUseInheritance();
-		/* since we use the same uids in testcases to test diffrent behaviour we need to flush the cache*/
-		$service->flushCache();
 
 		$dao				= new tx_languagevisibility_daocommon;
 		$factoryClass		= t3lib_div::makeInstanceClassName('tx_languagevisibility_elementFactory');
@@ -364,11 +342,8 @@ class tx_visibilityServiceDB_testcase extends tx_phpunit_database_testcase {
 		$language 			= $this->_getLang(1);
 		$service			= new tx_languagevisibility_visibilityService();
 		$service->setUseInheritance();
-		/* since we use the same uids in testcases to test diffrent behaviour we need to flush the cache*/
-		$service->flushCache();
 
 		$dao				= new tx_languagevisibility_daocommon;
-		tx_languagevisibility_daocommon::clearCache();
 		$factoryClass		= t3lib_div::makeInstanceClassName('tx_languagevisibility_elementFactory');
 		$factory			= new $factoryClass($dao);
 
@@ -406,11 +381,8 @@ class tx_visibilityServiceDB_testcase extends tx_phpunit_database_testcase {
 		$language 			= $this->_getLang(1);
 		$service			= new tx_languagevisibility_visibilityService();
 		$service->setUseInheritance();
-		/* since we use the same uids in testcases to test diffrent behaviour we need to flush the cache*/
-		$service->flushCache();
 
 		$dao				= new tx_languagevisibility_daocommon;
-		tx_languagevisibility_daocommon::clearCache();
 		$factoryClass		= t3lib_div::makeInstanceClassName('tx_languagevisibility_elementFactory');
 		$factory			= new $factoryClass($dao);
 
@@ -439,7 +411,6 @@ class tx_visibilityServiceDB_testcase extends tx_phpunit_database_testcase {
 	 * @param void
 	 * @return void
 	 * @author Timo Schmidt <timo.schmidt@aoemedia.de>
-	 * 	 *
 	 */
 	public function yesInPageAnnulatesInheritedForceToNoOfRootlineRecord(){
 		$this->importDataSet(dirname(__FILE__).'/fixtures/yesInPageAnnulatesInheritedForceToNoOfRootlineRecord.xml');
@@ -447,12 +418,8 @@ class tx_visibilityServiceDB_testcase extends tx_phpunit_database_testcase {
 		$language 			= $this->_getLang(1);
 		$service			= new tx_languagevisibility_visibilityService();
 		$service->setUseInheritance();
-		/* since we use the same uids in testcases to test diffrent behaviour we need to flush the cache*/
-		$service->flushCache();
 
 		$dao				= new tx_languagevisibility_daocommon;
-		tx_languagevisibility_daocommon::clearCache();
-
 		$factoryClass		= t3lib_div::makeInstanceClassName('tx_languagevisibility_elementFactory');
 		$factory			= new $factoryClass($dao);
 
@@ -480,11 +447,8 @@ class tx_visibilityServiceDB_testcase extends tx_phpunit_database_testcase {
 		$language 			= $this->_getLang(1);
 		$service			= new tx_languagevisibility_visibilityService();
 		$service->setUseInheritance();
-		/* since we use the same uids in testcases to test diffrent behaviour we need to flush the cache*/
-		$service->flushCache();
 
 		$dao				= new tx_languagevisibility_daocommon;
-		tx_languagevisibility_daocommon::clearCache();
 		$factoryClass		= t3lib_div::makeInstanceClassName('tx_languagevisibility_elementFactory');
 		$factory			= new $factoryClass($dao);
 
@@ -515,12 +479,8 @@ class tx_visibilityServiceDB_testcase extends tx_phpunit_database_testcase {
 		$language 			= $this->_getLang(1);
 		$service			= new tx_languagevisibility_visibilityService();
 		$service->setUseInheritance();
-		/* since we use the same uids in testcases to test diffrent behaviour we need to flush the cache*/
-		$service->flushCache();
 
 		$dao				= new tx_languagevisibility_daocommon;
-		tx_languagevisibility_daocommon::clearCache();
-
 		$factoryClass		= t3lib_div::makeInstanceClassName('tx_languagevisibility_elementFactory');
 		$factory			= new $factoryClass($dao);
 
@@ -555,32 +515,15 @@ class tx_visibilityServiceDB_testcase extends tx_phpunit_database_testcase {
 			$this->importDataSet(dirname(__FILE__). '/fixtures/dbContentWithVisibilityTestdata.xml');
 		}
 		$dao=new tx_languagevisibility_daocommon;
-		tx_languagevisibility_daocommon::clearCache();
-
 		$factoryClass=t3lib_div::makeInstanceClassName('tx_languagevisibility_elementFactory');
 
 		$factory=new $factoryClass($dao);
 		return $factory->getElementForTable($table,$uid);
 	}
 
-	function setUp() {
-		$this->createDatabase();
-		$db = $this->useTestDatabase();
-		$this->importStdDB();
-
-		$GLOBALS["TYPO3_CONF_VARS"]["FE"]["addRootLineFields"] = "tx_languagevisibility_inheritanceflag_original,tx_languagevisibility_inheritanceflag_overlayed";
-		$GLOBALS["TYPO3_CONF_VARS"]["FE"]["pageOverlayFields"] = "uid,title,subtitle,nav_title,media,keywords,description,abstract,author,author_email,sys_language_uid,tx_languagevisibility_inheritanceflag_overlayed";
-
-
-		// order of extension-loading is important !!!!
-		$this->importExtensions(array('cms','languagevisibility'));
+	public function setUp() {
+		parent::setUp();
 		$this->_loadWorkspaces();
+		
 	}
-
-	function tearDown() {
-		$this->cleanDatabase();
-		$this->dropDatabase();
-		$GLOBALS['TYPO3_DB']->sql_select_db(TYPO3_db);
-	}
-
 }

@@ -3,12 +3,44 @@
 require_once (t3lib_extMgm::extPath ( "languagevisibility" ) . 'classes/class.tx_languagevisibility_languagerepository.php');
 require_once (t3lib_extMgm::extPath ( "languagevisibility" ) . 'classes/dao/class.tx_languagevisibility_daocommon.php');
 
+/**
+ * @author timo
+ *
+ */
 class tx_languagevisibility_language {
 	private $row;
 	
 	protected static $flagCache;
 	
-	function setData($row) {
+	/**
+	 * Holds the exploded fallBackOrderArray
+	 * 
+	 * @var array
+	 */
+	protected $defaultFallBackOrderArray;
+	
+	/**
+	 * Holds the exploded elementFallBackOrderArray
+	 * 
+	 * @var array
+	 */
+	protected $elementFallBackOrderArray;
+	
+	/**
+	 * Holds the exploded newFallBackOrderArray
+	 * 
+	 * @var array
+	 */
+	protected $newsFallBackOrderArray;
+	
+	
+	/**
+	 * @var holds the lg_iso_2 isocode
+	 */
+	protected $lg_iso_2;
+	
+	
+	public function setData($row) {
 		$this->row = $row;
 	}
 	
@@ -18,9 +50,14 @@ class tx_languagevisibility_language {
 	 * @return array
 	 */
 	public function getFallbackOrder() {
-		//unfortunatly defaultlangauge is 999 instead of 0 (reason in formrendering of typo3):
-		$tx_languagevisibility_fallbackorder = str_replace ( '999', '0', $this->row ['tx_languagevisibility_fallbackorder'] );
-		return t3lib_div::trimExplode ( ',', $tx_languagevisibility_fallbackorder );
+		//determine and explode only once	
+		if(!isset($this->defaultFallBackOrderArray)){
+			//unfortunatly defaultlangauge is 999 instead of 0 (reason in formrendering of typo3):
+			$tx_languagevisibility_fallbackorder = str_replace ( '999', '0', $this->row ['tx_languagevisibility_fallbackorder'] );
+			$this->defaultFallBackOrderArray =  t3lib_div::trimExplode ( ',', $tx_languagevisibility_fallbackorder );
+		}
+		
+		return $this->defaultFallBackOrderArray;
 	}
 	
 	/**
@@ -28,13 +65,18 @@ class tx_languagevisibility_language {
 	 *
 	 * @return array
 	 */
-	public function getFallbackOrderElement() {
-		if ($this->usesComplexFallbackSettings ()) {
-			$tx_languagevisibility_fallbackorderel = str_replace ( '999', '0', $this->row ['tx_languagevisibility_fallbackorderel'] );
-			return t3lib_div::trimExplode ( ',', $tx_languagevisibility_fallbackorderel );
-		} else {
-			return $this->getFallbackOrder ();
+	public function getFallbackOrderElement() {	
+		//determine and explode only once
+		if(!isset($this->elementFallBackOrderArray)){
+			if ($this->usesComplexFallbackSettings ()) {
+				$tx_languagevisibility_fallbackorderel = str_replace ( '999', '0', $this->row ['tx_languagevisibility_fallbackorderel'] );
+				$this->elementFallBackOrderArray = t3lib_div::trimExplode ( ',', $tx_languagevisibility_fallbackorderel );
+			} else {
+				$this->elementFallBackOrderArray = $this->getFallbackOrder ();
+			}
 		}
+		
+		return $this->elementFallBackOrderArray;
 	}
 	
 	/**
@@ -42,13 +84,18 @@ class tx_languagevisibility_language {
 	 *
 	 * @return array
 	 */
-	public function getFallbackOrderTTNewsElement() {
-		if ($this->usesComplexFallbackSettings ()) {
-			$tx_languagevisibility_fallbackorderttnewel = str_replace ( '999', '0', $this->row ['tx_languagevisibility_fallbackorderttnewsel'] );
-			return t3lib_div::trimExplode ( ',', $tx_languagevisibility_fallbackorderttnewel );
-		} else {
-			return $this->getFallbackOrder ();
+	public function getFallbackOrderTTNewsElement() {		
+		//determine and explode only once
+		if(!isset($this->newsFallBackOrderArray)){
+			if ($this->usesComplexFallbackSettings ()) {
+				$tx_languagevisibility_fallbackorderttnewel = str_replace ( '999', '0', $this->row ['tx_languagevisibility_fallbackorderttnewsel'] );
+				$this->newsFallBackOrderArray = t3lib_div::trimExplode ( ',', $tx_languagevisibility_fallbackorderttnewel );
+			} else {
+				$this->newsFallBackOrderArray = $this->getFallbackOrder ();
+			}
 		}
+		
+		return $this->newsFallBackOrderArray;
 	}
 	
 	/**
@@ -83,7 +130,7 @@ class tx_languagevisibility_language {
 	 *
 	 * @return boolean
 	 */
-	function getDefaultVisibilityForTTNewsElement() {
+	public function getDefaultVisibilityForTTNewsElement() {
 		return $this->row ['tx_languagevisibility_defaultvisibilityttnewsel'];
 	}
 	
@@ -92,18 +139,33 @@ class tx_languagevisibility_language {
 	 *
 	 * @return int
 	 */
-	function getUid() {
+	public function getUid() {
 		return $this->row ['uid'];
 	}
 	
-	function getIsoCode() {
-		// Finding the ISO code:
-		$result = $GLOBALS ['TYPO3_DB']->exec_SELECTquery ( 'lg_iso_2', 'static_languages', 'uid=' . intval ( $this->row ['static_lang_isocode'] ), '', '' );
-		$static_languages_row = $GLOBALS ['TYPO3_DB']->sql_fetch_assoc ( $result );
-		return $static_languages_row ['lg_iso_2'];
+	/**
+	 * Method to determine the lg_iso_2 code from the static languages record.
+	 * 
+	 * @return string
+	 */
+	public function getIsoCode() {
+		if(!isset($this->lg_iso_2)){
+			// Finding the ISO code:
+			$result = $GLOBALS ['TYPO3_DB']->exec_SELECTquery ( 'lg_iso_2', 'static_languages', 'uid=' . intval ( $this->row ['static_lang_isocode'] ), '', '' );
+			$row = $GLOBALS ['TYPO3_DB']->sql_fetch_assoc ( $result );
+			$this->lg_iso_2 = $row['lg_iso_2'];
+		}
+		
+		return $this->lg_iso_2;
 	}
 	
-	function getTitle($pidForDefault = '') {
+	/**
+	 * Returns the title of the language.
+	 * 
+	 * @param $pidForDefault
+	 * @return string
+	 */
+	public function getTitle($pidForDefault = '') {
 		if ($this->getUid () == '0') {
 			if ($pidForDefault == '')
 				$pidForDefault = $this->_guessCurrentPid ();
@@ -115,14 +177,14 @@ class tx_languagevisibility_language {
 		}
 	}
 	
-	function _guessCurrentPid() {
+	protected function _guessCurrentPid() {
 		return t3lib_div::_GP ( 'id' );
 	}
 	
 	/**
 	 * @param  Optional the pid of the page. This can be used to get the correct flag for default language (which is set in tsconfig)
 	 **/
-	function getFlagImg($pidForDefault = '') {
+	public function getFlagImg($pidForDefault = '') {
 		global $BACK_PATH;
 		
 		$cache_key = 'pid:'.$pidForDefault.'uid:'.$this->getUid();
@@ -136,8 +198,7 @@ class tx_languagevisibility_language {
 	/**
 	 * @param Optional the pid of the page. This can be used to get the correct flagpath for default language (which is set in tsconfig)
 	 **/
-	function getFlagImgPath($pidForDefault = '', $BACK_PATH = '') {
-		
+	public function getFlagImgPath($pidForDefault = '', $BACK_PATH = '') {
 		$flagAbsPath = t3lib_div::getFileAbsFileName ( $GLOBALS ['TCA'] ['sys_language'] ['columns'] ['flag'] ['config'] ['fileFolder'] );
 		
 		$flagIconPath = $BACK_PATH . '../' . substr ( $flagAbsPath, strlen ( PATH_site ) );
@@ -160,7 +221,7 @@ class tx_languagevisibility_language {
 	 * @param int uid
 	 * @return boolean
 	 **/
-	function isLanguageUidInFallbackOrder($uid) {
+	public function isLanguageUidInFallbackOrder($uid) {
 		$fallbacks = $this->getFallbackOrder ();
 		return in_array ( $uid, $fallbacks );
 	}

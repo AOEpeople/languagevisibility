@@ -31,13 +31,14 @@
  * @author	Daniel P�tzinger
  */
 
+require_once(t3lib_extMgm::extPath("languagevisibility").'tests/tx_languagevisibility_databaseTestcase.php');
+
 require_once(t3lib_extMgm::extPath("languagevisibility").'classes/class.tx_languagevisibility_language.php');
 
 // require_once (t3lib_extMgm::extPath('phpunit').'class.tx_phpunit_test.php');
 require_once (PATH_t3lib.'class.t3lib_tcemain.php');
 
-class tx_languagerepository_testcase extends tx_phpunit_database_testcase {
-
+class tx_languagerepository_testcase extends tx_languagevisibility_databaseTestcase {
 
 	public function test_getLanguages()
 	{
@@ -64,23 +65,11 @@ class tx_languagerepository_testcase extends tx_phpunit_database_testcase {
 	    $language=$languageRep->getLanguageById(1);
 	    $this->assertTrue($language instanceof tx_languagevisibility_language, "no language object");
 	    $this->assertEquals($language->getUid(),1,"wrong uid");
-
 	}
 
 	function setUp() {
-		$this->createDatabase();
-		$db = $this->useTestDatabase();
-		$this->importStdDB();
-		// order of extension-loading is important !!!!
-		$this->importExtensions(array('cms','languagevisibility'));
-
+		parent::setUp();
 		$this->importDataSet(dirname(__FILE__). '/fixtures/dbDefaultLangs.xml');
-	}
-
-	function tearDown() {
-		$this->cleanDatabase();
-   		$this->dropDatabase();
-		$GLOBALS['TYPO3_DB']->sql_select_db(TYPO3_db);
 	}
 }
 ?>

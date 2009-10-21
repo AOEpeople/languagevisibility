@@ -20,8 +20,13 @@ class tx_languagevisibility_beservices {
 	 */
 	public static function getVisibleFlagsForElement($uid, $table) {
 		$cacheKey = $uid.':'.$table;
-		
-		if(!isset(self::$visibleFlagsCache[$cacheKey])){
+
+		$cacheManager	= tx_languagevisibility_cacheManager::getInstance();
+		$isCacheEnabled	= $cacheManager->isCacheEnabled();
+		$cacheData 		= $cacheManager->get('visibleFlagsCache');
+		 
+		if( ! $isCacheEnabled || !isset($cacheData[$cacheKey])){
+			
 			$dao = t3lib_div::makeInstance ( 'tx_languagevisibility_daocommon' );
 			$elementfactoryName = t3lib_div::makeInstanceClassName ( 'tx_languagevisibility_elementFactory' );
 			$elementfactory = new $elementfactoryName ( $dao );
@@ -33,6 +38,7 @@ class tx_languagevisibility_beservices {
 			
 			$languageRep 	= t3lib_div::makeInstance ( 'tx_languagevisibility_languagerepository' );
 			$languageList 	= $languageRep->getLanguages ();
+			
 			$visibility 	= t3lib_div::makeInstance ( 'tx_languagevisibility_visibilityService' );
 			
 			$visibleFlags = array ();
@@ -41,10 +47,12 @@ class tx_languagevisibility_beservices {
 					$visibleFlags [] = $language->getFlagImg (0);
 				}
 			}
-			self::$visibleFlagsCache[$cacheKey] =  implode ( '', $visibleFlags );
+			
+			$cacheData[$cacheKey] =  implode ( '', $visibleFlags );
+			$cacheManager->set('visibleFlagsCache',$cacheData);
 		}
 		
-		return self::$visibleFlagsCache[$cacheKey];
+		return $cacheData[$cacheKey];
 	}
 	
 	/**

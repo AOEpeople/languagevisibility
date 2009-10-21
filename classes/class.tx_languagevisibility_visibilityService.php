@@ -1,7 +1,7 @@
 <?php
 
 require_once t3lib_extMgm::extPath('languagevisibility') . 'classes/class.tx_languagevisibility_visibility.php';
-
+require_once t3lib_extMgm::extPath('languagevisibility') . 'classes/class.tx_languagevisibility_cacheManager.php';
 
 class tx_languagevisibility_visibilityService {
 	/**
@@ -10,12 +10,11 @@ class tx_languagevisibility_visibilityService {
 	protected static $useInheritance;
 	
 	/**
-	 * Holds a cache for visibility settings of a record.
+	 * Constructor of the service, used to initialize the service with the usage
+	 * of the inheritance feature.
 	 * 
-	 * @var array
+	 * @return void
 	 */
-	protected static $visibilitySettingCache;
-	
 	public function __construct(){		
 		if(!isset(self::$useInheritance)){
 			$confArr = unserialize($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf']['languagevisibility']);
@@ -23,16 +22,6 @@ class tx_languagevisibility_visibilityService {
 				self::setUseInheritance();	
 			}
 		}
-	}
-	
-	/**
-	 * Method to clear the internal cache.
-	 * 
-	 * @param void
-	 * @return void
-	 */
-	public function flushCache(){
-		self::$visibilitySettingCache = array();
 	}
 	
 	/**
@@ -46,6 +35,8 @@ class tx_languagevisibility_visibilityService {
 	}
 	
 	/**
+	 * Function to configure the visibilityService to use inherited settings.
+	 *  
 	 * @param boolean $useInheritance
 	 */
 	public static function setUseInheritance($useInheritance=true) {
@@ -59,7 +50,7 @@ class tx_languagevisibility_visibilityService {
 	* @param tx_languagevisibility_element $element
 	* @return mixed 
 	**/
-	function getOverlayLanguageIdForLanguageAndElement(tx_languagevisibility_language $language,$element) {
+	function getOverlayLanguageIdForLanguageAndElement(tx_languagevisibility_language $language, tx_languagevisibility_element $element) {
 		if ($this->isVisible($language,$element)) {
 			return $this->_relevantOverlayLanguageId;
 		}
@@ -71,7 +62,8 @@ class tx_languagevisibility_visibilityService {
 	 * currently used to get correct r
 	 * page rootline - also if a page in rootline is not vivible
 	 *
-	 * @return unknown
+	 * @todo can this resolved diffrent? the relevantOverlayLanguageId is set in isVisible
+	 * @return int
 	 */
 	function getLastRelevantOverlayLanguageId() {
 		return $this->_relevantOverlayLanguageId;
@@ -83,9 +75,9 @@ class tx_languagevisibility_visibilityService {
 	*  (sets for internal access only $this->_relevantOverlayLanguageId which holds the overlay languageid)
 	*  
 	*  @param tx_languagevisibility_language $language
-	*  @param 
+	*  @param tx_languagevisibility_element
 	**/
-	public function isVisible(tx_languagevisibility_language $language,$element)    {
+	public function isVisible(tx_languagevisibility_language $language, tx_languagevisibility_element $element)    {
 		$this->_relevantOverlayLanguageId=$language->getUid();
 		
 		$visibility=$this->getVisibilitySetting($language,$element);
@@ -148,7 +140,7 @@ class tx_languagevisibility_visibilityService {
 	 * 
 	 * @return tx_languagevisibility_visibility $visibility
 	 */
-	protected function getInheritedVisibility(tx_languagevisibility_language $language, $element){
+	protected function getInheritedVisibility(tx_languagevisibility_language $language, tx_languagevisibility_element $element){
 		
 		$dao = t3lib_div::makeInstance ( 'tx_languagevisibility_daocommon' );
 		$elementfactoryName = t3lib_div::makeInstanceClassName ( 'tx_languagevisibility_elementFactory' );
@@ -184,12 +176,21 @@ class tx_languagevisibility_visibilityService {
 	* @param tx_languagevisibility_element $element
 	* @return string
 	*/
-	public function getVisibilitySetting(tx_languagevisibility_language $language,$element) {
-		if(!isset(self::$visibilitySettingCache[$language->getUid().'_'.$element->getUid().'_'.$element->getTable()])){
-			self::$visibilitySettingCache[$language->getUid().'_'.$element->getUid().'_'.$element->getTable()] = $this->getVisibility($language,$element)->getVisibilityString();
+	public function getVisibilitySetting(tx_languagevisibility_language $language,tx_languagevisibility_element $element) {
+		$cacheManager	= tx_languagevisibility_cacheManager::getInstance();
+		$cacheData 		= $cacheManager->get('visibilitySettingCache');
+		$isCacheEnabled	= $cacheManager->isCacheEnabled();
+		
+		$elementTable 	= $element->getTable();
+		$elementUid		= $element->getUid();
+		$languageUid	= $language->getUid();
+		
+		if(!$isCacheEnabled || !isset($cacheData[$languageUid.'_'.$elementUid.'_'.$elementTable])){
+			$cacheData[$languageUid.'_'.$elementUid.'_'.$elementTable] = $this->getVisibility($language,$element)->getVisibilityString();
+			$cacheManager->set('visibilitySettingCache', $cacheData);
 		}
 		
-		return self::$visibilitySettingCache[$language->getUid().'_'.$element->getUid().'_'.$element->getTable()];
+		return $cacheData[$languageUid.'_'.$elementUid.'_'.$elementTable];
 	}
 	
 	
@@ -200,7 +201,7 @@ class tx_languagevisibility_visibilityService {
 	* @param tx_languagevisibility_element $element
 	* @return string
 	 */
-	public function getVisibilityDescription(tx_languagevisibility_language $language,$element){
+	public function getVisibilityDescription(tx_languagevisibility_language $language,tx_languagevisibility_element $element){
 		return $this->getVisibility($language,$element)->getVisibilityDescription();
 	}
 	
@@ -211,7 +212,7 @@ class tx_languagevisibility_visibilityService {
 	* @param tx_languagevisibility_element $element
 	* @return tx_languagevisibility_visibility
 	*/
-	protected function getVisibility(tx_languagevisibility_language $language,$element){		
+	protected function getVisibility(tx_languagevisibility_language $language,tx_languagevisibility_element $element){		
 		$visibility 	= new tx_languagevisibility_visibility();
 		$local			=	$element->getLocalVisibilitySetting($language->getUid());
 			

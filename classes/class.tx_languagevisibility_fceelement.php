@@ -22,10 +22,6 @@ class tx_languagevisibility_fceelement extends tx_languagevisibility_element {
 		$this->disabledIsVisible = $DS ['meta'] ['disabledIsVisible'] ? 1 : 0;
 	}
 	
-	public function getTable() {
-		return 'tt_content';
-	}
-	
 	public function getElementDescription() {
 		return 'FCE';
 	}
@@ -90,7 +86,7 @@ class tx_languagevisibility_fceelement extends tx_languagevisibility_element {
 	/**
 	 *TODO
 	 **/
-	function getOverLayRecordForCertainLanguage($languageId, $onlyUid = FALSE) {
+	function getOverLayRecordForCertainLanguageImplementation($languageId, $onlyUid = FALSE) {
 		return array ();
 	}
 	

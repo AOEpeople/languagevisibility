@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testdata>
+	<pages>
+		<uid>1</uid>
+		<pid>0</pid>
+		<tx_languagevisibility_visibility>a:1:{i:1;s:3:"no+";}</tx_languagevisibility_visibility>
+		<tx_languagevisibility_inheritanceflag_original>1</tx_languagevisibility_inheritanceflag_original>
+	</pages>
+	<pages>
+		<uid>2</uid>
+		<pid>1</pid>
+	</pages>
+	<pages>
+		<uid>3</uid>
+		<pid>2</pid>
+	</pages>
+	<pages_language_overlay>
+		<uid>4</uid>
+		<pid>3</pid>
+		<sys_language_uid>1</sys_language_uid>
+	</pages_language_overlay>
+</testdata>

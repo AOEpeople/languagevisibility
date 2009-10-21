@@ -4,59 +4,43 @@
 require_once(t3lib_extMgm::extPath("languagevisibility").'classes/class.tx_languagevisibility_element.php');
 
 class tx_languagevisibility_recordelement extends tx_languagevisibility_element {
-
-	/**
-	 * Variable to store the tablename of the record element. 
-	 *
-	 * @var string
-	 */
-	protected $table;
-
-	/**
-	 * Method to set the tablename of the recordelement.
-	 *
-	 * @param string $table
-	 */
-	function setTable($table) {
-		$this->table=$table;
-	}
-	
 	
 	/**
-	 * Method to get the tablename
-	 *
-	 * @return string
-	 */
-	public function getTable(){
-		return $this->table;
-	}
-
-	/**
-	 * Enter description here...
-	 *
+	 * Returns a formal description of the record element.
+	 * 
+	 * (non-PHPdoc)
+	 * @see classes/tx_languagevisibility_element#getElementDescription()
 	 * @return string
 	 */
 	public function getElementDescription(){
 		return 'TYPO3-Record';
 	}
 	
+
 	/**
-	* workspace aware check of overlay records for tt_content
-	**/
-	function getOverLayRecordForCertainLanguage($languageId,$onlyUid=FALSE) {
-			global $TCA;
-			$table=$this->table;
-			//actual row in live WS
-
-			$row=$this->_getLiveRowIfWorkspace($this->row,$table);
-			if ($row===false) {
-				return false;
-			}
-
+	 * This method is the implementation of an abstract parent method.
+	 * The method should return the overlay record for a certain language.
+	 * 
+	 * (non-PHPdoc)
+	 * @see classes/tx_languagevisibility_element#getOverLayRecordForCertainLanguageImplementation($languageId)
+	 */
+	protected function getOverLayRecordForCertainLanguageImplementation($languageId) {
+		global $TCA;
+		
+		$table		= $this->table;
+		$uid 		= $this->row['uid'];
+		$workspace	= intval($GLOBALS['BE_USER']->workspace);
+		//actual row in live WS
+			
+		$row=$this->_getLiveRowIfWorkspace($this->row,$table);
+		if ($row===false) {
+			$result = false;
+		}else{
+	
 			$useUid=$row['uid'];
 			$usePid=$row['pid'];
-
-			if ($GLOBALS['BE_USER']->workspace==0) {
+			
+			if ($workspace==0) {
 				// Shadow state for new items MUST be ignored	in workspace
 				$addWhere=' AND t3ver_state!=1';
 			}
@@ -64,24 +48,27 @@ class tx_languagevisibility_recordelement extends tx_languagevisibility_element 
 				//else search get workspace version
 				$addWhere=' AND (t3ver_wsid=0 OR t3ver_wsid='.$GLOBALS['BE_USER']->workspace.')';
 			}
-
+			
 			// Select overlay record:
 			$res = $GLOBALS['TYPO3_DB']->exec_SELECTquery(
 					'*',
 					$table,
-							$TCA[$table]['ctrl']['languageField'].'='.intval($languageId).
+						$TCA[$table]['ctrl']['languageField'].'='.intval($languageId).
 						' AND '.$TCA[$table]['ctrl']['transOrigPointerField'].'='.intval($useUid).
 						' AND hidden=0 AND deleted=0'.$addWhere,
 					'',
 					'',
 					'1'
 				);
-
+			
 			$olrow = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res);
 			$olrow = $this->getContextIndependentWorkspaceOverlay($table,$olrow);
 			$GLOBALS['TYPO3_DB']->sql_free_result($res);
+					
+			$result = $olrow;
+		}
 			
-			return 	$olrow;
+		return $result;
 	}
 
 
@@ -109,10 +96,14 @@ class tx_languagevisibility_recordelement extends tx_languagevisibility_element 
 		}
 	}
 
+	/**
+	 * Returns the fallback order of an record element.
+	 * 
+	 * (non-PHPdoc)
+	 * @see classes/tx_languagevisibility_element#getFallbackOrder($language)
+	 */
 	function getFallbackOrder(tx_languagevisibility_language $language) {
 		return $language->getFallbackOrderElement();
 	}
-
 }
-
 ?>

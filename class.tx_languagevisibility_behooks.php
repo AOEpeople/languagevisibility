@@ -27,6 +27,8 @@
  * @author	Daniel P?tzinger <poetzinger@aoemedia.de>
  */
 
+require_once t3lib_extMgm::extPath('languagevisibility') . 'classes/class.tx_languagevisibility_cacheManager.php';
+
 /**
  * SELECT box processing
  *
@@ -68,6 +70,9 @@ class tx_languagevisibility_behooks {
 					}
 
 					$incomingFieldArray ['tx_languagevisibility_visibility'] = serialize ( $incomingFieldArray ['tx_languagevisibility_visibility'] );
+
+					//flush all caches
+					tx_languagevisibility_cacheManager::getInstance()->flushAllCaches();
 				}
 
 			break;
@@ -96,7 +101,8 @@ class tx_languagevisibility_behooks {
 			case 'tt_content' :
 			case 'tt_news' :
 			case 'pages_language_overlay' :
-
+				
+				
 				if ($status == 'new') {
 					$row ['uid'] = $reference->substNEWwithIDs [$id];
 
@@ -110,6 +116,9 @@ class tx_languagevisibility_behooks {
 
 					$GLOBALS ['TYPO3_DB']->exec_UPDATEquery ( $table, $where, $row );
 				}
+				
+				tx_languagevisibility_cacheManager::getInstance()->flushAllCaches();				
+
 			break;
 		}
 	}

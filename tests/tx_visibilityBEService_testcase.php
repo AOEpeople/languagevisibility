@@ -22,6 +22,8 @@
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
+require_once(t3lib_extMgm::extPath("languagevisibility").'tests/tx_languagevisibility_databaseTestcase.php');
+
 /**
  * This testcase is used to test the functionallity of the beservice
  *
@@ -41,30 +43,8 @@
  * @access public
  */
  
-class tx_visibilityBEService_testcase extends tx_phpunit_database_testcase {	
+class tx_visibilityBEService_testcase extends tx_languagevisibility_databaseTestcase {	
 
-	/**
-	* Creates the test environment.
-	*
-	*/
-	function setUp() {
-		$this->createDatabase();
-		$db = $this->useTestDatabase();
-		
-		// order of extension-loading is important !!!!
-		$this->importStdDB();
-		$this->importExtensions(array('cms','languagevisibility'));
-	}
-
-	/**
-	* Resets the test enviroment after the test.
-	*/
-	function tearDown() {
-		$this->cleanDatabase();
-   		$this->dropDatabase();
-   		$GLOBALS['TYPO3_DB']->sql_select_db(TYPO3_db);
-	}
-	
 	/**
 	* Simple test to check that supported tables can be determined correctly
 	* 
@@ -76,8 +56,7 @@ class tx_visibilityBEService_testcase extends tx_phpunit_database_testcase {
 	public function canDetermineSupportedTables(){
 		$this->assertTrue(tx_languagevisibility_beservices::isSupportedTable('tt_news'));
 		$this->assertTrue(tx_languagevisibility_beservices::isSupportedTable('pages'));
-		$this->assertTrue(tx_languagevisibility_beservices::isSupportedTable('tt_content'));
-		
+		$this->assertTrue(tx_languagevisibility_beservices::isSupportedTable('tt_content'));	
 	}
 	
 	/**

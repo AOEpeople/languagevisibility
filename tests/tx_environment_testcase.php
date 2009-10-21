@@ -22,7 +22,7 @@
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
-class tx_environment_testcase extends tx_phpunit_database_testcase {
+class tx_environment_testcase extends tx_phpunit_testcase {
 
 	/**
 	 * Just to have some confidence about the system settings ;)
