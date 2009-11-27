@@ -6,9 +6,9 @@ CREATE TABLE sys_language (
 	tx_languagevisibility_fallbackorderel blob NOT NULL,
 	tx_languagevisibility_fallbackorderttnewsel blob NOT NULL,
 	tx_languagevisibility_complexfallbacksetting smallint(6) DEFAULT '0' NOT NULL,
-	tx_languagevisibility_defaultvisibility varchar(11) DEFAULT '0' NOT NULL,
-	tx_languagevisibility_defaultvisibilityel varchar(11) DEFAULT '0' NOT NULL,
-	tx_languagevisibility_defaultvisibilityttnewsel varchar(11) DEFAULT '0' NOT NULL
+	tx_languagevisibility_defaultvisibility varchar(11) DEFAULT 't' NOT NULL,
+	tx_languagevisibility_defaultvisibilityel varchar(11) DEFAULT 't' NOT NULL,
+	tx_languagevisibility_defaultvisibilityttnewsel varchar(11) DEFAULT 't' NOT NULL
 );
 
 
