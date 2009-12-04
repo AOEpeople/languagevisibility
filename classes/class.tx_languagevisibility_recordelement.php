@@ -4,10 +4,10 @@
 require_once(t3lib_extMgm::extPath("languagevisibility").'classes/class.tx_languagevisibility_element.php');
 
 class tx_languagevisibility_recordelement extends tx_languagevisibility_element {
-	
+
 	/**
 	 * Returns a formal description of the record element.
-	 * 
+	 *
 	 * (non-PHPdoc)
 	 * @see classes/tx_languagevisibility_element#getElementDescription()
 	 * @return string
@@ -15,40 +15,40 @@ class tx_languagevisibility_recordelement extends tx_languagevisibility_element 
 	public function getElementDescription(){
 		return 'TYPO3-Record';
 	}
-	
+
 
 	/**
 	 * This method is the implementation of an abstract parent method.
 	 * The method should return the overlay record for a certain language.
-	 * 
+	 *
 	 * (non-PHPdoc)
 	 * @see classes/tx_languagevisibility_element#getOverLayRecordForCertainLanguageImplementation($languageId)
 	 */
 	protected function getOverLayRecordForCertainLanguageImplementation($languageId) {
 		global $TCA;
-		
+
 		$table		= $this->table;
 		$uid 		= $this->row['uid'];
 		$workspace	= intval($GLOBALS['BE_USER']->workspace);
 		//actual row in live WS
-			
+
 		$row=$this->_getLiveRowIfWorkspace($this->row,$table);
 		if ($row===false) {
 			$result = false;
 		}else{
-	
+
 			$useUid=$row['uid'];
 			$usePid=$row['pid'];
-			
+
 			if ($workspace==0) {
 				// Shadow state for new items MUST be ignored	in workspace
-				$addWhere=' AND t3ver_state!=1';
+				$addWhere=' AND t3ver_state!=1 AND pid > 0 AND t3ver_wsid=0';
 			}
 			else {
 				//else search get workspace version
-				$addWhere=' AND (t3ver_wsid=0 OR t3ver_wsid='.$GLOBALS['BE_USER']->workspace.')';
+				$addWhere=' AND (t3ver_wsid=0 OR t3ver_wsid='.$workspace.')';
 			}
-			
+
 			// Select overlay record:
 			$res = $GLOBALS['TYPO3_DB']->exec_SELECTquery(
 					'*',
@@ -60,14 +60,14 @@ class tx_languagevisibility_recordelement extends tx_languagevisibility_element 
 					'',
 					'1'
 				);
-			
+
 			$olrow = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res);
 			$olrow = $this->getContextIndependentWorkspaceOverlay($table,$olrow);
 			$GLOBALS['TYPO3_DB']->sql_free_result($res);
-					
+
 			$result = $olrow;
 		}
-			
+
 		return $result;
 	}
 
@@ -98,7 +98,7 @@ class tx_languagevisibility_recordelement extends tx_languagevisibility_element 
 
 	/**
 	 * Returns the fallback order of an record element.
-	 * 
+	 *
 	 * (non-PHPdoc)
 	 * @see classes/tx_languagevisibility_element#getFallbackOrder($language)
 	 */

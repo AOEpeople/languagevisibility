@@ -65,6 +65,22 @@
 		<tx_languagevisibility_fallbackorderel>999</tx_languagevisibility_fallbackorderel>
 		<tx_languagevisibility_fallbackorderttnewsel>999</tx_languagevisibility_fallbackorderttnewsel>
 	</sys_language>
+	<sys_language>
+		<uid>5</uid>
+		<pid>0</pid>
+		<tstamp>1222075907</tstamp>
+		<hidden>0</hidden>
+		<title>Chinese</title>
+        <flag>cn.gif</flag>
+        <static_lang_isocode>105</static_lang_isocode>
+        <tx_languagevisibility_complexfallbacksetting>0</tx_languagevisibility_complexfallbacksetting>
+		<tx_languagevisibility_defaultvisibility>t</tx_languagevisibility_defaultvisibility>
+		<tx_languagevisibility_defaultvisibilityel>t</tx_languagevisibility_defaultvisibilityel>
+		<tx_languagevisibility_defaultvisibilityttnewsel>t</tx_languagevisibility_defaultvisibilityttnewsel>
+		<tx_languagevisibility_fallbackorder>1</tx_languagevisibility_fallbackorder>
+		<tx_languagevisibility_fallbackorderel>999</tx_languagevisibility_fallbackorderel>
+		<tx_languagevisibility_fallbackorderttnewsel>999</tx_languagevisibility_fallbackorderttnewsel>
+	</sys_language>
 
 
 </dataset>

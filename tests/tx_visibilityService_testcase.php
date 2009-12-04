@@ -37,14 +37,14 @@ require_once (t3lib_extMgm::extPath ( "languagevisibility" ) . 'classes/class.tx
 require_once (PATH_t3lib . 'class.t3lib_tcemain.php');
 
 class tx_visibilityService_testcase extends tx_phpunit_testcase {
-	
+
 	public function test_visibility() {
-		
+
 		// Create the language object fixture.
 		$fixture = array ('uid' => 1, 'tx_languagevisibility_fallbackorder' => '2' );
 		$language1 = new tx_languagevisibility_language ( );
 		$language1->setData ( $fixture );
-		
+
 		$rep = t3lib_div::makeInstance ( 'tx_languagevisibility_languagerepository' );
 		$deflanguage = $rep->getDefaultLanguage ();
 		//Create the element object fixture.
@@ -58,53 +58,53 @@ class tx_visibilityService_testcase extends tx_phpunit_testcase {
 		$factory = new $factoryClass ( $daostub );
 		//get element from factory:
 		$element = $factory->getElementForTable ( $_table, $_uid );
-		
+
 		//test
 		$visibility = t3lib_div::makeInstance ( 'tx_languagevisibility_visibilityService' );
-		
+
 		// language 1 should be set local to "t"
 		$this->assertEquals ( 't', $visibility->getVisibilitySetting ( $language1, $element ), "setting t expected" );
 		$this->assertEquals ( true, $visibility->isVisible ( $deflanguage, $element ), "default lang should be visible" );
 	}
-	
+
 	public function test_visibility_fixture_ce() {
-		
+
 		$language = $this->_fixture_getLanguageOneWithDefaultFallback ();
 		$element = $this->_fixture_getElementWithDefaultVisibility ();
-		
+
 		//test
 		$visibility = t3lib_div::makeInstance ( 'tx_languagevisibility_visibilityService' );
-		
+
 		// language 1 should be set local to "t"
 		$this->assertEquals ( '-', $element->getLocalVisibilitySetting ( 1 ), "setting d expected" );
 		$this->assertEquals ( 'f', $visibility->getVisibilitySetting ( $language, $element ), "setting f expected (because default is used)" );
 		$this->assertEquals ( true, $visibility->isVisible ( $language, $element ), "default lang should be visible" );
 		$this->assertEquals ( 0, $visibility->getOverlayLanguageIdForLanguageAndElement ( $language, $element ), "default should be overlay" );
 	}
-	
+
 	public function test_visibility_fixture_fce_db() {
 		$language = $this->_fixture_getLanguageThreeWithMultiFallback ();
 		$element = $this->_fixture_getFCEElementWithDefaultVisibility ();
-		
+
 		//test
 		$visibility = t3lib_div::makeInstance ( 'tx_languagevisibility_visibilityService' );
-		
+
 		// language 1 should be set local to "t"
 		$this->assertEquals ( '-', $element->getLocalVisibilitySetting ( 1 ), "setting default (-) expected" );
-		
+
 		$this->assertEquals ( 'f', $visibility->getVisibilitySetting ( $language, $element ), "setting f expected (because default is used)" );
 		$this->assertEquals ( true, $visibility->isVisible ( $language, $element ), "in aust it should be visible" );
 		//$this->assertEquals(1, $visibility->getOverlayLanguageIdForLanguageAndElement($language,$element), "default should be overlay");
 	}
-	
+
 	public function test_visibility_fixture_page() {
 
 		$language = $this->_fixture_getLanguageOneWithDefaultFallback ();
 		$element = $this->_fixture_getPageElementWithDefaultVisibility ();
-		
+
 		//test
 		$visibility = t3lib_div::makeInstance ( 'tx_languagevisibility_visibilityService' );
-		
+
 		// language 1 should be set local to "t"
 		$this->assertTrue ($element instanceof tx_languagevisibility_pageelement,'factory return instance of wrong type');
 		$this->assertEquals ( '-', $element->getLocalVisibilitySetting ( 1 ), "setting d expected" );
@@ -112,21 +112,21 @@ class tx_visibilityService_testcase extends tx_phpunit_testcase {
 		$this->assertEquals ( true, $visibility->isVisible ( $language, $element ), "default lang should be visible" );
 		$this->assertEquals ( 0, $visibility->getOverlayLanguageIdForLanguageAndElement ( $language, $element ), "default record should be overlay" );
 	}
-	
+
 	public function test_visibility_fixture_news(){
 		$language = $this->_fixture_getLanguageOneWithDefaultFallback ();
 		$element = $this->_fixture_getNewsElementWithDefaultVisibility ();
-		
-		
+
+
 		$visibility = t3lib_div::makeInstance ( 'tx_languagevisibility_visibilityService' );
-		
+
 		$this->assertTrue ($element instanceof tx_languagevisibility_ttnewselement,'factory returned instance of wrong type');
 		$this->assertEquals ( '-', $element->getLocalVisibilitySetting ( 1 ), "setting d expected" );
 		$this->assertEquals ( 'f', $visibility->getVisibilitySetting ( $language, $element ), "setting f expected (because default is used)" );
 		$this->assertEquals ( true, $visibility->isVisible ( $language, $element ), "default lang should be visible" );
-		
+
 	}
-	
+
 	function _fixture_getLanguageOneWithDefaultFallback() {
 		// Create the language object fixture.
 		$fixture = array ('uid' => 1, 'tx_languagevisibility_fallbackorder' => '0,1', 'tx_languagevisibility_fallbackorderel' => '0,1', 'tx_languagevisibility_defaultvisibility' => 'f', 'tx_languagevisibility_defaultvisibilityel' => 'f','tx_languagevisibility_defaultvisibilityttnewsel' => 'f' );
@@ -141,14 +141,14 @@ class tx_visibilityService_testcase extends tx_phpunit_testcase {
 		$language1->setData ( $fixture );
 		return $language1;
 	}
-	
+
 	function _fixture_getLanguageFourWithElementFallback() {
 		$fixture = array ('uid' => 2, 'tx_languagevisibility_fallbackorder' => '0,1', 'tx_languagevisibility_fallbackorderel' => '1', 'tx_languagevisibility_defaultvisibility' => 'f', 'tx_languagevisibility_defaultvisibilityel' => 'f' );
 		$language4 = new tx_languagevisibility_language ( );
 		$language4->setData ( $fixture );
 		return $language4;
 	}
-	
+
 	function _fixture_getElementWithDefaultVisibility() {
 		//Create the element object fixture.
 		$_table = 'tt_content';
@@ -179,7 +179,7 @@ class tx_visibilityService_testcase extends tx_phpunit_testcase {
 		$element = $factory->getElementForTable ( $_table, $_uid );
 		return $element;
 	}
-	
+
 	function _fixture_getFCEElementWithDefaultVisibility() {
 		//Create the element object fixture.
 		$_table = 'tt_content';
@@ -249,7 +249,7 @@ class tx_visibilityService_testcase extends tx_phpunit_testcase {
 		$element = $factory->getElementForTable ( $_table, $_uid );
 		return $element;
 	}
-	
+
 	function _fixture_getNewsElementWithDefaultVisibility() {
 		//Create the element object fixture.
 		$_table = 'tt_news';

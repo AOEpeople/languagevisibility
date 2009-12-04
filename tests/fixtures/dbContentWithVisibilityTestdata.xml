@@ -230,4 +230,60 @@
 			<tx_languagevisibility_visibility>s:188:"s:179:"a:14:{i:0;s:1:"-";i:1;s:2:"no";i:2;s:1:"-";i:3;s:1:"-";i:4;s:1:"-";i:5;s:1:"-";i:6;s:1:"-";i:7;s:1:"-";i:8;s:1:"-";i:9;s:1:"-";i:10;s:1:"-";i:11;s:1:"-";i:12;s:1:"-";i:13;s:1:"-";}";";</tx_languagevisibility_visibility>
 		</tt_content>
 		
+		
+		
+	<tt_content>
+		<uid>15</uid>
+		<pid>1</pid>
+		<header>Element with hidden overlay</header>
+		<hidden>0</hidden>
+		<deleted>0</deleted>
+		<t3ver_wsid>0</t3ver_wsid>
+		<l18n_parent>0</l18n_parent>
+		<l18n_diffsource>0</l18n_diffsource>
+		<sys_language_uid>0</sys_language_uid>
+		<tx_languagevisibility_visibility>a:5:{i:0;s:1:"-";i:1;s:1:"-";i:2;s:1:"-";i:4;s:1:"t";i:5;s:1:"t";}</tx_languagevisibility_visibility>
+	</tt_content>
+
+	<tt_content>
+		<uid>16</uid>
+		<pid>1</pid>
+		<header>overlay</header>
+		<hidden>0</hidden>
+		<deleted>0</deleted>
+		<t3ver_wsid>0</t3ver_wsid>
+		<l18n_parent>15</l18n_parent>
+		<l18n_diffsource>0</l18n_diffsource>
+		<sys_language_uid>4</sys_language_uid>
+		<tx_languagevisibility_visibility></tx_languagevisibility_visibility>
+	</tt_content>
+
+	<tt_content>
+		<uid>17</uid>
+		<pid>1</pid>
+		<header>Hidden overlay</header>
+		<hidden>1</hidden>
+		<deleted>0</deleted>
+		<t3ver_wsid>0</t3ver_wsid>
+		<l18n_parent>15</l18n_parent>
+		<l18n_diffsource>0</l18n_diffsource>
+		<sys_language_uid>5</sys_language_uid>
+		<tx_languagevisibility_visibility></tx_languagevisibility_visibility>
+	</tt_content>
+
+	<tt_content>
+		<uid>18</uid>
+		<pid>-1</pid>
+		<header>workspace overlay</header>
+		<hidden>0</hidden>
+		<deleted>0</deleted>
+		<t3ver_wsid>5</t3ver_wsid>
+		<l18n_parent>15</l18n_parent>
+		<l18n_diffsource>0</l18n_diffsource>
+		<sys_language_uid>5</sys_language_uid>
+		<tx_languagevisibility_visibility></tx_languagevisibility_visibility>
+	</tt_content>
+	
+		
+		
 </dataset>

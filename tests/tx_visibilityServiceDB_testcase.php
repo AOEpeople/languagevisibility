@@ -39,7 +39,15 @@ require_once (PATH_t3lib.'class.t3lib_tcemain.php');
 
 class tx_visibilityServiceDB_testcase extends tx_languagevisibility_databaseTestcase {
 
-	function test_visibility_ce() {
+	/**
+	 * Check the visibility of a regular content element
+	 *
+	 * @test
+	 * @param void
+	 * @return void
+	 * @see tx_languagevisibility_visibilityService
+	 */
+	function visibility_ce() {
 		$language = $this->_getLang(1);
 		$visibility=t3lib_div::makeInstance('tx_languagevisibility_visibilityService');
 
@@ -53,7 +61,16 @@ class tx_visibilityServiceDB_testcase extends tx_languagevisibility_databaseTest
 			$this->assertEquals(0, $visibility->getOverlayLanguageIdForLanguageAndElement($language,$element), sprintf("default should be overlay table:%s uid:%d",$table,$uid));
 		}
 	}
-	function test_visibility_overlayCe() {
+
+	/**
+	 * Check the visibility of some content elements with overlay-records
+	 *
+	 * @test
+	 * @param void
+	 * @return void
+	 * @see tx_languagevisibility_visibilityService
+	 */
+	function visibility_overlayCe() {
 		$element = $this->_getContent('tt_content',2 /* element with L1 overlay */);
 		$visibility=t3lib_div::makeInstance('tx_languagevisibility_visibilityService');
 
@@ -64,6 +81,38 @@ class tx_visibilityServiceDB_testcase extends tx_languagevisibility_databaseTest
 			$this->assertEquals(true, $visibility->isVisible($language,$element), "element should be visible in lang ".$expectedResult);
 			$this->assertEquals($expectedResult, $visibility->getOverlayLanguageIdForLanguageAndElement($language,$element), sprintf("Element Overlay used wrong fallback - language %d - should be %d ",$langUid,$expectedResult));
 		}
+	}
+
+	/**
+	 * Check the visibility of some content elements with overlay-records
+	 *
+	 * @test
+	 * @param void
+	 * @return void
+	 * @see tx_languagevisibility_visibilityService
+	 */
+	function visibility_hiddenOverlayCe() {
+			/* @var $element tx_languagevisibility_element */
+		$element = $this->_getContent('tt_content',15 /* element with L1 overlay */);
+			/* @var $visibility tx_languagevisibility_visibilityService */
+		$visibility=t3lib_div::makeInstance('tx_languagevisibility_visibilityService');
+
+			//Test language 4 to see that this is working if something exists
+		$language = $this->_getLang( 4 );
+		$this->assertEquals('t', $visibility->getVisibilitySetting($language,$element));
+		$this->assertTrue($visibility->isVisible($language,$element), 'There\'s an overlay for this language - therefore it should be visible');
+		$this->assertTrue($element->hasTranslation( 4 ));
+
+		$language = $this->_getLang( 5 );
+		$this->assertEquals('t', $visibility->getVisibilitySetting($language,$element));
+		$this->assertFalse($visibility->isVisible($language,$element), 'This one shouldn\'t be visible because there\'s no valid overlay');
+		$this->assertFalse($element->hasTranslation( 5 ));
+
+		$this->_fakeWorkspaceContext(5);
+		$language = $this->_getLang( 5 );
+		$this->assertEquals('t', $visibility->getVisibilitySetting($language,$element));
+		$this->assertTrue($visibility->isVisible($language,$element), 'This one should be visible because there\'s a valid overlay in the workspace (5)');
+		$this->assertTrue($element->hasTranslation( 5 ));
 	}
 
 	function test_visibility_overlayPage() {
@@ -524,6 +573,6 @@ class tx_visibilityServiceDB_testcase extends tx_languagevisibility_databaseTest
 	public function setUp() {
 		parent::setUp();
 		$this->_loadWorkspaces();
-		
+
 	}
 }
