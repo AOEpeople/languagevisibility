@@ -79,8 +79,8 @@ class tx_languagevisibility_elementFactory {
 		/* @var $element tx_languagevisibility_element */
 		switch ($table) {
 			case 'pages':
-				require_once(t3lib_extMgm::extPath("languagevisibility").'classes/class.tx_languagevisibility_pageelement.php');
 				if (version_compare(TYPO3_version,'4.3.0','<')) {
+					require_once(t3lib_extMgm::extPath("languagevisibility").'classes/class.tx_languagevisibility_pageelement.php');
 					$elementclass=t3lib_div::makeInstanceClassName('tx_languagevisibility_pageelement');
 					$element=new $elementclass($row);
 				} else {
@@ -88,8 +88,8 @@ class tx_languagevisibility_elementFactory {
 				}
 				break;
 			case 'tt_news':
-				require_once(t3lib_extMgm::extPath("languagevisibility").'classes/class.tx_languagevisibility_ttnewselement.php');
 				if (version_compare(TYPO3_version,'4.3.0','<')) {
+					require_once(t3lib_extMgm::extPath("languagevisibility").'classes/class.tx_languagevisibility_ttnewselement.php');
 					$elementclass=t3lib_div::makeInstanceClassName('tx_languagevisibility_ttnewselement');
 					$element=new $elementclass($row);
 				} else {
