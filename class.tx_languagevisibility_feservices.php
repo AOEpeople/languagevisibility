@@ -15,8 +15,12 @@ class tx_languagevisibility_feservices {
 
 	public static function checkVisiblityForElement($uid, $table, $lUid) {
 		$dao = t3lib_div::makeInstance ( 'tx_languagevisibility_daocommon' );
-		$elementfactoryName = t3lib_div::makeInstanceClassName ( 'tx_languagevisibility_elementFactory' );
-		$elementfactory = new $elementfactoryName ( $dao );
+		if (version_compare(TYPO3_version,'4.3.0','<')) {
+			$elementfactoryName = t3lib_div::makeInstanceClassName ( 'tx_languagevisibility_elementFactory' );
+			$elementfactory = new $elementfactoryName ( $dao );
+		} else {
+			$elementfactory = t3lib_div::makeInstance('tx_languagevisibility_elementFactory', $dao);
+		}
 		$element = $elementfactory->getElementForTable ( $table, $uid );
 		$languageRep = t3lib_div::makeInstance ( 'tx_languagevisibility_languagerepository' );
 		$language = $languageRep->getLanguageById ( $lUid );
@@ -28,8 +32,12 @@ class tx_languagevisibility_feservices {
 
 	public static function getElement($uid, $table) {
 		$dao = t3lib_div::makeInstance ( 'tx_languagevisibility_daocommon' );
-		$elementfactoryName = t3lib_div::makeInstanceClassName ( 'tx_languagevisibility_elementFactory' );
-		$elementfactory = new $elementfactoryName ( $dao );
+		if (version_compare(TYPO3_version,'4.3.0','<')) {
+			$elementfactoryName = t3lib_div::makeInstanceClassName ( 'tx_languagevisibility_elementFactory' );
+			$elementfactory = new $elementfactoryName ( $dao );
+		} else {
+			$elementfactory = t3lib_div::makeInstance('tx_languagevisibility_elementFactory', $dao);
+		}
 		$element = $elementfactory->getElementForTable ( $table, $uid );
 		return $element;
 	}
@@ -44,8 +52,12 @@ class tx_languagevisibility_feservices {
 
 	public static function getOverlayLanguageIdForElementRecord($uid, $table, $lUid) {
 		$dao = t3lib_div::makeInstance ( 'tx_languagevisibility_daocommon' );
-		$elementfactoryName = t3lib_div::makeInstanceClassName ( 'tx_languagevisibility_elementFactory' );
-		$elementfactory = new $elementfactoryName ( $dao );
+		if (version_compare(TYPO3_version,'4.3.0','<')) {
+			$elementfactoryName = t3lib_div::makeInstanceClassName ( 'tx_languagevisibility_elementFactory' );
+			$elementfactory = new $elementfactoryName ( $dao );
+		} else {
+			$elementfactory = t3lib_div::makeInstance('tx_languagevisibility_elementFactory', $dao);
+		}
 		$element = $elementfactory->getElementForTable ( $table, $uid );
 		$languageRep = t3lib_div::makeInstance ( 'tx_languagevisibility_languagerepository' );
 		$language = $languageRep->getLanguageById ( $lUid );
@@ -56,8 +68,12 @@ class tx_languagevisibility_feservices {
 
 	public static function getOverlayLanguageIdForElementRecordForced($uid, $table, $lUid) {
 		$dao = t3lib_div::makeInstance ( 'tx_languagevisibility_daocommon' );
-		$elementfactoryName = t3lib_div::makeInstanceClassName ( 'tx_languagevisibility_elementFactory' );
-		$elementfactory = new $elementfactoryName ( $dao );
+		if (version_compare(TYPO3_version,'4.3.0','<')) {
+			$elementfactoryName = t3lib_div::makeInstanceClassName ( 'tx_languagevisibility_elementFactory' );
+			$elementfactory = new $elementfactoryName ( $dao );
+		} else {
+			$elementfactory = t3lib_div::makeInstance('tx_languagevisibility_elementFactory', $dao);
+		}
 		$element = $elementfactory->getElementForTable ( $table, $uid );
 		$languageRep = t3lib_div::makeInstance ( 'tx_languagevisibility_languagerepository' );
 		$language = $languageRep->getLanguageById ( $lUid );

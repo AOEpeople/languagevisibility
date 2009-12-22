@@ -170,8 +170,12 @@ class tx_languagevisibility_visibilityService {
 	protected function getInheritedVisibility(tx_languagevisibility_language $language, tx_languagevisibility_element $element){
 
 		$dao = t3lib_div::makeInstance ( 'tx_languagevisibility_daocommon' );
-		$elementfactoryName = t3lib_div::makeInstanceClassName ( 'tx_languagevisibility_elementFactory' );
-		$elementfactory = new $elementfactoryName ( $dao );
+		if (version_compare(TYPO3_version,'4.3.0','<')) {
+			$elementfactoryName = t3lib_div::makeInstanceClassName ( 'tx_languagevisibility_elementFactory' );
+			$elementfactory = new $elementfactoryName ( $dao );
+		} else {
+			$elementfactory = t3lib_div::makeInstance('tx_languagevisibility_elementFactory', $dao);
+		}
 
 		$elements = $elementfactory->getParentElementsFromElement($element,$language);
 

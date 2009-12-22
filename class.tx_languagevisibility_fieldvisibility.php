@@ -38,8 +38,12 @@ class user_tx_languagevisibility_fieldvisibility {
 		$languageRep 		= t3lib_div::makeInstance ( 'tx_languagevisibility_languagerepository' );
 		$dao 				= t3lib_div::makeInstance ( 'tx_languagevisibility_daocommon' );
 
-		$elementfactoryName = t3lib_div::makeInstanceClassName ( 'tx_languagevisibility_elementFactory' );
-		$elementfactory 	= new $elementfactoryName ( $dao );
+		if (version_compare(TYPO3_version,'4.3.0','<')) {
+			$elementfactoryName = t3lib_div::makeInstanceClassName ( 'tx_languagevisibility_elementFactory' );
+			$elementfactory 	= new $elementfactoryName ( $dao );
+		} else {
+			$elementfactory = t3lib_div::makeInstance('tx_languagevisibility_elementFactory', $dao);
+		}
 
 		$value 				= $PA ['row'] [$PA ['field']];
 		$table 				= $PA ['table'];

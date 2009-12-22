@@ -28,8 +28,12 @@ class tx_languagevisibility_beservices {
 		if( ! $isCacheEnabled || !isset($cacheData[$cacheKey])){
 
 			$dao = t3lib_div::makeInstance ( 'tx_languagevisibility_daocommon' );
-			$elementfactoryName = t3lib_div::makeInstanceClassName ( 'tx_languagevisibility_elementFactory' );
-			$elementfactory = new $elementfactoryName ( $dao );
+			if (version_compare(TYPO3_version,'4.3.0','<')) {
+				$elementfactoryName = t3lib_div::makeInstanceClassName ( 'tx_languagevisibility_elementFactory' );
+				$elementfactory = new $elementfactoryName ( $dao );
+			} else {
+				$elementfactory = t3lib_div::makeInstance('tx_languagevisibility_elementFactory', $dao);
+			}
 			try {
 				$element = $elementfactory->getElementForTable ( $table, $uid );
 			} catch ( Exception $e ) {
@@ -65,8 +69,12 @@ class tx_languagevisibility_beservices {
 	 */
 	public static function getElement($uid,$table,$overlay_ids = true) {
 		$dao=t3lib_div::makeInstance('tx_languagevisibility_daocommon');
-		$elementfactoryName= t3lib_div::makeInstanceClassName('tx_languagevisibility_elementFactory');
-		$elementfactory=new $elementfactoryName($dao);
+		if (version_compare(TYPO3_version,'4.3.0','<')) {
+			$elementfactoryName= t3lib_div::makeInstanceClassName('tx_languagevisibility_elementFactory');
+			$elementfactory=new $elementfactoryName($dao);
+		} else {
+			$elementfactory = t3lib_div::makeInstance('tx_languagevisibility_elementFactory', $dao);
+		}
 		$element=$elementfactory->getElementForTable($table,$uid,$overlay_ids);
 		return $element;
 	}
@@ -84,8 +92,12 @@ class tx_languagevisibility_beservices {
 		$language 	= $rep->getLanguageById ( $languageUid );
 
 		$dao = t3lib_div::makeInstance ( 'tx_languagevisibility_daocommon' );
-		$elementfactoryName = t3lib_div::makeInstanceClassName ( 'tx_languagevisibility_elementFactory' );
-		$elementfactory = new $elementfactoryName ( $dao );
+		if (version_compare(TYPO3_version,'4.3.0','<')) {
+			$elementfactoryName = t3lib_div::makeInstanceClassName ( 'tx_languagevisibility_elementFactory' );
+			$elementfactory = new $elementfactoryName ( $dao );
+		} else {
+			$elementfactory = t3lib_div::makeInstance('tx_languagevisibility_elementFactory', $dao);
+		}
 
 		try {
 			$element = $elementfactory->getElementForTable ( $table, $uid );
@@ -182,9 +194,12 @@ class tx_languagevisibility_beservices {
 	 */
 	public static function hasTranslationInAnyLanguage($uid, $table) {
 		$dao = t3lib_div::makeInstance ( 'tx_languagevisibility_daocommon' );
-		$elementfactoryName = t3lib_div::makeInstanceClassName ( 'tx_languagevisibility_elementFactory' );
-		$elementfactory = new $elementfactoryName ( $dao );
-
+		if (version_compare(TYPO3_version,'4.3.0','<')) {
+			$elementfactoryName = t3lib_div::makeInstanceClassName ( 'tx_languagevisibility_elementFactory' );
+			$elementfactory = new $elementfactoryName ( $dao );
+		} else {
+			$elementfactory = t3lib_div::makeInstance('tx_languagevisibility_elementFactory', $dao);
+		}
 		try{
 			$element = $elementfactory->getElementForTable ( $table, $uid );
 			$rep = t3lib_div::makeInstance ( 'tx_languagevisibility_languagerepository' );

@@ -80,13 +80,21 @@ class tx_languagevisibility_elementFactory {
 		switch ($table) {
 			case 'pages':
 				require_once(t3lib_extMgm::extPath("languagevisibility").'classes/class.tx_languagevisibility_pageelement.php');
-				$elementclass=t3lib_div::makeInstanceClassName('tx_languagevisibility_pageelement');
-				$element=new $elementclass($row);
+				if (version_compare(TYPO3_version,'4.3.0','<')) {
+					$elementclass=t3lib_div::makeInstanceClassName('tx_languagevisibility_pageelement');
+					$element=new $elementclass($row);
+				} else {
+					$element = t3lib_div::makeInstance('tx_languagevisibility_pageelement', $row);
+				}
 				break;
 			case 'tt_news':
 				require_once(t3lib_extMgm::extPath("languagevisibility").'classes/class.tx_languagevisibility_ttnewselement.php');
-				$elementclass=t3lib_div::makeInstanceClassName('tx_languagevisibility_ttnewselement');
-				$element=new $elementclass($row);
+				if (version_compare(TYPO3_version,'4.3.0','<')) {
+					$elementclass=t3lib_div::makeInstanceClassName('tx_languagevisibility_ttnewselement');
+					$element=new $elementclass($row);
+				} else {
+					$element = t3lib_div::makeInstance('tx_languagevisibility_ttnewselement', $row);
+				}
 				break;
 			case 'tt_content':
 				if ($row['CType']=='templavoila_pi1') {
@@ -96,14 +104,22 @@ class tx_languagevisibility_elementFactory {
 					if (is_array($DS)) {
 						if ($DS['meta']['langDisable']==1 && $DS['meta']['langDatabaseOverlay']==1) {
 							//handle as special FCE with normal tt_content overlay:
-							require_once(t3lib_extMgm::extPath("languagevisibility").'classes/class.tx_languagevisibility_fceoverlayelement.php');
-							$elementclass=t3lib_div::makeInstanceClassName('tx_languagevisibility_fceoverlayelement');
-							$element=new $elementclass($row);
+							if (version_compare(TYPO3_version,'4.3.0','<')) {
+								require_once(t3lib_extMgm::extPath("languagevisibility").'classes/class.tx_languagevisibility_fceoverlayelement.php');
+								$elementclass=t3lib_div::makeInstanceClassName('tx_languagevisibility_fceoverlayelement');
+								$element=new $elementclass($row);
+							} else {
+								$element = t3lib_div::makeInstance('tx_languagevisibility_fceoverlayelement', $row);
+							}
 						}
 						else {
-							require_once(t3lib_extMgm::extPath("languagevisibility").'classes/class.tx_languagevisibility_fceelement.php');
-							$elementclass=t3lib_div::makeInstanceClassName('tx_languagevisibility_fceelement');
-							$element=new $elementclass($row,$DS);
+							if (version_compare(TYPO3_version,'4.3.0','<')) {
+								require_once(t3lib_extMgm::extPath("languagevisibility").'classes/class.tx_languagevisibility_fceelement.php');
+								$elementclass=t3lib_div::makeInstanceClassName('tx_languagevisibility_fceelement');
+								$element=new $elementclass($row,$DS);
+							} else {
+								$element = t3lib_div::makeInstance('tx_languagevisibility_fceelement', $row, $DS);
+							}
 						}
 					}
 					else {
@@ -111,9 +127,13 @@ class tx_languagevisibility_elementFactory {
 					}
 				}
 				else {
-					require_once(t3lib_extMgm::extPath("languagevisibility").'classes/class.tx_languagevisibility_celement.php');
-					$elementclass=t3lib_div::makeInstanceClassName('tx_languagevisibility_celement');
-					$element=new $elementclass($row);
+					if (version_compare(TYPO3_version,'4.3.0','<')) {
+						require_once(t3lib_extMgm::extPath("languagevisibility").'classes/class.tx_languagevisibility_celement.php');
+						$elementclass=t3lib_div::makeInstanceClassName('tx_languagevisibility_celement');
+						$element=new $elementclass($row);
+					} else {
+						$element = t3lib_div::makeInstance('tx_languagevisibility_celement', $row);
+					}
 				}
 				break;
 			default:

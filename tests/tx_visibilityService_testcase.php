@@ -54,8 +54,8 @@ class tx_visibilityService_testcase extends tx_phpunit_testcase {
 		$fixture = array ('uid' => $_uid, 'tx_languagevisibility_visibility' => serialize ( $visibility ) );
 		$daostub = new tx_languagevisibility_daocommon_stub ( );
 		$daostub->stub_setRow ( $fixture, $_table );
-		$factoryClass = t3lib_div::makeInstanceClassName ( 'tx_languagevisibility_elementFactory' );
-		$factory = new $factoryClass ( $daostub );
+
+		$factory = new tx_languagevisibility_elementFactory ( $daostub );
 		//get element from factory:
 		$element = $factory->getElementForTable ( $_table, $_uid );
 
@@ -157,8 +157,8 @@ class tx_visibilityService_testcase extends tx_phpunit_testcase {
 		$fixture = array ('uid' => $_uid, 'tx_languagevisibility_visibility' => serialize ( $visibility ) );
 		$daostub = new tx_languagevisibility_daocommon_stub ( );
 		$daostub->stub_setRow ( $fixture, $_table );
-		$factoryClass = t3lib_div::makeInstanceClassName ( 'tx_languagevisibility_elementFactory' );
-		$factory = new $factoryClass ( $daostub );
+
+		$factory = new tx_languagevisibility_elementFactory ( $daostub );
 		//get element from factory:
 		$element = $factory->getElementForTable ( $_table, $_uid );
 		return $element;
@@ -173,8 +173,8 @@ class tx_visibilityService_testcase extends tx_phpunit_testcase {
 		$daostub = new tx_languagevisibility_daocommon_stub ( );
 		$daostub->stub_setRow ( $fixtureL1Rec, $_table );
 		$daostub->stub_setRow ( $fixtureL0Rec, $_table );
-		$factoryClass = t3lib_div::makeInstanceClassName ( 'tx_languagevisibility_elementFactory' );
-		$factory = new $factoryClass ( $daostub );
+
+		$factory = new tx_languagevisibility_elementFactory ( $daostub );
 		//get element from factory:
 		$element = $factory->getElementForTable ( $_table, $_uid );
 		return $element;
@@ -229,8 +229,8 @@ class tx_visibilityService_testcase extends tx_phpunit_testcase {
 </T3FlexForms>' );
 		$daostub = new tx_languagevisibility_daocommon_stub ( );
 		$daostub->stub_setRow ( $fixture, $_table );
-		$factoryClass = t3lib_div::makeInstanceClassName ( 'tx_languagevisibility_elementFactory' );
-		$factory = new $factoryClass ( $daostub );
+
+		$factory = new tx_languagevisibility_elementFactory ( $daostub );
 		//get element from factory:
 		$element = $factory->getElementForTable ( $_table, $_uid );
 		return $element;
@@ -243,8 +243,8 @@ class tx_visibilityService_testcase extends tx_phpunit_testcase {
 		$fixture = array ('uid' => $_uid, 'tx_languagevisibility_visibility' => serialize ( $visibility ) , 'tx_languagevisibility_inheritanceflag_original' => 0,'tx_languagevisibility_inheritanceflag_overlayed' => 0);
 		$daostub = new tx_languagevisibility_daocommon_stub ( );
 		$daostub->stub_setRow ( $fixture, $_table );
-		$factoryClass = t3lib_div::makeInstanceClassName ( 'tx_languagevisibility_elementFactory' );
-		$factory = new $factoryClass ( $daostub );
+
+		$factory = new tx_languagevisibility_elementFactory ( $daostub );
 		//get element from factory:
 		$element = $factory->getElementForTable ( $_table, $_uid );
 		return $element;
@@ -258,8 +258,8 @@ class tx_visibilityService_testcase extends tx_phpunit_testcase {
 		$fixture = array ('uid' => $_uid, 'tx_languagevisibility_visibility' => serialize ( $visibility ) , 'tx_languagevisibility_inheritanceflag_original' => 0,'tx_languagevisibility_inheritanceflag_overlayed' => 0);
 		$daostub = new tx_languagevisibility_daocommon_stub ( );
 		$daostub->stub_setRow ( $fixture, $_table );
-		$factoryClass = t3lib_div::makeInstanceClassName ( 'tx_languagevisibility_elementFactory' );
-		$factory = new $factoryClass ( $daostub );
+
+		$factory = new tx_languagevisibility_elementFactory ( $daostub );
 		//get element from factory:
 		$element = $factory->getElementForTable ( $_table, $_uid );
 		return $element;

@@ -30,7 +30,7 @@ require_once (PATH_t3lib . 'class.t3lib_extobjbase.php');
 /**
  * Module extension (addition to function menu) 'Language Visibility Overview' for the 'testtt' extension.
  *
- * @author     <Daniel Pötzinger>
+ * @author     <Daniel Pï¿½tzinger>
  * @package    TYPO3
  * @subpackage    tx_languagevisibility
  */
@@ -42,11 +42,11 @@ class tx_languagevisibility_modfunc1 extends t3lib_extobjbase {
 	 */
 	function modMenu() {
 		global $LANG;
-		
+
 		$menuArray = array ('depth' => array (0 => $LANG->getLL ( 'depth_0' ), 1 => $LANG->getLL ( 'depth_1' ), 2 => $LANG->getLL ( 'depth_2' ), 3 => $LANG->getLL ( 'depth_3' ) ) );
-		
+
 		// Languages:
-		
+
 
 		$languageRep = t3lib_div::makeInstance ( 'tx_languagevisibility_languagerepository' );
 		$languageList = $languageRep->getLanguages ();
@@ -54,10 +54,10 @@ class tx_languagevisibility_modfunc1 extends t3lib_extobjbase {
 		foreach ( $languageList as $language ) {
 			$menuArray ['lang'] [$language->getUid ()] = $language->getTitle ();
 		}
-		
+
 		return $menuArray;
 	}
-	
+
 	/**
 	 * MAIN function for page information of localization
 	 *
@@ -65,38 +65,38 @@ class tx_languagevisibility_modfunc1 extends t3lib_extobjbase {
 	 */
 	function main() {
 		global $BACK_PATH, $LANG, $SOBE;
-		
+
 		if ($this->pObj->id) {
 			$theOutput = '';
-			
+
 			// Depth selector:
 			$h_func = t3lib_BEfunc::getFuncMenu ( $this->pObj->id, 'SET[depth]', $this->pObj->MOD_SETTINGS ['depth'], $this->pObj->MOD_MENU ['depth'], 'index.php' );
 			$h_func .= t3lib_BEfunc::getFuncMenu ( $this->pObj->id, 'SET[lang]', $this->pObj->MOD_SETTINGS ['lang'], $this->pObj->MOD_MENU ['lang'], 'index.php' );
 			$theOutput .= $h_func;
-			
+
 			// Add CSH:
 			$theOutput .= t3lib_BEfunc::cshItem ( '_MOD_web_info', 'lang', $GLOBALS ['BACK_PATH'], '|<br/>' );
-			
+
 			// Showing the tree:
 			// Initialize starting point of page tree:
 			$treeStartingPoint = intval ( $this->pObj->id );
 			$treeStartingRecord = t3lib_BEfunc::getRecordWSOL ( 'pages', $treeStartingPoint );
 			$depth = $this->pObj->MOD_SETTINGS ['depth'];
-			
+
 			// Initialize tree object:
 			$tree = t3lib_div::makeInstance ( 't3lib_pageTree' );
 			$tree->init ( 'AND ' . $GLOBALS ['BE_USER']->getPagePermsClause ( 1 ) );
 			$tree->addField ( 'l18n_cfg' );
-			
+
 			// Creating top icon; the current page
 			$HTML = t3lib_iconWorks::getIconImage ( 'pages', $treeStartingRecord, $GLOBALS ['BACK_PATH'], 'align="top"' );
 			$tree->tree [] = array ('row' => $treeStartingRecord, 'HTML' => $HTML );
-			
+
 			// Create the tree from starting point:
 			if ($depth)
 				$tree->getTree ( $treeStartingPoint, $depth, '' );
 				#debug($tree->tree);
-			
+
 
 			// Add CSS needed:
 			$css_content = '
@@ -117,14 +117,14 @@ class tx_languagevisibility_modfunc1 extends t3lib_extobjbase {
 			';
 			$marker = '/*###POSTCSSMARKER###*/';
 			$this->pObj->content = str_replace ( $marker, $css_content . chr ( 10 ) . $marker, $this->pObj->content );
-			
+
 			// Render information table:
 			$theOutput .= $this->renderL10nTable ( $tree );
 		}
-		
+
 		return $theOutput;
 	}
-	
+
 	/**
 	 * Rendering the localization information table.
 	 *
@@ -133,31 +133,33 @@ class tx_languagevisibility_modfunc1 extends t3lib_extobjbase {
 	 */
 	function renderL10nTable(&$tree) {
 		global $LANG;
-		
+
 		// Title length:
 		$titleLen = $GLOBALS ['BE_USER']->uc ['titleLen'];
-		
+
 		// Put together the TREE:
 		$output = '';
 		$newOL_js = array ();
 		$langRecUids = array ();
-		
+
 		//Init DDD
 		$dao = t3lib_div::makeInstance ( 'tx_languagevisibility_daocommon' );
-		$elementfactoryName = t3lib_div::makeInstanceClassName ( 'tx_languagevisibility_elementFactory' );
-		$elementfactory = new $elementfactoryName ( $dao );
-		
+		if (version_compare(TYPO3_version,'4.3.0','<')) {
+			$elementfactory = new tx_languagevisibility_elementFactory ( $dao );
+		} else {
+			$elementfactory = t3lib_div::makeInstance('tx_languagevisibility_elementFactory', $dao);
+		}
 		$languageRep = t3lib_div::makeInstance ( 'tx_languagevisibility_languagerepository' );
 		$languageList = $languageRep->getLanguages ();
-		
+
 		$visibility = t3lib_div::makeInstance ( 'tx_languagevisibility_visibilityService' );
-		
+
 		//traverse Tree:
 		foreach ( $tree->tree as $data ) {
 			$tCells = array ();
-			
+
 			$element = $elementfactory->getElementForTable ( 'pages', $data ['row'] ['uid'] );
-			
+
 			//first cell (tree):
 			// Page icons / titles etc.
 			$tCells [] = '<td' . ($data ['row'] ['_CSSCLASS'] ? ' class="' . $data ['row'] ['_CSSCLASS'] . '"' : '') . '>' . $data ['HTML'] . htmlspecialchars ( t3lib_div::fixed_lgd_cs ( $data ['row'] ['title'], $titleLen ) ) . (strcmp ( $data ['row'] ['nav_title'], '' ) ? ' [Nav: <em>' . htmlspecialchars ( t3lib_div::fixed_lgd_cs ( $data ['row'] ['nav_title'], $titleLen ) ) . '</em>]' : '') . '</td>';
@@ -179,7 +181,7 @@ class tx_languagevisibility_modfunc1 extends t3lib_extobjbase {
 				} else {
 					$statusTrans = 'c-nottranslated';
 				}
-				
+
 				if ($language->getUid () == 0) {
 					//Default
 					//"View page" link is created:
@@ -191,29 +193,29 @@ class tx_languagevisibility_modfunc1 extends t3lib_extobjbase {
 					// Put into cell:
 					$tCells [] = '<td class="' . $statusTrans . ' c-leftLine">' . $info . '</td>';
 					$tCells [] = '<td class="' . $statusTrans . '" title="' . $LANG->getLL ( 'lang_renderl10n_CEcount', '1' ) . '" align="center">' . $this->getContentElementCount ( $data ['row'] ['uid'], 0 ) . '</td>';
-				
+
 				} else {
 					//Normal Language:
 					if ($element->hasTranslation ( $langId )) {
-						
+
 						$status = 'c-ok';
 						$overLayRow = $element->getOverLayRecordForCertainLanguage ( $langId );
 						//add uid of overlay to list of editable records:
 						$langRecUids [$langId] [] = $overLayRow ['uid'];
 						$icon = t3lib_iconWorks::getIconImage ( 'pages_language_overlay', $overLayRow, $GLOBALS ['BACK_PATH'], 'align="top" class="c-recIcon"' );
-						
+
 						$info = $icon . htmlspecialchars ( t3lib_div::fixed_lgd_cs ( $overLayRow ['title'], $titleLen ) ) . (strcmp ( $overLayRow ['nav_title'], '' ) ? ' [Nav: <em>' . htmlspecialchars ( t3lib_div::fixed_lgd_cs ( $overLayRow ['nav_title'], $titleLen ) ) . '</em>]' : '') . ($row ['_COUNT'] > 1 ? '<div>' . $LANG->getLL ( 'lang_renderl10n_badThingThereAre', '1' ) . '</div>' : '');
 						$tCells [] = '<td class="' . $statusTrans . ' c-leftLine">' . $info . '</td>';
-						
+
 						// Edit whole record:
 						$info = '';
 						$editUid = $overLayRow ['uid'];
 						$params = '&edit[pages_language_overlay][' . $editUid . ']=edit';
 						$info .= '<a href="#" onclick="' . htmlspecialchars ( t3lib_BEfunc::editOnClick ( $params, $GLOBALS ['BACK_PATH'] ) ) . '">' . '<img' . t3lib_iconWorks::skinImg ( $GLOBALS ['BACK_PATH'], 'gfx/edit2.gif', 'width="11" height="12"' ) . ' title="' . $LANG->getLL ( 'lang_renderl10n_editLanguageOverlayRecord', '1' ) . '" border="0" alt="" />' . '</a>';
-						
+
 						$info .= '<a href="#" onclick="' . htmlspecialchars ( 'top.loadEditId(' . intval ( $data ['row'] ['uid'] ) . ',"&SET[language]=' . $langId . '"); return false;' ) . '">' . '<img' . t3lib_iconWorks::skinImg ( $GLOBALS ['BACK_PATH'], 'gfx/edit_page.gif', 'width="12" height="12"' ) . ' title="' . $LANG->getLL ( 'lang_renderl10n_editPageLang', '1' ) . '" border="0" alt="" />' . '</a>';
 						$info .= str_replace ( '###LANG_UID###', $langId, $viewPageLink );
-						
+
 						$tCells [] = '<td class="' . $statusTrans . '">' . $info . '</td>';
 						$tCells [] = '<td class="' . $statusTrans . '" title="' . $LANG->getLL ( 'lang_renderl10n_CEcount', '1' ) . '" align="center">' . $this->getContentElementCount ( $data ['row'] ['uid'], $langId ) . '</td>';
 					} else {
@@ -226,7 +228,7 @@ class tx_languagevisibility_modfunc1 extends t3lib_extobjbase {
 								+(document.webinfoForm[\'newOL[' . $langId . '][' . $data ['row'] ['uid'] . ']\'].checked ? \'&edit[pages_language_overlay][' . $data ['row'] ['uid'] . ']=new\' : \'\')
 							';
 						$tCells [] = '<td class="' . $statusTrans . '">' . $infoCell . '</td>';
-					
+
 					}
 				}
 				//last cell show status
@@ -238,7 +240,7 @@ class tx_languagevisibility_modfunc1 extends t3lib_extobjbase {
 				', $tCells ) . '
 			</tr>';
 		}
-		
+
 		//first ROW:
 		//****************
 		$firstRowCells [] = '<td>' . $LANG->getLL ( 'lang_renderl10n_page', '1' ) . ':</td>';
@@ -251,7 +253,7 @@ class tx_languagevisibility_modfunc1 extends t3lib_extobjbase {
 					$firstRowCells [] = '<td></td>';
 				} else {
 					// Title:
-					
+
 
 					// Edit language overlay records:
 					if (is_array ( $langRecUids [$langId] )) {
@@ -262,7 +264,7 @@ class tx_languagevisibility_modfunc1 extends t3lib_extobjbase {
 					} else {
 						$firstRowCells [] = '<td>&nbsp;</td>';
 					}
-					
+
 					// Create new overlay records:
 					$params = "'" . $newOL_js [$langId] . "+'&columnsOnly=title,hidden,sys_language_uid&defVals[pages_language_overlay][sys_language_uid]=" . $langId;
 					$firstRowCells [] = '<td><a href="#" onclick="' . htmlspecialchars ( t3lib_BEfunc::editOnClick ( $params, $GLOBALS ['BACK_PATH'] ) ) . '">
@@ -272,21 +274,21 @@ class tx_languagevisibility_modfunc1 extends t3lib_extobjbase {
 				}
 			}
 		}
-		
+
 		$output = '
 			<tr class="bgColor4">
 				' . implode ( '
 				', $firstRowCells ) . '
 			</tr>' . $output;
-		
+
 		$output = '
 
 		<table border="0" cellspacing="0" cellpadding="0" id="langTable">' . $output . '
 		</table>';
-		
+
 		return $output;
 	}
-	
+
 	function _getStatusImage($stat) {
 		global $BACK_PATH;
 		if ($stat) {
@@ -295,7 +297,7 @@ class tx_languagevisibility_modfunc1 extends t3lib_extobjbase {
 			return '<img src="' . $BACK_PATH . '../typo3conf/ext/languagevisibility/res/nok.gif">';
 		}
 	}
-	
+
 	/**
 	 * Counting content elements for a single language on a page.
 	 *
@@ -308,7 +310,7 @@ class tx_languagevisibility_modfunc1 extends t3lib_extobjbase {
 			$res = $GLOBALS ['TYPO3_DB']->exec_SELECTquery ( 'count(*)', 'tt_content', 'pid=' . intval ( $pageId ) . ' AND sys_language_uid=' . intval ( $sysLang ) . t3lib_BEfunc::deleteClause ( 'tt_content' ) . t3lib_BEfunc::versioningPlaceholderClause ( 'tt_content' ) );
 			list ( $count ) = $GLOBALS ['TYPO3_DB']->sql_fetch_row ( $res );
 		}
-		
+
 		return $count ? $count : '-';
 	}
 }
@@ -316,12 +318,12 @@ class tx_languagevisibility_modfunc1 extends t3lib_extobjbase {
 /**
  * Module extension (addition to function menu) 'Language Visibility Overview' for the 'testtt' extension.
  *
- * @author     <Daniel Pötzinger>
+ * @author     <Daniel Pï¿½tzinger>
  * @package    TYPO3
  * @subpackage    tx_languagevisibility
  */
 class sstx_languagevisibility_modfunc1 extends t3lib_extobjbase {
-	
+
 	/**
 	 * Returns the module menu
 	 *
@@ -329,10 +331,10 @@ class sstx_languagevisibility_modfunc1 extends t3lib_extobjbase {
 	 */
 	function modMenu() {
 		global $LANG;
-		
+
 		return Array ("tx_languagevisibility_modfunc1_check" => "" );
 	}
-	
+
 	/**
 	 * Main method of the module
 	 *
@@ -341,15 +343,15 @@ class sstx_languagevisibility_modfunc1 extends t3lib_extobjbase {
 	function main() {
 		// Initializes the module. Done in this function because we may need to re-initialize if data is submitted!
 		global $SOBE, $BE_USER, $LANG, $BACK_PATH, $TCA_DESCR, $TCA, $CLIENT, $TYPO3_CONF_VARS;
-		
+
 		$theOutput .= $this->pObj->doc->spacer ( 5 );
 		$theOutput .= $this->pObj->doc->section ( $LANG->getLL ( "title" ), "Dummy content here...", 0, 1 );
-		
+
 		$menu = array ();
 		$menu [] = t3lib_BEfunc::getFuncCheck ( $this->wizard->pObj->id, "SET[tx_languagevisibility_modfunc1_check]", $this->wizard->pObj->MOD_SETTINGS ["tx_languagevisibility_modfunc1_check"] ) . $LANG->getLL ( "checklabel" );
 		$theOutput .= $this->pObj->doc->spacer ( 5 );
 		$theOutput .= $this->pObj->doc->section ( "Menu", implode ( " - ", $menu ), 0, 1 );
-		
+
 		return $theOutput;
 	}
 }

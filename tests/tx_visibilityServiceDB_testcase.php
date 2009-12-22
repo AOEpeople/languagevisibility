@@ -272,8 +272,8 @@ class tx_visibilityServiceDB_testcase extends tx_languagevisibility_databaseTest
 		$language 			= $this->_getLang(1);
 
 		$dao				= new tx_languagevisibility_daocommon;
-		$factoryClass		= t3lib_div::makeInstanceClassName('tx_languagevisibility_elementFactory');
-		$factory			= new $factoryClass($dao);
+
+		$factory			= new tx_languagevisibility_elementFactory($dao);
 
 		$visibilityResult 	= true;
 		/* @var $element tx_languagevisibility_pageelement  */
@@ -309,8 +309,8 @@ class tx_visibilityServiceDB_testcase extends tx_languagevisibility_databaseTest
 
 
 		$dao				= new tx_languagevisibility_daocommon;
-		$factoryClass		= t3lib_div::makeInstanceClassName('tx_languagevisibility_elementFactory');
-		$factory			= new $factoryClass($dao);
+
+		$factory			= new tx_languagevisibility_elementFactory($dao);
 
 		$visibilityResult 	= true;
 
@@ -350,8 +350,8 @@ class tx_visibilityServiceDB_testcase extends tx_languagevisibility_databaseTest
 		$service->setUseInheritance();
 
 		$dao				= new tx_languagevisibility_daocommon;
-		$factoryClass		= t3lib_div::makeInstanceClassName('tx_languagevisibility_elementFactory');
-		$factory			= new $factoryClass($dao);
+
+		$factory			= new tx_languagevisibility_elementFactory($dao);
 
 		$visibilityResult 	= true;
 
@@ -393,8 +393,8 @@ class tx_visibilityServiceDB_testcase extends tx_languagevisibility_databaseTest
 		$service->setUseInheritance();
 
 		$dao				= new tx_languagevisibility_daocommon;
-		$factoryClass		= t3lib_div::makeInstanceClassName('tx_languagevisibility_elementFactory');
-		$factory			= new $factoryClass($dao);
+
+		$factory			= new tx_languagevisibility_elementFactory($dao);
 
 		$visibilityResult 	= true;
 
@@ -432,8 +432,8 @@ class tx_visibilityServiceDB_testcase extends tx_languagevisibility_databaseTest
 		$service->setUseInheritance();
 
 		$dao				= new tx_languagevisibility_daocommon;
-		$factoryClass		= t3lib_div::makeInstanceClassName('tx_languagevisibility_elementFactory');
-		$factory			= new $factoryClass($dao);
+
+		$factory			= new tx_languagevisibility_elementFactory($dao);
 
 		$visibilityResult 	= true;
 
@@ -469,8 +469,8 @@ class tx_visibilityServiceDB_testcase extends tx_languagevisibility_databaseTest
 		$service->setUseInheritance();
 
 		$dao				= new tx_languagevisibility_daocommon;
-		$factoryClass		= t3lib_div::makeInstanceClassName('tx_languagevisibility_elementFactory');
-		$factory			= new $factoryClass($dao);
+
+		$factory			= new tx_languagevisibility_elementFactory($dao);
 
 		$visibilityResult 	= true;
 
@@ -498,8 +498,8 @@ class tx_visibilityServiceDB_testcase extends tx_languagevisibility_databaseTest
 		$service->setUseInheritance();
 
 		$dao				= new tx_languagevisibility_daocommon;
-		$factoryClass		= t3lib_div::makeInstanceClassName('tx_languagevisibility_elementFactory');
-		$factory			= new $factoryClass($dao);
+
+		$factory			= new tx_languagevisibility_elementFactory($dao);
 
 
 		$element  = $factory->getElementForTable('pages',6);
@@ -530,8 +530,8 @@ class tx_visibilityServiceDB_testcase extends tx_languagevisibility_databaseTest
 		$service->setUseInheritance();
 
 		$dao				= new tx_languagevisibility_daocommon;
-		$factoryClass		= t3lib_div::makeInstanceClassName('tx_languagevisibility_elementFactory');
-		$factory			= new $factoryClass($dao);
+
+		$factory			= new tx_languagevisibility_elementFactory($dao);
 
 		/* @var $element tx_languagevisibility_pageelement*/
 		$element  				= $factory->getElementForTable('pages',7);
@@ -564,9 +564,8 @@ class tx_visibilityServiceDB_testcase extends tx_languagevisibility_databaseTest
 			$this->importDataSet(dirname(__FILE__). '/fixtures/dbContentWithVisibilityTestdata.xml');
 		}
 		$dao=new tx_languagevisibility_daocommon;
-		$factoryClass=t3lib_div::makeInstanceClassName('tx_languagevisibility_elementFactory');
 
-		$factory=new $factoryClass($dao);
+		$factory=new tx_languagevisibility_elementFactory($dao);
 		return $factory->getElementForTable($table,$uid);
 	}
 
