@@ -47,4 +47,10 @@ $pagesOverlayfields .= (empty($pagesOverlayfields)) ? $NewPagesOverlayfields : '
 $GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['phpunit']['importExtensions_additionalDatabaseFiles'][] = 'EXT:languagevisibility/ext_tables.sql';
 $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['aoe_wspreview/system/class.tx_aoewspreview_system_workspaceService.php']['createDiff'][] = 'EXT:languagevisibility/class.tx_languagevisibility_behooks.php:tx_languagevisibility_behooks->aoewspreview_createDiff';
 
+/**
+ * Hooks
+ */
+
+$GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['templavoila']['pi1']['renderElementClass'][] = 'EXT:languagevisibility/hooks/class.tx_languagevisibility_hooks_templavoila_pi1.php:tx_languagevisibility_hooks_templavoila_pi1';'
+
 ?>
