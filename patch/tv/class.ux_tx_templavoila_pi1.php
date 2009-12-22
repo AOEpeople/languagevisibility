@@ -23,7 +23,7 @@
 ***************************************************************/
 
 class ux_tx_templavoila_pi1 extends tx_templavoila_pi1 {
-   
+
 
 	/**
 	 * Common function for rendering of the Flexible Content / Page Templates.
@@ -86,10 +86,10 @@ class ux_tx_templavoila_pi1 extends tx_templavoila_pi1 {
 			$lKey = ($GLOBALS['TSFE']->sys_language_isocode && !$langDisabled && !$langChildren) ? 'l'.$GLOBALS['TSFE']->sys_language_isocode : 'lDEF';
 			//danielp
 			if ($row['_OVERLAYLANGUAGEISOCODE'] && !$langDisabled && !$langChildren) {
-				$lKey='l'.$row['_OVERLAYLANGUAGEISOCODE'];				
-				
+				$lKey='l'.$row['_OVERLAYLANGUAGEISOCODE'];
+
 			}
-			
+
 			$dataValues = is_array($data['data']) ? $data['data'][$sheet][$lKey] : '';
 			if (!is_array($dataValues))	$dataValues = array();
 
@@ -104,7 +104,7 @@ class ux_tx_templavoila_pi1 extends tx_templavoila_pi1 {
 				if ($this->conf['childTemplate'])	{
 					$renderType = $this->conf['childTemplate'];
 				} else {	// Default:
-					$renderType = t3lib_div::GPvar('print') ? 'print' : '';
+					$renderType = t3lib_div::_GP('print') ? 'print' : '';
 				}
 
 					// Get Template Object record:
@@ -125,7 +125,7 @@ class ux_tx_templavoila_pi1 extends tx_templavoila_pi1 {
 							//Danielp
 							if ($row['_OVERLAYLANGUAGEISOCODE'] && !$langDisabled && $langChildren) {
 								$vKey='v'.$row['_OVERLAYLANGUAGEISOCODE'];
-											
+
 							}
 							$TOlocalProc = $singleSheet ? $TOproc['ROOT']['el'] : $TOproc['sheets'][$sheet]['ROOT']['el'];
 							$this->processDataValues($dataValues,$dataStruct['ROOT']['el'],$TOlocalProc,$vKey);
@@ -169,8 +169,8 @@ class ux_tx_templavoila_pi1 extends tx_templavoila_pi1 {
 
 		return $content;
 	}
-	
-	
+
+
 	/**
 	 * Creates a visual response to the TemplaVoila blocks on the page.
 	 *
@@ -274,7 +274,7 @@ class ux_tx_templavoila_pi1 extends tx_templavoila_pi1 {
 						$content.
 					'</div>';
 		}
-		
+
 		return $content	;
 	}
 
