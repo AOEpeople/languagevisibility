@@ -84,10 +84,12 @@ class ux_tx_templavoila_pi1 extends tx_templavoila_pi1 {
 			$data = t3lib_div::xml2array($row['tx_templavoila_flex']);
 
 			$lKey = ($GLOBALS['TSFE']->sys_language_isocode && !$langDisabled && !$langChildren) ? 'l'.$GLOBALS['TSFE']->sys_language_isocode : 'lDEF';
-			//danielp
-			if ($row['_OVERLAYLANGUAGEISOCODE'] && !$langDisabled && !$langChildren) {
-				$lKey='l'.$row['_OVERLAYLANGUAGEISOCODE'];
 
+				/* AOE modification not needed for TV > 1.4.2 */
+			foreach($hookObjectsArr as $hookObj)	{
+				if (method_exists ($hookObj, 'renderElement_preProcessLanguageKey')) {
+					$lKey = $hookObj->renderElement_preProcessLanguageKey($row, $table, $lKey, $langDisable, $langChildren, $this);
+				}
 			}
 
 			$dataValues = is_array($data['data']) ? $data['data'][$sheet][$lKey] : '';
@@ -103,6 +105,13 @@ class ux_tx_templavoila_pi1 extends tx_templavoila_pi1 {
 					// Initialize rendering type:
 				if ($this->conf['childTemplate'])	{
 					$renderType = $this->conf['childTemplate'];
+					if (substr($renderType, 0, 9) == 'USERFUNC:') {
+						$conf = array(
+							'conf' => is_array($this->conf['childTemplate.']) ? $this->conf['childTemplate.'] : array(),
+							'toRecord' => $row
+						);
+						$renderType = t3lib_div::callUserFunction(substr($renderType, 9), $conf, $this);
+					}
 				} else {	// Default:
 					$renderType = t3lib_div::_GP('print') ? 'print' : '';
 				}
@@ -116,19 +125,45 @@ class ux_tx_templavoila_pi1 extends tx_templavoila_pi1 {
 					if (is_array($TO))	{
 
 							// Get local processing:
-						$TOproc = t3lib_div::xml2array($TOrec['localprocessing']);
-						if (!is_array($TOproc))	$TOproc=array();
-
+						$TOproc = array();
+						if ($TOrec['localprocessing']) {
+							$TOproc = t3lib_div::xml2array($TOrec['localprocessing']);
+							if (!is_array($TOproc))	{
+								// Must be a error!
+								// TODO log to TT the content of $TOproc (it is a error message now)
+								$TOproc = array();
+							}
+						}
 							// Processing the data array:
 						if ($GLOBALS['TT']->LR) $GLOBALS['TT']->push('Processing data');
 							$vKey = ($GLOBALS['TSFE']->sys_language_isocode && !$langDisabled && $langChildren) ? 'v'.$GLOBALS['TSFE']->sys_language_isocode : 'vDEF';
-							//Danielp
-							if ($row['_OVERLAYLANGUAGEISOCODE'] && !$langDisabled && $langChildren) {
-								$vKey='v'.$row['_OVERLAYLANGUAGEISOCODE'];
 
+								/* AOE modification not needed for TV > 1.4.2 */
+							foreach($hookObjectsArr as $hookObj)	{
+								if (method_exists ($hookObj, 'renderElement_preProcessValueKey')) {
+									$lKey = $hookObj->renderElement_preProcessValueKey($row, $table, $vKey, $langDisable, $langChildren, $this);
+								}
 							}
+
 							$TOlocalProc = $singleSheet ? $TOproc['ROOT']['el'] : $TOproc['sheets'][$sheet]['ROOT']['el'];
+								// Store the original data values before the get processed.
+							$originalDataValues = $dataValues;
 							$this->processDataValues($dataValues,$dataStruct['ROOT']['el'],$TOlocalProc,$vKey);
+
+								// Hook: renderElement_postProcessDataValues
+							foreach ($hookObjectsArr as $hookObj) {
+								if (method_exists($hookObj, 'renderElement_postProcessDataValues')) {
+									$flexformData = array(
+										'table' => $table,
+										'row'   => $row,
+										'sheet' => $renderSheet,
+										'sLang' => $lKey,
+										'vLang' => $vKey
+									);
+									$hookObj->renderElement_postProcessDataValues($DS, $dataValues, $originalDataValues, $flexformData);
+								}
+							}
+
 						if ($GLOBALS['TT']->LR) $GLOBALS['TT']->pull();
 
 							// Merge the processed data into the cached template structure:
@@ -163,7 +198,7 @@ class ux_tx_templavoila_pi1 extends tx_templavoila_pi1 {
 			}
 		} else {
 			$content = $this->formatError('
-				cCouldn\'t find a Data Structure set for table/row "'.$table.':'.$row['uid'].'".
+				Couldn\'t find a Data Structure set for table/row "'.$table.':'.$row['uid'].'".
 				Please select a Data Structure and Template Object first.');
 		}
 
@@ -277,7 +312,6 @@ class ux_tx_templavoila_pi1 extends tx_templavoila_pi1 {
 
 		return $content	;
 	}
-
 }
 
 
