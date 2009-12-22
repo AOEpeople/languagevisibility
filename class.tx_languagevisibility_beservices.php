@@ -7,13 +7,13 @@ require_once (t3lib_extMgm::extPath ( "languagevisibility" ) . 'classes/dao/clas
 require_once (t3lib_extMgm::extPath ( "languagevisibility" ) . 'patch/lib/class.tx_languagevisibility_beUser.php');
 
 class tx_languagevisibility_beservices {
-	
+
 	protected static $cache_canBeUserCopyDelete = array();
-	
+
 	protected static $visibleFlagsCache = array();
-	
+
 	/**
-	 * 
+	 *
 	 * @param $uid
 	 * @param $table
 	 * @return string
@@ -24,9 +24,9 @@ class tx_languagevisibility_beservices {
 		$cacheManager	= tx_languagevisibility_cacheManager::getInstance();
 		$isCacheEnabled	= $cacheManager->isCacheEnabled();
 		$cacheData 		= $cacheManager->get('visibleFlagsCache');
-		 
+
 		if( ! $isCacheEnabled || !isset($cacheData[$cacheKey])){
-			
+
 			$dao = t3lib_div::makeInstance ( 'tx_languagevisibility_daocommon' );
 			$elementfactoryName = t3lib_div::makeInstanceClassName ( 'tx_languagevisibility_elementFactory' );
 			$elementfactory = new $elementfactoryName ( $dao );
@@ -35,26 +35,26 @@ class tx_languagevisibility_beservices {
 			} catch ( Exception $e ) {
 				return '-';
 			}
-			
+
 			$languageRep 	= t3lib_div::makeInstance ( 'tx_languagevisibility_languagerepository' );
 			$languageList 	= $languageRep->getLanguages ();
-			
+
 			$visibility 	= t3lib_div::makeInstance ( 'tx_languagevisibility_visibilityService' );
-			
+
 			$visibleFlags = array ();
 			foreach ( $languageList as $language ) {
 				if ($visibility->isVisible ( $language, $element )) {
 					$visibleFlags [] = $language->getFlagImg (0);
 				}
 			}
-			
+
 			$cacheData[$cacheKey] =  implode ( '', $visibleFlags );
 			$cacheManager->set('visibleFlagsCache',$cacheData);
 		}
-		
+
 		return $cacheData[$cacheKey];
 	}
-	
+
 	/**
 	 * Helper function to get an element by uid and tablename.
 	 *
@@ -65,12 +65,12 @@ class tx_languagevisibility_beservices {
 	 */
 	public static function getElement($uid,$table,$overlay_ids = true) {
 		$dao=t3lib_div::makeInstance('tx_languagevisibility_daocommon');
-		$elementfactoryName= t3lib_div::makeInstanceClassName('tx_languagevisibility_elementFactory');		
-		$elementfactory=new $elementfactoryName($dao);		
+		$elementfactoryName= t3lib_div::makeInstanceClassName('tx_languagevisibility_elementFactory');
+		$elementfactory=new $elementfactoryName($dao);
 		$element=$elementfactory->getElementForTable($table,$uid,$overlay_ids);
 		return $element;
 	}
-		
+
 	/**
 	 * Helper function to check i an element with a given uid and tablename is visible for a languageid.
 	 *
@@ -82,22 +82,22 @@ class tx_languagevisibility_beservices {
 	public static function isVisible($uid, $table, $languageUid) {
 		$rep 		= tx_languagevisibility_languagerepository::makeInstance();
 		$language 	= $rep->getLanguageById ( $languageUid );
-		
+
 		$dao = t3lib_div::makeInstance ( 'tx_languagevisibility_daocommon' );
 		$elementfactoryName = t3lib_div::makeInstanceClassName ( 'tx_languagevisibility_elementFactory' );
 		$elementfactory = new $elementfactoryName ( $dao );
-		
+
 		try {
 			$element = $elementfactory->getElementForTable ( $table, $uid );
 		} catch ( Exception $e ) {
 			return false;
 		}
-		
+
 		$visibility = t3lib_div::makeInstance ( 'tx_languagevisibility_visibilityService' );
-		
+
 		return $visibility->isVisible ( $language, $element );
 	}
-	
+
 	/**
 	 * Helper function to check if the current backend user has rights to cut,copy or delete
 	 *
@@ -108,18 +108,18 @@ class tx_languagevisibility_beservices {
 		/* @var $be_user tx_languagevisibility_beUser */
 		$be_user 	= t3lib_div::makeInstance('tx_languagevisibility_beUser');
 		$userId 	= $be_user->getUid();
-		
+
 		if(!isset(self::$cache_canBeUserCopyDelete[$userId])){
-			if($be_user->allowCutCopyMoveDelete() || $be_user->isAdmin() ){				
-				$result = true;								
+			if($be_user->allowCutCopyMoveDelete() || $be_user->isAdmin() ){
+				$result = true;
 			}else{
 				$result = false;
 			}
-			
+
 			self::$cache_canBeUserCopyDelete[$userId] = $result;
 		}
-		
-		
+
+
 		return self::$cache_canBeUserCopyDelete[$userId];
 	}
 
@@ -134,30 +134,30 @@ class tx_languagevisibility_beservices {
 		switch($table){
 			case 'tt_news':
 			case 'tt_content':
-				global $TCA;	 		
-				t3lib_div::loadTCA($table);						
+				global $TCA;
+				t3lib_div::loadTCA($table);
 				$tanslationIdField = $TCA[$table]['ctrl']['transOrigPointerField'];
 
 				if($tanslationIdField != ''){
-					//if the field which points to the orginal of the translation is 
+					//if the field which points to the orginal of the translation is
 					//not 0 a translation exists and we have an overlay record
-					
+
 					return $row[$tanslationIdField] != 0;
 				}else{
 					//if no translation field exists this is not an overlay
 					return false;
 				}
 			break;
-			
+
 			case 'pages_language_overlay':
 				return true;
 			break;
 			case 'pages':
-				return false;	
+				return false;
 			break;
 		}
 	}
-	
+
 	/**
 	 * Method to check if records of a given table support the languagevisibility feature
 	 *
@@ -172,7 +172,7 @@ class tx_languagevisibility_beservices {
 			return false;
 		}
 	}
-	
+
 	/**
 	 * Static service method to determine if an record has a translation in any language
 	 *
@@ -184,12 +184,12 @@ class tx_languagevisibility_beservices {
 		$dao = t3lib_div::makeInstance ( 'tx_languagevisibility_daocommon' );
 		$elementfactoryName = t3lib_div::makeInstanceClassName ( 'tx_languagevisibility_elementFactory' );
 		$elementfactory = new $elementfactoryName ( $dao );
-		
+
 		try{
 			$element = $elementfactory->getElementForTable ( $table, $uid );
 			$rep = t3lib_div::makeInstance ( 'tx_languagevisibility_languagerepository' );
 			$languages = $rep->getLanguages ();
-			
+
 			foreach ( $languages as $language ) {
 				//skip default language
 				if ($language->getUid () != 0) {
@@ -204,7 +204,7 @@ class tx_languagevisibility_beservices {
 		}
 		return false;
 	}
-	
+
 	/**
 	 * checks if the current BE_USER has access to the page record:
 	 *  that is the case if:
@@ -214,7 +214,7 @@ class tx_languagevisibility_beservices {
 	 *			c) delete: same as for edit (only if user has access to all visible languages)
 	 **/
 	public static function hasUserAccessToPageRecord($id, $cmd = 'edit') {
-		
+
 		global $BE_USER;
 		if ($cmd == 'new') {
 			return true;
@@ -244,7 +244,7 @@ class tx_languagevisibility_beservices {
 		}
 		return true;
 	}
-	
+
 	/**
 	 * checks if the current BE_USER has access to a record:
 	 *  that is the case if:
@@ -253,7 +253,7 @@ class tx_languagevisibility_beservices {
 	 **/
 	public static function hasUserAccessToEditRecord($table, $id) {
 		global $BE_USER;
-	
+
 		if (! is_numeric ( $id )) {
 			return false;
 		}
@@ -264,16 +264,16 @@ class tx_languagevisibility_beservices {
 		//check if overlay record:
 		$dao = t3lib_div::makeInstance ( 'tx_languagevisibility_daocommon' );
 		$row = $dao->getRecord ( $id, $table );
-		
+
 		//@TODO check TCA for languagefield
 		if (self::isOverlayRecord ( $row, $table )) {
-		
+
 			if ($BE_USER->checkLanguageAccess ( $row ['sys_language_uid'] ))
 				return true;
 			else
 				return false;
 		}
-		
+
 		$rep = t3lib_div::makeInstance ( 'tx_languagevisibility_languagerepository' );
 		$languages = $rep->getLanguages ();
 		foreach ( $languages as $language ) {
@@ -295,10 +295,10 @@ class tx_languagevisibility_beservices {
 		}
 		return true;
 	}
-	
+
 	/**
 	 * Method to check if the inheritance is enabled or not
-	 * 
+	 *
 	 * @return boolean
 	 */
 	protected function isInheritanceEnabled(){
@@ -309,7 +309,7 @@ class tx_languagevisibility_beservices {
 			return false;
 		}
 	}
-	
+
 	/**
 	 * returns array with the visibility options that are allowed for the current user.
 	 *
@@ -320,7 +320,7 @@ class tx_languagevisibility_beservices {
 		$uid = $language->getUid ();
 		$select = array ();
 		$useInheritance = ($elementSupportsInheritance && self::isInheritanceEnabled());
-			
+
 		if(!$isOverlay){
 			if ($uid == 0) {
 				$select ['-'] = '-';
@@ -335,7 +335,7 @@ class tx_languagevisibility_beservices {
 				$select ['t'] = 't';
 				$select ['f'] = 'f';
 			}
-	
+
 			//check permissions, if user has no permission only no for the language is allowed
 			// if the user has permissions for languages that act as fallbacklanguage: then the languages that falls back can have "-" in the options!
 			if (! $GLOBALS ['BE_USER']->checkLanguageAccess ( $uid )) {
@@ -352,7 +352,7 @@ class tx_languagevisibility_beservices {
 				if ($isInFallback) {
 					$select ['-'] = '-';
 				}
-				
+
 				$select ['no'] = 'no';
 				if($useInheritance){ $select ['no+'] = 'no+'; }
 			}
@@ -361,9 +361,9 @@ class tx_languagevisibility_beservices {
 			$select ['-'] = '-';
 			$select ['no'] = 'no';
 			if($useInheritance){ $select ['no+'] = 'no+'; }
-		}		
+		}
 
-		
+
 		/**
 		 * Get translations of labels from the locallang file
 		 */
@@ -372,11 +372,11 @@ class tx_languagevisibility_beservices {
 			foreach ( $select as $k => $v ) {
 				$select [$k] = $GLOBALS ['LANG']->sl ( 'LLL:EXT:languagevisibility/locallang_db.xml:tx_languagevisibility_visibility.I.' . $v );
 			}
-		}		
-		
+		}
+
 		return $select;
 	}
-	
+
 	/**
 	 * This method is used to create an visibility array with the default settings
 	 * for all languages.
@@ -390,7 +390,7 @@ class tx_languagevisibility_beservices {
 		foreach ( $languageList as $language ) {
 			$options = tx_languagevisibility_beservices::getAvailableOptionsForLanguage ( $language );
 			$default [$language->getUid ()] = array_shift ( array_keys($options) );
-		
+
 		}
 		return $default;
 	}
@@ -403,9 +403,9 @@ class tx_languagevisibility_beservices {
 	 * @return string
 	 */
 	public static function getOriginalTableOfTranslation($table){
-		global $TCA;	 		
+		global $TCA;
 		t3lib_div::loadTCA($table);
-		
+
 		$translationTable = $TCA[$table]['ctrl']['transOrigPointerTable'];
 		if($translationTable != ''){
 			return $translationTable;
@@ -413,7 +413,7 @@ class tx_languagevisibility_beservices {
 			return $table;
 		}
 	}
-	
+
 	/**
 	 * This method is used to determine the original uid of a translation
 	 *
@@ -422,9 +422,9 @@ class tx_languagevisibility_beservices {
 	 * @return string
 	 */
 	public static function getOriginalUidOfTranslation($row,$table){
-		global $TCA;	 		
+		global $TCA;
 		t3lib_div::loadTCA($table);
-		
+
 
 		if(is_array($row) && is_array($TCA)){
 			return $row[$TCA[$table]['ctrl']['transOrigPointerField']];

@@ -10,85 +10,85 @@ class user_tx_languagevisibility_fieldvisibility {
 	private $isNewElement = false;
 	private $pageId = 0;
 	private $modTSconfig = array ();
-	
+
 	function init() {
 		$this->calcPerms = $GLOBALS ['BE_USER']->calcPerms ( $pageInfoArr );
 
 	}
-	
+
 	public function user_fieldvisibility($PA, $fobj) {
 		$this->init ();
-		
+
 		//init some class attributes
 		$this->pageId 	= $PA ['row'] ['pid'];
 		$uid 			= $PA ['row'] ['uid'];
-		
+
 		if (substr ($uid, 0, 3 ) == 'NEW') {
 			$this->isNewElement = TRUE;
 		}
 		if ($PA ['table'] == 'pages' && ! $this->isNewElement) {
 			$this->pageId = $PA ['row'] ['uid'];
 		}
-		
+
 		$_modTSconfig 		= $GLOBALS ["BE_USER"]->getTSConfig ( 'mod.languagevisibility', t3lib_BEfunc::getPagesTSconfig ( $this->pageId ) );
-		$this->modTSconfig 	= $_modTSconfig ['properties'];			
+		$this->modTSconfig 	= $_modTSconfig ['properties'];
 
 		###
-		
+
 		$languageRep 		= t3lib_div::makeInstance ( 'tx_languagevisibility_languagerepository' );
 		$dao 				= t3lib_div::makeInstance ( 'tx_languagevisibility_daocommon' );
-		
+
 		$elementfactoryName = t3lib_div::makeInstanceClassName ( 'tx_languagevisibility_elementFactory' );
-		$elementfactory 	= new $elementfactoryName ( $dao );		
-			
+		$elementfactory 	= new $elementfactoryName ( $dao );
+
 		$value 				= $PA ['row'] [$PA ['field']];
 		$table 				= $PA ['table'];
 		$isOverlay 			= tx_languagevisibility_beservices::isOverlayRecord($PA ['row'] , $table);
-		
+
 		$visivilitySetting = @unserialize ( $value );
 		if (! is_array ( $visivilitySetting ) && $value != '') {
 			$content .= 'Visibility Settings seems to be corrupt:' . $value;
 		}
-				
-		if($isOverlay){	
+
+		if($isOverlay){
 			$uid	= tx_languagevisibility_beservices::getOriginalUidOfTranslation($PA ['row'],$table);
 			$table 	= tx_languagevisibility_beservices::getOriginalTableOfTranslation($table);
-			
+
 			//This element is an overlay therefore we need to render the visibility field just for the language of the overlay
 			$overlayRecordsLanguage = $languageRep->getLanguageById($PA ['row'] ['sys_language_uid']);
-				
+
 			try {
-				$originalElement	= $elementfactory->getElementForTable ( $table, $uid);		
+				$originalElement	= $elementfactory->getElementForTable ( $table, $uid);
 			}catch(Exception $e ){
-				return ''; 
+				return '';
 			}
-			
+
 			$infosStruct 			= $this->_getLanguageInfoStructurListForElementAndLanguageList($originalElement,array($overlayRecordsLanguage),$PA ['itemFormElName'],true);
 		}else{
-			//This element is an original element (no overlay)		
+			//This element is an original element (no overlay)
 			try {
 				$originalElement 	= $elementfactory->getElementForTable ( $table, $uid );
 			} catch ( Exception $e ) {
 				return 'sorry this element supports no visibility settings';
 			}
-			
+
 			$content 	.= $originalElement->getInformativeDescription ();
-			
+
 			if ($originalElement->isMonolithicTranslated ()) {
 				return $content;
 			}
-	
+
 			/**/
 			$languageList 	= $languageRep->getLanguages ();
 			$infosStruct 	= $this->_getLanguageInfoStructurListForElementAndLanguageList($originalElement,$languageList,$PA ['itemFormElName'],false);
 		}
-		
+
 		$content 		.= $this->_renderLanguageInfos ( $infosStruct );
 		return '<div id="fieldvisibility">' . $content . '<a href="#" onclick="resetSelectboxes()">reset</a></div>' . $this->_javascript ();
 	}
-	
+
 	/**
-	 * This methid is used to generate an infostructur array, which will be 
+	 * This methid is used to generate an infostructur array, which will be
 	 * renderd as a Form
 	 *
 	 * @param tx_languagevisibility_element $changeableElement
@@ -101,35 +101,35 @@ class user_tx_languagevisibility_fieldvisibility {
 
 		$visibility 	= t3lib_div::makeInstance ( 'tx_languagevisibility_visibilityService' );
 		$infosStruct 	= array ();
-			
-		foreach ( $languageList as $language ) {	
-			
-			$infoitem 	= array (	'visible' 			=> $visibility->isVisible ( $language, $changeableElement ), 
-									'languageTitle' 	=> $language->getTitle ( $this->pageId ), 
-									'languageFlag' 		=> $language->getFlagImg ( $this->pageId ), 
-									'hasTranslation' 	=> $changeableElement->hasTranslation ( $language->getUid () ), 
+
+		foreach ( $languageList as $language ) {
+
+			$infoitem 	= array (	'visible' 			=> $visibility->isVisible ( $language, $changeableElement ),
+									'languageTitle' 	=> $language->getTitle ( $this->pageId ),
+									'languageFlag' 		=> $language->getFlagImg ( $this->pageId ),
+									'hasTranslation' 	=> $changeableElement->hasTranslation ( $language->getUid () ),
 									'isTranslation'		=> $isOverlay,
 									'isVisible' 		=> $visibility->isVisible ( $language, $changeableElement ),
 									'visibilityDescription' => $visibility->getVisibilityDescription($language, $changeableElement) );
-			
+
 			//if there is no access to language - and localsettings exist, then do not show select box
 			//this is to not be able as an translator to override languagesetting
-			$currentSetting 					= $changeableElement->getLocalVisibilitySetting ( $language->getUid () );			
-			$currentOptionsForUserAndLanguage 	= tx_languagevisibility_beservices::getAvailableOptionsForLanguage( $language , $isOverlay,$changeableElement->supportsInheritance());	
+			$currentSetting 					= $changeableElement->getLocalVisibilitySetting ( $language->getUid () );
+			$currentOptionsForUserAndLanguage 	= tx_languagevisibility_beservices::getAvailableOptionsForLanguage( $language , $isOverlay,$changeableElement->supportsInheritance());
 			if($currentSetting == '' || isset ( $currentOptionsForUserAndLanguage [$currentSetting] )) {
-	
+
 				if ($isOverlay){
 					$defaultSelect		= $changeableElement->getVisibilitySettingStoredInOverlayRecord($language->getUid ());
-					
+
 					$visibilityValue	= $changeableElement->getVisibilitySettingStoredInDefaultRecord($language->getUid ());
 					$visibilityString	= $currentOptionsForUserAndLanguage[$visibilityValue];
-				}else{	
+				}else{
 					$defaultSelect		= $changeableElement->getVisibilitySettingStoredInDefaultRecord($language->getUid ());
-					
+
 					$visibilityValue	= $changeableElement->getVisibilitySettingStoredInOverlayRecord($language->getUid ());
 					$visibilityString	= $currentOptionsForUserAndLanguage[$visibilityValue];
 				}
-				
+
 				if ($this->isNewElement && $defaultSelect == '') {
 					if ($this->modTSconfig ['language.'] [$language->getUid () . '.'] ['defaultVisibilityOnCreate'] != '') {
 						$defaultSelect = $this->modTSconfig ['language.'] [$language->getUid () . '.'] ['defaultVisibilityOnCreate'];
@@ -139,7 +139,7 @@ class user_tx_languagevisibility_fieldvisibility {
 			} else {
 				$selectBox = '<input type="hidden" name="' . $itemFormElName . '[' . $language->getUid () . ']" value="' . $currentSetting . '" ></input>(' . $currentSetting . ')';
 			}
-			
+
 			if ($isOverlay){
 				$infoitem ['overlayVisibility'] 	= $selectBox;
 				$infoitem ['originalVisibility'] 	= $visibilityString;
@@ -147,13 +147,13 @@ class user_tx_languagevisibility_fieldvisibility {
 				$infoitem ['overlayVisibility']		= $visibilityString;
 				$infoitem ['originalVisibility'] 	= $selectBox;
 			}
-			
+
 			$infosStruct [] = $infoitem;
 		}
-		
+
 		return $infosStruct;
 	}
-	
+
 	/**
 	 * Generates the selectbox for the languagevisibility settings of an item
 	 *
@@ -179,12 +179,12 @@ class user_tx_languagevisibility_fieldvisibility {
 		}
 		$content .= '</select>';
 		return $content;
-	
+
 	}
-	
+
 	/**
 	 * This method is used to determine a css class for the diffrent visiblity modes
-	 * 
+	 *
 	 * @param string
 	 * @return string
 	 * @author Timo Schmidt <timo.schmidt@aoemedia.de>
@@ -201,10 +201,10 @@ class user_tx_languagevisibility_fieldvisibility {
 				$res = 'no_inherited';
 			break;
 		}
-		
+
 		return $res;
 	}
-	
+
 	function _renderLanguageInfos($infosStruct) {
 		$content = '<style type="text/css">
 		.visibilitytable  {margin: 10px 0 0 0}
@@ -224,7 +224,7 @@ class user_tx_languagevisibility_fieldvisibility {
 		.visibilitytable select .f {background-color: #BFFFB7}
 		.visibilitytable td {padding: 0 5px 2px 2px}
 		</' . 'style>';
-		
+
 		$content .= '<table style="border-collapse: collapse;" class="visibilitytable">';
 		$content .= '<tr class="bgColor4">'.
 						'<th >' . $this->getLLL ( 'language' ) . '</th>'.
@@ -233,10 +233,10 @@ class user_tx_languagevisibility_fieldvisibility {
 						'<th>'  . $this->getLLL ( 'hastranslation' ) . '</th>'.
 						'<th>'  . $this->getLLL ( 'isshown' ) . '</th>'.
 					'</tr>';
-		
+
 		foreach ( $infosStruct as $info ) {
 			$i ++;
-			
+
 			//toggle row class
 			$class 		= ($i % 2) ? ' class="bgColor"' : '';
 			$content	.= 	'<tr' . $class . '>'.
@@ -247,18 +247,18 @@ class user_tx_languagevisibility_fieldvisibility {
 								'<td style="text-align: center"  class="lastcell">' . $this->_getStatusImage ( $info ['isVisible'], $info['visibilityDescription']) . '</td>'.
 							'</tr>';
 		}
-		
+
 		$content .= '</table>';
 		return $content;
 	}
-	
+
 	function getLLL($key) {
 		return $GLOBALS ['LANG']->sl ( 'LLL:EXT:languagevisibility/locallang_db.xml:' . $key );
 	}
-	
+
 	/**
-	 * Generated a little status icon 
-	 * 
+	 * Generated a little status icon
+	 *
 	 * @param boolean positive or negative state
 	 * @return html tag to include the state image
 	 */
@@ -269,7 +269,7 @@ class user_tx_languagevisibility_fieldvisibility {
 			return '<img src="../typo3conf/ext/languagevisibility/res/nok.gif" title="'.htmlspecialchars($title).'">';
 		}
 	}
-	
+
 	function _link_edit($table, $id) {
 		global $BACK_PATH;
 		$params = '&table=' . $table . '&edit[' . $table . '][' . $id . ']=edit';
@@ -277,13 +277,13 @@ class user_tx_languagevisibility_fieldvisibility {
 		$url = $BACK_PATH . "alt_doc.php?id=" . $id . $params;
 		return '<a href="' . $url . '" target="blank">[edit]</a>';
 	}
-	
+
 	/*******************************************
 	 *
 	 * Link functions (protected)
 	 *
 	 *******************************************/
-	
+
 	/**
 	 * Returns an HTML link for editing
 	 *
@@ -297,22 +297,22 @@ class user_tx_languagevisibility_fieldvisibility {
 	function link_edit($label, $table, $uid, $forced = FALSE) {
 		if ($label) {
 			if (($table == 'pages' && ($this->calcPerms & 2) || $table != 'pages' && ($this->calcPerms & 16))) {
-				
+
 				$params = '&edit[' . $table . '][' . $uid . ']=edit';
 				$retUrl = 'returnUrl=' . ($requestUri == - 1 ? "'+T3_THIS_LOCATION+'" : rawurlencode ( $requestUri ? $requestUri : t3lib_div::getIndpEnv ( 'REQUEST_URI' ) ));
 				$url = "alt_doc.php?" . $retUrl . $params;
 				$onClick = "window.open('" . $url . "','editpopup','scrollbars=no,status=no,toolbar=no,location=no,directories=no,resizable=no,menubar=no,width=700,height=500,top=10,left=10')";
 				return '<a style="text-decoration: none;" href="#" onclick="' . htmlspecialchars ( $onClick ) . '">' . $label . '</a>';
-			
+
 			} else {
 				return $label;
 			}
 		}
 		return '';
 	}
-	
+
 	function _javascript() {
-		
+
 		return '
 <script type="text/javascript">
 
@@ -348,7 +348,7 @@ function getElementsByClassName(class_name)
 }
 
 </script>';
-	
+
 	}
 
 }
