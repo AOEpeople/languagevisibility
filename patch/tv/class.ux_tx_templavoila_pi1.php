@@ -293,22 +293,20 @@ class ux_tx_templavoila_pi1 extends tx_templavoila_pi1 {
 			// Compile information:
 			//danielp
 		$id = 'templavoila-preview-'.t3lib_div::shortMD5(microtime());
-		if ($this->conf['showVisualId']) {
-			$content = '<div style="text-align: left; position: absolute; display:none; filter: alpha(Opacity=90);" id="'.$id.'">
-						'.$infoArray.'
-					</div>
-					<div id="'.$id.'-wrapper" style=""
-						onmouseover="
-							document.getElementById(\''.$id.'\').style.display=\'block\';
-							document.getElementById(\''.$id.'-wrapper\').attributes.getNamedItem(\'style\').nodeValue = \'border: 2px dashed #333366;\';
-								"
-						onmouseout="
-							document.getElementById(\''.$id.'\').style.display=\'none\';
-							document.getElementById(\''.$id.'-wrapper\').attributes.getNamedItem(\'style\').nodeValue = \'\';
-								">'.
-						$content.
-					'</div>';
-		}
+		$content = '<div style="text-align: left; position: absolute; display:none; filter: alpha(Opacity=90);" id="'.$id.'">
+					'.$infoArray.'
+				</div>
+				<div id="'.$id.'-wrapper" style=""
+					onmouseover="
+						document.getElementById(\''.$id.'\').style.display=\'block\';
+						document.getElementById(\''.$id.'-wrapper\').attributes.getNamedItem(\'style\').nodeValue = \'border: 2px dashed #333366;\';
+							"
+					onmouseout="
+						document.getElementById(\''.$id.'\').style.display=\'none\';
+						document.getElementById(\''.$id.'-wrapper\').attributes.getNamedItem(\'style\').nodeValue = \'\';
+							">'.
+					$content.
+				'</div>';
 
 		return $content	;
 	}
