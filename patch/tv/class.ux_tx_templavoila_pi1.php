@@ -141,7 +141,7 @@ class ux_tx_templavoila_pi1 extends tx_templavoila_pi1 {
 								/* AOE modification not needed for TV > 1.4.2 */
 							foreach($hookObjectsArr as $hookObj)	{
 								if (method_exists ($hookObj, 'renderElement_preProcessValueKey')) {
-									$lKey = $hookObj->renderElement_preProcessValueKey($row, $table, $vKey, $langDisable, $langChildren, $this);
+									$vKey = $hookObj->renderElement_preProcessValueKey($row, $table, $vKey, $langDisable, $langChildren, $this);
 								}
 							}
 
