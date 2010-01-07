@@ -57,14 +57,14 @@ class ux_tx_templavoila_api extends tx_templavoila_api {
 							$localizationInfoArr[$sys_language_uid] = array();
 							$localizationInfoArr[$sys_language_uid]['mode'] = 'exists';
 							$localizationInfoArr[$sys_language_uid]['localization_uid'] = $attachedLocalizations[$sys_language_uid];
-	
+
 							$tt_content_elementRegister[$attachedLocalizations[$sys_language_uid]]++;
 						} elseif ($contentTreeArr['el']['CType']!='templavoila_pi1') {	// Only localize content elements with "Default" langauge set
 							if ((int)$contentTreeArr['el']['sys_language_uid']===0)	{
 								$localizationInfoArr[$sys_language_uid] = array();
 								$localizationInfoArr[$sys_language_uid]['mode'] = 'localize';
 							}
-						} elseif(!$contentTreeArr['ds_meta']['langDisable']  && ((int)$contentTreeArr['el']['sys_language_uid']===-1 ||
+						} elseif(!$contentTreeArr['ds_meta']['langDisable'] && ((int)$contentTreeArr['el']['sys_language_uid']===-1 ||
 													(int)$contentTreeArr['el']['sys_language_uid']===0))
 												{	
 							$localizationInfoArr[$sys_language_uid] = array();
