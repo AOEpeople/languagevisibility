@@ -1,3 +1,6 @@
+08.01.2010 Michael Klapper <michael.klapper@aoemedia.de>
+	* Fix Bug #5931: Fatal error: Cannot re-assign $this
+
 13.03.2008
 	* modify templavoila pi1 patch: override visualId to not show the preview at all. New typoscript option "showVisualId"
 
