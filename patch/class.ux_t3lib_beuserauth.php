@@ -13,9 +13,11 @@ class ux_t3lib_beUserAuth extends t3lib_beUserAuth {
 	 * @param	string		Table name
 	 * @param	mixed		If integer, then this is the ID of the record. If Array this just represents fields in the record.
 	 * @param	boolean		Set, if testing a new (non-existing) record array. Will disable certain checks that doesn't make much sense in that context.
+	 * @param	boolean		Set, if testing a deleted record array.
+	 * @param	boolean		Set, whenever access to all translations of the record is required
 	 * @return	boolean		True if OK, otherwise false
 	 */
-	function recordEditAccessInternals($table,$idOrRow,$newRecord=FALSE)	{
+	function recordEditAccessInternals($table,$idOrRow,$newRecord=FALSE, $deletedRecord = FALSE, $checkFullLanguageAccess = FALSE) {
 		global $TCA;
 
 		if (isset($TCA[$table]))	{
@@ -34,32 +36,34 @@ class ux_t3lib_beUserAuth extends t3lib_beUserAuth {
 
 				// Checking languages:
 			if ($TCA[$table]['ctrl']['languageField'])	{
-				
-				if (isset($idOrRow[$TCA[$table]['ctrl']['languageField']]))	{	// Language field must be found in input row - otherwise it does not make sense.					
+				if (isset($idOrRow[$TCA[$table]['ctrl']['languageField']]))	{	// Language field must be found in input row - otherwise it does not make sense.
 					$skipLanguageErrorMessage=FALSE;
 					//danielp allow default language for creating new elements as well as editing if languagevisibility allows it
-					
-					if (!$this->checkLanguageAccess($idOrRow[$TCA[$table]['ctrl']['languageField']])) {
-												
-						if ($idOrRow[$TCA[$table]['ctrl']['languageField']] ==0) {		
-												
+
+					if (!$this->checkLanguageAccess($idOrRow[$TCA[$table]['ctrl']['languageField']]))	{
+
+						if ($idOrRow[$TCA[$table]['ctrl']['languageField']] ==0) {
+
 							$editingIsAllowed=FALSE;
-							require_once(t3lib_extMgm::extPath("languagevisibility").'class.tx_languagevisibility_beservices.php');	
-							$visibilityservice=t3lib_div::makeInstance('tx_languagevisibility_beservices');							
+							require_once(t3lib_extMgm::extPath("languagevisibility") . 'class.tx_languagevisibility_beservices.php');
+							$visibilityservice=t3lib_div::makeInstance('tx_languagevisibility_beservices');
 							if ($visibilityservice->hasUserAccessToEditRecord($table,$idOrRow['uid'])) {
 								$editingIsAllowed=TRUE;
-								
-							}												
+
+							}
 							if ($newRecord OR $editingIsAllowed) {
 								$skipLanguageErrorMessage=TRUE;
-							
+
 							}
 						}
 						if (!$skipLanguageErrorMessage) {
-							$this->errorMsg = 'ERROR: Language was not allowed.';
+							$this->errorMsg = 'ERROR: Language ( ' . $idOrRow[$TCA[$table]['ctrl']['languageField']] . ') was not allowed.';
 							return FALSE;
 						}
-					}
+					} elseif ($checkFullLanguageAccess && $idOrRow[$TCA[$table]['ctrl']['languageField']]==0 && !$this->checkFullLanguagesAccess($table, $idOrRow)) {
+ 						$this->errorMsg = 'ERROR: Related/affected language was not allowed.';
+ 						return FALSE;
+ 					}
 				} else {
 					$this->errorMsg = 'ERROR: The "languageField" field named "'.$TCA[$table]['ctrl']['languageField'].'" was not found in testing record!';
 					return FALSE;
