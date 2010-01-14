@@ -326,6 +326,20 @@ class tx_languagevisibility_beservices {
 	}
 
 	/**
+	 * Method to check if the inheritance is enabled or not
+	 *
+	 * @return boolean
+	 */
+	protected function isTranslatedAsDefaultEnabled(){
+		$confArr = unserialize($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf']['languagevisibility']);
+		if(is_array($confArr)){
+			return ($confArr['translatedAsDefaultEnabled'] == 1);
+		}else{
+			return false;
+		}
+	}
+
+	/**
 	 * returns array with the visibility options that are allowed for the current user.
 	 *
 	 * @param tx_languagevisibility_language $language
@@ -368,6 +382,9 @@ class tx_languagevisibility_beservices {
 					$select ['-'] = '-';
 				}
 
+				if ($uid != 0 && self::isTranslatedAsDefaultEnabled()) {
+					$select ['t'] = 't';
+				}
 				$select ['no'] = 'no';
 				if($useInheritance){ $select ['no+'] = 'no+'; }
 			}
@@ -399,6 +416,7 @@ class tx_languagevisibility_beservices {
 	 * @return array
 	 */
 	public static function getDefaultVisibilityArray() {
+			/* @var $languageRep tx_languagevisibility_languagerepository */
 		$languageRep = t3lib_div::makeInstance ( 'tx_languagevisibility_languagerepository' );
 		$languageList = $languageRep->getLanguages ();
 		$default = array ();

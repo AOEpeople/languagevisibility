@@ -5,6 +5,9 @@ applyPatchTV = 1
   # cat=basic//20; type=boolean; label=Inheritance: Enable inherited settings for pages
 inheritanceEnabled = 0
 
+  # cat=basic//20; type=boolean; label=Use "if translated" as default: relevant if user creates a record without having access to the default-lang - if disabled "no" will be choosen
+translatedAsDefaultEnabled = 0
+
   # cat=basic//30; type=boolean; label=Cache Layer: Enable this option to use the refetching and caching of records (less db querys, more memory usage)
 useCache = 0
 
