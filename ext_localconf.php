@@ -7,6 +7,8 @@ $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['t3lib/class.t3lib_tcemain.php']['proc
 
 require_once(t3lib_extMgm::extPath($_EXTKEY) . 'class.tx_languagevisibility_fieldvisibility.php');
 
+// overriding option because this is done by languagevisibility and will not work if set
+$GLOBALS['TYPO3_CONF_VARS']['FE']['hidePagesIfNotTranslatedByDefault'] = 0;
 
 $TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['t3lib/class.t3lib_page.php']=t3lib_extMgm::extPath($_EXTKEY) . 'patch/class.ux_t3lib_page.php';
 include_once(t3lib_extMgm::extPath($_EXTKEY) . 'patch/class.ux_t3lib_page.php');
