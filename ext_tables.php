@@ -163,11 +163,13 @@ $tempColumnsPages = Array (
 
 t3lib_div::loadTCA("pages");
 t3lib_extMgm::addTCAcolumns("pages",$tempColumnsPages,1);
-t3lib_extMgm::addToAllTCAtypes("pages","--div--;LLL:EXT:languagevisibility/locallang_db.xml:tabname,tx_languagevisibility_visibility;;;;1-1-1");
+t3lib_extMgm::addToAllTCAtypes("pages","tx_languagevisibility_visibility;;;;1-1-1", '', 'after:l18n_cfg');
+t3lib_extMgm::addToAllTCAtypes("pages","--div--;LLL:EXT:languagevisibility/locallang_db.xml:tabname", '', 'before:l18n_cfg');
 
 t3lib_div::loadTCA("pages_language_overlay");
 t3lib_extMgm::addTCAcolumns("pages_language_overlay",$tempColumnsPages,1);
-t3lib_extMgm::addToAllTCAtypes("pages_language_overlay","--div--;LLL:EXT:languagevisibility/locallang_db.xml:tabname,tx_languagevisibility_visibility;;;;1-1-1");
+t3lib_extMgm::addToAllTCAtypes("pages_language_overlay","tx_languagevisibility_visibility;;;;1-1-1", '', 'after:l18n_cfg');
+t3lib_extMgm::addToAllTCAtypes("pages_language_overlay","--div--;LLL:EXT:languagevisibility/locallang_db.xml:tabname", '', 'before:l18n_cfg');
 
 t3lib_div::loadTCA("tt_news");
 t3lib_extMgm::addTCAcolumns("tt_news",$tempColumnsElements,1);
