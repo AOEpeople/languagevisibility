@@ -41,7 +41,7 @@ class tx_languagevisibility_hooks_templavoila_pi1 {
 	 * @param object $object
 	 * @return string
 	 */
-	public function renderElement_preProcessLanguageKey($row, $table, $lKey, $langDisable, $langChildren, &$object) {
+	public function renderElement_preProcessLanguageKey($row, $table, $lKey, $langDisabled, $langChildren, &$object) {
 		if ($row['_OVERLAYLANGUAGEISOCODE'] && !$langDisabled && !$langChildren) {
 			$lKey='l'.$row['_OVERLAYLANGUAGEISOCODE'];
 		}
@@ -59,7 +59,7 @@ class tx_languagevisibility_hooks_templavoila_pi1 {
 	 * @param object $object
 	 * @return string
 	 */
-	public function renderElement_preProcessValueKey($row, $table, $vKey, $langDisable, $langChildren, &$object) {
+	public function renderElement_preProcessValueKey($row, $table, $vKey, $langDisabled, $langChildren, &$object) {
 		if ($row['_OVERLAYLANGUAGEISOCODE'] && !$langDisabled && $langChildren) {
 			$vKey='v'.$row['_OVERLAYLANGUAGEISOCODE'];
 		}
