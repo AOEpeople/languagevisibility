@@ -12,6 +12,8 @@ class tx_languagevisibility_beservices {
 
 	protected static $visibleFlagsCache = array();
 
+	protected static $cache_isVisible = array();
+
 	/**
 	 *
 	 * @param $uid
@@ -88,26 +90,34 @@ class tx_languagevisibility_beservices {
 	 * @return boolean
 	 */
 	public static function isVisible($uid, $table, $languageUid) {
-		$rep 		= tx_languagevisibility_languagerepository::makeInstance();
-		$language 	= $rep->getLanguageById ( $languageUid );
 
-		$dao = t3lib_div::makeInstance ( 'tx_languagevisibility_daocommon' );
-		if (version_compare(TYPO3_version,'4.3.0','<')) {
-			$elementfactoryName = t3lib_div::makeInstanceClassName ( 'tx_languagevisibility_elementFactory' );
-			$elementfactory = new $elementfactoryName ( $dao );
-		} else {
-			$elementfactory = t3lib_div::makeInstance('tx_languagevisibility_elementFactory', $dao);
+		$cacheKey = sprintf('%s:%d:%d', $table, $uid, $languageUid);
+
+		if(!isset(self::$cache_isVisible[$cacheKey])) {
+
+			$rep 		= tx_languagevisibility_languagerepository::makeInstance();
+			$language 	= $rep->getLanguageById ( $languageUid );
+
+			$dao = t3lib_div::makeInstance ( 'tx_languagevisibility_daocommon' );
+			if (version_compare(TYPO3_version,'4.3.0','<')) {
+				$elementfactoryName = t3lib_div::makeInstanceClassName ( 'tx_languagevisibility_elementFactory' );
+				$elementfactory = new $elementfactoryName ( $dao );
+			} else {
+				$elementfactory = t3lib_div::makeInstance('tx_languagevisibility_elementFactory', $dao);
+			}
+
+			try {
+				$element = $elementfactory->getElementForTable ( $table, $uid );
+			} catch ( Exception $e ) {
+				return false;
+			}
+
+			$visibility = t3lib_div::makeInstance ( 'tx_languagevisibility_visibilityService' );
+
+			self::$cache_isVisible[$cacheKey] = $visibility->isVisible ( $language, $element );
 		}
 
-		try {
-			$element = $elementfactory->getElementForTable ( $table, $uid );
-		} catch ( Exception $e ) {
-			return false;
-		}
-
-		$visibility = t3lib_div::makeInstance ( 'tx_languagevisibility_visibilityService' );
-
-		return $visibility->isVisible ( $language, $element );
+		return self::$cache_isVisible[$cacheKey];
 	}
 
 	/**
