@@ -24,6 +24,27 @@
  *
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
+
+interface t3lib_pageSelect_getPageOverlayHook {
+
+	/**
+	 *
+	 * @param array $pageInput
+	 * @param integer $lUid
+	 * @param t3lib_pageSelect $parent
+	 * @return void
+	 */
+	public function getPageOverlay_preProcess(&$pageInput, &$lUid, t3lib_pageSelect $parent);
+}
+
+interface t3lib_pageSelect_getRecordOverlayHook {
+
+	public function getRecordOverlay_preProcess($table, &$row, &$sys_language_content, $OLmode, t3lib_pageSelect $parent);
+	public function getRecordOverlay_postProcess($table, &$row, &$sys_language_content, $OLmode, t3lib_pageSelect $parent);
+
+}
+
+
 /**
  * Contains a class with "Page functions" mainly for the frontend
  *
@@ -121,99 +142,88 @@ class ux_t3lib_pageSelect extends t3lib_pageSelect {
 	 * @param	string		Overlay mode. If "hideNonTranslated" then records without translation will not be returned un-translated but unset (and return value is false)
 	 * @return	mixed		Returns the input record, possibly overlaid with a translation. But if $OLmode is "hideNonTranslated" then it will return false if no translation is found.
 	 */
-	function getRecordOverlay($table, $row, $sys_language_content, $OLmode = '') {
-		//echo $table.'--'.$row['uid'].'--'.$sys_language_content.'--'.$OLmode;
-		//echo '<hr>';
-		//return parent::getRecordOverlay($table,$row,$sys_language_content,$OLmode);
-
-
+	function getRecordOverlay($table,$row,$sys_language_content,$OLmode='')	{
 		global $TCA;
-		//echo $row['uid'].'-';  //39348
 
+		if (is_array($GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['t3lib/class.t3lib_page.php']['getRecordOverlay'])) {
+			foreach ($GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['t3lib/class.t3lib_page.php']['getRecordOverlay'] as $classRef) {
+				$hookObject = t3lib_div::getUserObj($classRef);
 
-		//unset olmode
-		$OLmode = '';
-		//	die('���');
-		//call service to know if element is visible and which overlay language to use
-		try {
-			$element = tx_languagevisibility_feservices::getElement ( $row ['uid'], $table );
-			$overlayLanguage = tx_languagevisibility_feservices::getOverlayLanguageIdForElement ( $element, $sys_language_content );
-
-		} catch ( Exception $e ) {
-			//for any other tables:
-			return parent::getRecordOverlay ( $table, $row, $sys_language_content, $OLmode );
+				if (!($hookObject instanceof t3lib_pageSelect_getRecordOverlayHook)) {
+					throw new UnexpectedValueException('$hookObject must implement interface t3lib_pageSelect_getRecordOverlayHook', 1251476766);
+				}
+				$hookObject->getRecordOverlay_preProcess($table,$row,$sys_language_content,$OLmode, $this);
+			}
 		}
-		//debug($overlayLanguage);
-		if ($overlayLanguage === false) {
-			//echo 'unset  '.$table.'  / '.$row['uid'];
-			//not visible:
-			unset ( $row );
-			return $row;
-		} else {
-			//visible:
-			if ($overlayLanguage != 0) {
 
-				if ($element instanceof tx_languagevisibility_fceelement) {
-					//for FCE the overlay processing is handled by templavoila module, so mark the row with additional infos:
-					$languageRep = t3lib_div::makeInstance ( 'tx_languagevisibility_languagerepository' );
-					$overlayLanguageObj = $languageRep->getLanguageById ( $overlayLanguage );
-					$row ['_OVERLAYLANGUAGEISOCODE'] = $overlayLanguageObj->getIsoCode ();
-					return $row;
-				} elseif ($element instanceof tx_languagevisibility_fceoverlayelement) {
-					//now its getting tricky: we need to return overlay record with merged XML
-					$olrow = $this->_getDatabaseTranslationOverlayRecord ( 'tt_content', $row, $overlayLanguage );
-					if ($GLOBALS ['TSFE']) {
-						$GLOBALS ['TSFE']->includeTCA ( 'tt_content' );
+		if ($row['uid']>0 && $row['pid']>0)	{
+			if ($TCA[$table] && $TCA[$table]['ctrl']['languageField'] && $TCA[$table]['ctrl']['transOrigPointerField'])	{
+				if (!$TCA[$table]['ctrl']['transOrigPointerTable'])	{	// Will not be able to work with other tables (Just didn't implement it yet; Requires a scan over all tables [ctrl] part for first FIND the table that carries localization information for this table (which could even be more than a single table) and then use that. Could be implemented, but obviously takes a little more....)
+
+						// Will try to overlay a record only if the sys_language_content value is larger than zero.
+					if ($sys_language_content>0)	{
+
+							// Must be default language or [All], otherwise no overlaying:
+						if ($row[$TCA[$table]['ctrl']['languageField']]<=0)	{
+
+								// Select overlay record:
+							$res = $GLOBALS['TYPO3_DB']->exec_SELECTquery(
+								'*',
+								$table,
+								'pid='.intval($row['pid']).
+									' AND '.$TCA[$table]['ctrl']['languageField'].'='.intval($sys_language_content).
+									' AND '.$TCA[$table]['ctrl']['transOrigPointerField'].'='.intval($row['uid']).
+									$this->enableFields($table),
+								'',
+								'',
+								'1'
+							);
+							$olrow = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res);
+							$GLOBALS['TYPO3_DB']->sql_free_result($res);
+							$this->versionOL($table,$olrow);
+
+								// Merge record content by traversing all fields:
+							if (is_array($olrow))	{
+								foreach($row as $fN => $fV)	{
+									if ($fN!='uid' && $fN!='pid' && isset($olrow[$fN]))	{
+
+										if ($GLOBALS['TSFE']->TCAcachedExtras[$table]['l10n_mode'][$fN]!='exclude'
+												&& ($GLOBALS['TSFE']->TCAcachedExtras[$table]['l10n_mode'][$fN]!='mergeIfNotBlank' || strcmp(trim($olrow[$fN]),'')))	{
+											$row[$fN] = $olrow[$fN];
+										}
+									} elseif ($fN=='uid')	{
+										$row['_LOCALIZED_UID'] = $olrow['uid'];
+									}
+								}
+							} elseif ($OLmode==='hideNonTranslated' && $row[$TCA[$table]['ctrl']['languageField']]==0)	{	// Unset, if non-translated records should be hidden. ONLY done if the source record really is default language and not [All] in which case it is allowed.
+								unset($row);
+							}
+
+							// Otherwise, check if sys_language_content is different from the value of the record - that means a japanese site might try to display french content.
+						} elseif ($sys_language_content!=$row[$TCA[$table]['ctrl']['languageField']])	{
+							unset($row);
+						}
+					} else {
+							// When default language is displayed, we never want to return a record carrying another language!
+						if ($row[$TCA[$table]['ctrl']['languageField']]>0)	{
+							unset($row);
+						}
 					}
-					//parse fce xml, and where a xml field is empty in olrow -> use default one
-					$flexObj = t3lib_div::makeInstance ( 't3lib_flexformtools' );
-					$this->_callbackVar_defaultXML = t3lib_div::xml2array ( $row ['tx_templavoila_flex'] );
-					$this->_callbackVar_overlayXML = t3lib_div::xml2array ( $olrow ['tx_templavoila_flex'] );
-					if (! is_array ( $this->_callbackVar_overlayXML ))
-						$this->_callbackVar_overlayXML = array ();
-					$return = $flexObj->traverseFlexFormXMLData ( 'tt_content', 'tx_templavoila_flex', $row, $this, '_callback_checkXMLFieldsForFallback' );
-
-					$row = parent::getRecordOverlay ( $table, $row, $overlayLanguage, $OLmode );
-					$row ['tx_templavoila_flex'] = t3lib_div::array2xml ( $this->_callbackVar_overlayXML );
-					return $row;
-				} else {
-					//for default elements just do TYPO3 default overlay
-					return parent::getRecordOverlay ( $table, $row, $overlayLanguage, $OLmode );
-				}
-			} else {
-				return $row;
-			}
-		}
-	}
-
-	/** It a callbackfunction (see getRecordOverlay)
-		 function traverses default row XML and checks for fields with 'mergeIfNotBlank' l10n_mode.
-		then in the overlay record XML this field is replaced by default one.
-		TO-DO: replace in fallbackOrder
-	 **/
-
-	function _callback_checkXMLFieldsForFallback($dsArr, $dataValue, $PA, $structurePath, &$pObj) {
-		if ($dataValue != '' && ($dsArr ['TCEforms'] ['l10n_mode'] == 'mergeIfNotBlank' || $dsArr ['TCEforms'] ['l10n_mode'] == 'exclude')) {
-			//echo 'check '.$structurePath;
-			if ($dsArr ['TCEforms'] ['l10n_mode'] == 'exclude') {
-				$pObj->setArrayValueByPath ( $structurePath, $this->_callbackVar_overlayXML, $dataValue );
-			} else {
-				$overlayValue = $pObj->getArrayValueByPath ( $structurePath, $this->_callbackVar_overlayXML );
-				if ($overlayValue == '' && $dsArr ['TCEforms'] ['l10n_mode'] == 'mergeIfNotBlank') {
-					$pObj->setArrayValueByPath ( $structurePath, $this->_callbackVar_overlayXML, $dataValue );
 				}
 			}
 		}
-	}
 
-	function _getDatabaseTranslationOverlayRecord($table, $row, $languageId) {
-		global $TCA;
-		// Select overlay record:
-		$res = $GLOBALS ['TYPO3_DB']->exec_SELECTquery ( '*', $table, 'pid=' . intval ( $row ['pid'] ) . ' AND ' . $TCA [$table] ['ctrl'] ['languageField'] . '=' . intval ( $languageId ) . ' AND ' . $TCA [$table] ['ctrl'] ['transOrigPointerField'] . '=' . intval ( $row ['uid'] ) . $this->enableFields ( $table ), '', '', '1' );
-		$olrow = $GLOBALS ['TYPO3_DB']->sql_fetch_assoc ( $res );
-		$this->versionOL ( $table, $olrow );
-		$GLOBALS['TYPO3_DB']->sql_free_result($res);
-		return $olrow;
+		if (is_array($GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['t3lib/class.t3lib_page.php']['getRecordOverlay'])) {
+			foreach ($GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['t3lib/class.t3lib_page.php']['getRecordOverlay'] as $classRef) {
+				$hookObject = t3lib_div::getUserObj($classRef);
+
+				if (!($hookObject instanceof t3lib_pageSelect_getRecordOverlayHook)) {
+					throw new UnexpectedValueException('$hookObject must implement interface t3lib_pageSelect_getRecordOverlayHook', 1251476766);
+				}
+				$hookObject->getRecordOverlay_postProcess($table,$row,$sys_language_content,$OLmode, $this);
+			}
+		}
+		return $row;
 	}
 
 	/*******************************************
@@ -283,71 +293,6 @@ class ux_t3lib_pageSelect extends t3lib_pageSelect {
 		$GLOBALS['TYPO3_DB']->sql_free_result($res);
 		return $output;
 	}
-
-	/**
-	 * Returns the relevant page overlay record fields
-	 *
-	 * @param	mixed		If $pageInput is an integer, it's the pid of the pageOverlay record and thus the page overlay record is returned. If $pageInput is an array, it's a page-record and based on this page record the language record is found and OVERLAYED before the page record is returned.
-	 * @param	integer		Language UID if you want to set an alternative value to $this->sys_language_uid which is default. Should be >=0
-	 * @return	array		Page row which is overlayed with language_overlay record (or the overlay record alone)
-	 */
-	function _original_getPageOverlay($pageInput, $lUid = -1) {
-
-		// Initialize:
-		if ($lUid < 0)
-			$lUid = $this->sys_language_uid;
-		$row = NULL;
-
-		// If language UID is different from zero, do overlay:
-		if ($lUid) {
-			$fieldArr = explode ( ',', $GLOBALS ['TYPO3_CONF_VARS'] ['FE'] ['pageOverlayFields'] );
-			if (is_array ( $pageInput )) {
-				$page_id = $pageInput ['uid']; // Was the whole record
-				$fieldArr = array_intersect ( $fieldArr, array_keys ( $pageInput ) ); // Make sure that only fields which exist in the incoming record are overlaid!
-			} else {
-				$page_id = $pageInput; // Was the id
-			}
-
-			if (count ( $fieldArr )) {
-				/*
-					NOTE to enabledFields('pages_language_overlay'):
-					Currently the showHiddenRecords of TSFE set will allow pages_language_overlay records to be selected as they are child-records of a page.
-					However you may argue that the showHiddenField flag should determine this. But that's not how it's done right now.
-				*/
-
-				// Selecting overlay record:
-				$res = $GLOBALS ['TYPO3_DB']->exec_SELECTquery ( implode ( ',', $fieldArr ), 'pages_language_overlay', 'pid=' . intval ( $page_id ) . '
-								AND sys_language_uid=' . intval ( $lUid ) . $this->enableFields ( 'pages_language_overlay' ), '', '', '1' );
-				$row = $GLOBALS ['TYPO3_DB']->sql_fetch_assoc ( $res );
-				$GLOBALS['TYPO3_DB']->sql_free_result($res);
-				$this->versionOL ( 'pages_language_overlay', $row );
-
-				if (is_array ( $row )) {
-					$row ['_PAGES_OVERLAY'] = TRUE;
-
-					// Unset vital fields that are NOT allowed to be overlaid:
-					unset ( $row ['uid'] );
-					unset ( $row ['pid'] );
-				}
-			}
-		}
-		//only change: unset mergeIfNotBlank Fields TODO: read TCA
-		if (isset ( $row ['url'] ) && empty ( $row ['url'] ))
-			unset ( $row ['url'] );
-		if (isset ( $row ['urltype'] ) && empty ( $row ['urltype'] ))
-			unset ( $row ['urltype'] );
-
-		// Create output:
-		if (is_array ( $pageInput )) {
-			return is_array ( $row ) ? array_merge ( $pageInput, $row ) : $pageInput; // If the input was an array, simply overlay the newfound array and return...
-		} else {
-			return is_array ( $row ) ? $row : array (); // always an array in return
-		}
-	}
-
-
-
-
 }
 
 if (defined ( 'TYPO3_MODE' ) && $TYPO3_CONF_VARS [TYPO3_MODE] ['XCLASS'] ['t3lib/class.ux_t3lib_page.php']) {
