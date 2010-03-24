@@ -13,21 +13,21 @@ if (version_compare(TYPO3_version,'4.4','>')) {
 	include_once(t3lib_extMgm::extPath($_EXTKEY) . 'patch/core_4.3/class.ux_t3lib_page.php');
 } else {
 	require_once(t3lib_extMgm::extPath($_EXTKEY) . 'class.tx_languagevisibility_fieldvisibility.php');
-	$TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['t3lib/class.t3lib_page.php'] = t3lib_extMgm::extPath($_EXTKEY) . 'patch/class.ux_t3lib_page.php';
-	include_once(t3lib_extMgm::extPath($_EXTKEY) . 'patch/class.ux_t3lib_page.php');
+	$TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['t3lib/class.t3lib_page.php'] = t3lib_extMgm::extPath($_EXTKEY) . 'patch/core_4.2/class.ux_t3lib_page.php';
+	include_once(t3lib_extMgm::extPath($_EXTKEY) . 'patch/core_4.2/class.ux_t3lib_page.php');
 }
 
 	// overriding option because this is done by languagevisibility and will not work if set
 $TYPO3_CONF_VARS['FE']['hidePagesIfNotTranslatedByDefault'] = 0;
 
 if ($TYPO3_CONF_VARS['FE']['XCLASS']['tslib/class.tslib_menu.php']) {
-	$TYPO3_CONF_VARS['FE']['XCLASS']['tslib/class.ux_tslib_menu.php']=t3lib_extMgm::extPath($_EXTKEY) . 'patch/class.ux_ux_tslib_menu.php';
+	$TYPO3_CONF_VARS['FE']['XCLASS']['tslib/class.ux_tslib_menu.php']=t3lib_extMgm::extPath($_EXTKEY) . 'patch/core_4.2/class.ux_ux_tslib_menu.php';
 }
 else {
-	$TYPO3_CONF_VARS['FE']['XCLASS']['tslib/class.tslib_menu.php']=t3lib_extMgm::extPath($_EXTKEY) . 'patch/class.ux_tslib_menu.php';
+	$TYPO3_CONF_VARS['FE']['XCLASS']['tslib/class.tslib_menu.php']=t3lib_extMgm::extPath($_EXTKEY) . 'patch/core_4.2/class.ux_tslib_menu.php';
 }
 
-$TYPO3_CONF_VARS['FE']['XCLASS']['tslib/class.tslib_fe.php']=t3lib_extMgm::extPath($_EXTKEY) . 'patch/class.ux_tslib_fe.php';
+$TYPO3_CONF_VARS['FE']['XCLASS']['tslib/class.tslib_fe.php']=t3lib_extMgm::extPath($_EXTKEY) . 'patch/core_4.2/class.ux_tslib_fe.php';
 
 $confArr = unserialize($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf']['languagevisibility']);
 if ($confArr['applyPatchTV']==1) {
@@ -38,9 +38,9 @@ $TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['ext/templavoila/pi1/class.tx_templavoila
 //$TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['ext/templavoila/class.tx_templavoila_api.php']=t3lib_extMgm::extPath($_EXTKEY) . 'patch/tv/class.ux_tx_templavoila_api.php';
 
 //modify permission check for creating pages
-$GLOBALS['TYPO3_CONF_VARS'][TYPO3_MODE]['XCLASS']['typo3/alt_doc.php']=t3lib_extMgm::extPath($_EXTKEY) . 'patch/class.ux_SCalt_doc.php';
-$TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['t3lib/class.t3lib_beuserauth.php']=t3lib_extMgm::extPath($_EXTKEY) . 'patch/class.ux_t3lib_beuserauth.php';
-$TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['t3lib/class.t3lib_tcemain.php']=t3lib_extMgm::extPath($_EXTKEY) . 'patch/class.ux_t3lib_tcemain.php';
+$GLOBALS['TYPO3_CONF_VARS'][TYPO3_MODE]['XCLASS']['typo3/alt_doc.php']=t3lib_extMgm::extPath($_EXTKEY) . 'patch/core_4.2/class.ux_SCalt_doc.php';
+$TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['t3lib/class.t3lib_beuserauth.php']=t3lib_extMgm::extPath($_EXTKEY) . 'patch/core_4.2/class.ux_t3lib_beuserauth.php';
+$TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['t3lib/class.t3lib_tcemain.php']=t3lib_extMgm::extPath($_EXTKEY) . 'patch/core_4.2/class.ux_t3lib_tcemain.php';
 
 //adding inheriatance flag to the rootline
 $rootlinefields = &$GLOBALS["TYPO3_CONF_VARS"]["FE"]["addRootLineFields"];
