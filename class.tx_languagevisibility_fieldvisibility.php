@@ -6,7 +6,7 @@ require_once (t3lib_extMgm::extPath ( "languagevisibility" ) . 'classes/class.tx
 require_once (t3lib_extMgm::extPath ( "languagevisibility" ) . 'classes/dao/class.tx_languagevisibility_daocommon.php');
 require_once (t3lib_extMgm::extPath ( "languagevisibility" ) . 'class.tx_languagevisibility_beservices.php');
 
-class user_tx_languagevisibility_fieldvisibility {
+class tx_languagevisibility_fieldvisibility {
 	private $isNewElement = false;
 	private $pageId = 0;
 	private $modTSconfig = array ();

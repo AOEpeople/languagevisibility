@@ -112,7 +112,7 @@ $tempColumns = Array (
 			"type" => "check"
 		)
 	),
-	
+
 );
 
 
@@ -126,7 +126,7 @@ $tempColumnsElements = Array (
 		"config" => Array (
 			"type" => "user",
 			"size" => "30",
-			"userFunc" => 'user_tx_languagevisibility_fieldvisibility->user_fieldvisibility',
+			"userFunc" => 'tx_languagevisibility_fieldvisibility->user_fieldvisibility',
 		)
 	)
 );
@@ -139,7 +139,7 @@ $tempColumnsPages = Array (
 		"config" => Array (
 			"type" => "user",
 			"size" => "30",
-			"userFunc" => 'user_tx_languagevisibility_fieldvisibility->user_fieldvisibility',
+			"userFunc" => 'tx_languagevisibility_fieldvisibility->user_fieldvisibility',
 		)
 	),
 	"tx_languagevisibility_inheritanceflag_original" => Array (
