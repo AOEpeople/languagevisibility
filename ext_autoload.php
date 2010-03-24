@@ -7,6 +7,7 @@ return array(
 	'tx_languagevisibility_behooks' => $extensionPath . 'class.tx_languagevisibility_behooks.php',
 	'tx_languagevisibility_beservices' => $extensionPath . 'class.tx_languagevisibility_beservices.php',
 	'tx_languagevisibility_feservices' => $extensionPath . 'class.tx_languagevisibility_feservices.php',
+	'tx_languagevisibility_fieldvisibility' => $extensionPath . 'class.tx_languagevisibility_fieldvisibility.php',
 	'tx_languagevisibility_cachemanager' => $extensionPath . 'classes/class.tx_languagevisibility_cacheManager.php',
 	'tx_languagevisibility_celement' => $extensionPath . 'classes/class.tx_languagevisibility_celement.php',
 	'tx_languagevisibility_element' => $extensionPath . 'classes/class.tx_languagevisibility_element.php',
@@ -27,5 +28,6 @@ return array(
 	'tx_languagevisibility_beuser' => $extensionPath . 'patch/lib/class.tx_languagevisibility_beUser.php',
 	'tx_languagevisibility_commandmap' => $extensionPath . 'patch/lib/class.tx_languagevisibility_commandMap.php',
 	'tx_languagevisibility_databasetestcase' => $extensionPath . 'tests/tx_languagevisibility_databaseTestcase.php',
+	'ux_t3lib_pageSelect' => $extensionPath . 'patch/core_4.3/class.ux_t3lib_pageSelect.php',
 );
 ?>

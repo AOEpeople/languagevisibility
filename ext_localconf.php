@@ -4,22 +4,27 @@ if (!defined ('TYPO3_MODE')) 	die ('Access denied.');
 
 $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['t3lib/class.t3lib_tcemain.php']['processDatamapClass']['languagevisibility'] = 'EXT:languagevisibility/class.tx_languagevisibility_behooks.php:tx_languagevisibility_behooks';
 
+if (version_compare(TYPO3_version,'4.4','>')) {
+		// assuming that we get our patch into the TYPO3 core
+	$TYPO3_CONF_VARS['SC_OPTIONS']['t3lib/class.t3lib_page.php']['getPageOverlay']['languagevisility'] = 'EXT:languagevisibility/hooks/class.tx_languagevisibility_hooks_t3lib_page.php:tx_languagevisibility_hooks_t3lib_page';
+} else if (version_compare(TYPO3_version,'4.3','>')) {
+	$TYPO3_CONF_VARS['SC_OPTIONS']['t3lib/class.t3lib_page.php']['getPageOverlay']['languagevisility'] = 'EXT:languagevisibility/hooks/class.tx_languagevisibility_hooks_t3lib_page.php:tx_languagevisibility_hooks_t3lib_page';
+	$TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['t3lib/class.t3lib_page.php'] = t3lib_extMgm::extPath($_EXTKEY) . 'patch/core_4.3/class.ux_t3lib_page.php';
+	include_once(t3lib_extMgm::extPath($_EXTKEY) . 'patch/core_4.3/class.ux_t3lib_page.php');
+} else {
+	require_once(t3lib_extMgm::extPath($_EXTKEY) . 'class.tx_languagevisibility_fieldvisibility.php');
+	$TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['t3lib/class.t3lib_page.php'] = t3lib_extMgm::extPath($_EXTKEY) . 'patch/class.ux_t3lib_page.php';
+	include_once(t3lib_extMgm::extPath($_EXTKEY) . 'patch/class.ux_t3lib_page.php');
+}
 
-require_once(t3lib_extMgm::extPath($_EXTKEY) . 'class.tx_languagevisibility_fieldvisibility.php');
+	// overriding option because this is done by languagevisibility and will not work if set
+$TYPO3_CONF_VARS['FE']['hidePagesIfNotTranslatedByDefault'] = 0;
 
-// overriding option because this is done by languagevisibility and will not work if set
-$GLOBALS['TYPO3_CONF_VARS']['FE']['hidePagesIfNotTranslatedByDefault'] = 0;
-
-$TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['t3lib/class.t3lib_page.php']=t3lib_extMgm::extPath($_EXTKEY) . 'patch/class.ux_t3lib_page.php';
-include_once(t3lib_extMgm::extPath($_EXTKEY) . 'patch/class.ux_t3lib_page.php');
 if ($TYPO3_CONF_VARS['FE']['XCLASS']['tslib/class.tslib_menu.php']) {
 	$TYPO3_CONF_VARS['FE']['XCLASS']['tslib/class.ux_tslib_menu.php']=t3lib_extMgm::extPath($_EXTKEY) . 'patch/class.ux_ux_tslib_menu.php';
 }
 else {
 	$TYPO3_CONF_VARS['FE']['XCLASS']['tslib/class.tslib_menu.php']=t3lib_extMgm::extPath($_EXTKEY) . 'patch/class.ux_tslib_menu.php';
-}
-if (TYPO3_MODE=='FE') {
-	//include_once($TYPO3_CONF_VARS['FE']['XCLASS']['tslib/class.tslib_menu.php']);
 }
 
 $TYPO3_CONF_VARS['FE']['XCLASS']['tslib/class.tslib_fe.php']=t3lib_extMgm::extPath($_EXTKEY) . 'patch/class.ux_tslib_fe.php';
