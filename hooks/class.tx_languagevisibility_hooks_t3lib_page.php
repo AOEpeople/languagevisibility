@@ -77,21 +77,19 @@ class tx_languagevisibility_hooks_t3lib_page implements t3lib_pageSelect_getPage
 	 */
 	public function getRecordOverlay_preProcess($table, &$row, &$sys_language_content, $OLmode, t3lib_pageSelect $parent) {
 		if(!is_array($row) || !isset($row['uid'])) {
-			if($row['uid']==5202) t3lib_div::debug('blub1');
 			return;
 		}
 		try {
 			$element = tx_languagevisibility_feservices::getElement ( $row ['uid'], $table );
 			$overlayLanguage = tx_languagevisibility_feservices::getOverlayLanguageIdForElement ( $element, $sys_language_content );
 		} catch ( Exception $e ) {
-			if($row['uid']==5202) t3lib_div::debug(array($row['uid']),'blub1');
 			return;
 		}
 
 		if ($overlayLanguage === false || $overlayLanguage === 0) {
 			unset ( $row );
 			return;
-		} else { //if(!$element instanceof tx_languagevisibility_fceelement || !$element instanceof tx_languagevisibility_fceoverlayelement) {
+		} else {
 			$sys_language_content = $overlayLanguage;
 		}
 	}
@@ -106,7 +104,7 @@ class tx_languagevisibility_hooks_t3lib_page implements t3lib_pageSelect_getPage
 	 * @return void
 	 */
 	public function getRecordOverlay_postProcess($table, &$row, &$sys_language_content, $OLmode, t3lib_pageSelect $parent) {
-		if(!is_array($row) || !isset($row['uid'])) {
+		if(!is_array($row) || !isset($row['uid']) || $sys_language_content == 0) {
 			return;
 		}
 		try {
