@@ -15,11 +15,11 @@ require_once(t3lib_extMgm::extPath("languagevisibility").'class.tx_languagevisib
 	function settingLanguage()	{
 
 		if (is_array($this->TYPO3_CONF_VARS['SC_OPTIONS']['tslib/class.tslib_fe.php']['settingLanguage_preProcess']))	{
-				$_params = array();
-				foreach($this->TYPO3_CONF_VARS['SC_OPTIONS']['tslib/class.tslib_fe.php']['settingLanguage_preProcess'] as $_funcRef)	{
-					t3lib_div::callUserFunction($_funcRef, $_params, $this);
-				}
+			$_params = array();
+			foreach($this->TYPO3_CONF_VARS['SC_OPTIONS']['tslib/class.tslib_fe.php']['settingLanguage_preProcess'] as $_funcRef)	{
+				t3lib_div::callUserFunction($_funcRef, $_params, $this);
 			}
+		}
 
 		parent::settingLanguage();
 
