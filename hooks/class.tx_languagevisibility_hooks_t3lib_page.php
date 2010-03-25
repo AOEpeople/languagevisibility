@@ -35,12 +35,12 @@ class tx_languagevisibility_hooks_t3lib_page implements t3lib_pageSelect_getPage
 	 * 1)	$lUid unchanged -
 	 * 			there was nothing to do for langvis and the overlay is requested is fine
 	 * 2)	$lUid == null
-	 * 			is relevant if we did the overlay ourselfs and the getPageOverlay function is not relevant anymore
+	 * 			is relevant if we did the overlay ourselfs and the processing within getPageOverlay function is not relevant anymore
 	 * 3)	$lUid changed
 	 * 			is relevant if we just changed the target-languge but require getPageOverlay to proceed with the overlay-chrunching
 	 *
-	 * @param unknown_type $pageInput
-	 * @param unknown_type $lUid
+	 * @param mixed $pageInput
+	 * @param integer $lUid
 	 * @param t3lib_pageSelect $parent
 	 * @return void
 	 */
@@ -54,14 +54,12 @@ class tx_languagevisibility_hooks_t3lib_page implements t3lib_pageSelect_getPage
 		$overlayLanguage = tx_languagevisibility_feservices::getOverlayLanguageIdForElementRecord ( $page_id, 'pages', $lUid );
 		if ($overlayLanguage === false) {
 			$overlayLanguageForced = tx_languagevisibility_feservices::getOverlayLanguageIdForElementRecordForced ( $page_id, 'pages', $lUid );
-				// avoid recursion if the language wasn't changed
-			if($overlayLanguageForced != $lUid) {
-				// $pageInput = $parent->getPageOverlay ( &$pageInput, $overlayLanguageForced );
-				$pageInput ['_NOTVISIBLE'] = TRUE;
-				$lUid = $overlayLanguageForced;
-			}
-		} elseif($overlayLanguage != $lUid) {	// avoid recursion if the language wasn't changed
-			// $pageInput = $parent->getPageOverlay ( &$pageInput, $overlayLanguage );
+				// don't use this recursion without further checks!!!!
+				// this isn't used because there  seems to be no reason why we should overlay an invisible page...
+			// $pageInput = $parent->getPageOverlay ( &$pageInput, $overlayLanguageForced );
+			$pageInput ['_NOTVISIBLE'] = TRUE;
+			$lUid = null;
+		} else {
 			$lUid = $overlayLanguage;
 		}
 	}
