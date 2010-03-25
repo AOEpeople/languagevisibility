@@ -12,20 +12,23 @@ require_once(t3lib_extMgm::extPath("languagevisibility").'class.tx_languagevisib
 	 * @return	void
 	 * @access private
 	 */
-	function settingLanguage()	{			
-			// Get values from TypoScript:
-			$lUid=intval($this->config['config']['sys_language_uid']);
-			
-			//works only with "ignore" setting
-			//need to check access for current page and show error:
-			if (!tx_languagevisibility_feservices::checkVisiblityForElement($this->page['uid'],'pages',$lUid)) {
-		   				$GLOBALS['TSFE']->pageNotFoundAndExit('Page is not visible in requested language ['.$lUid.'/'.$this->page['uid'].']');
-			
+	function settingLanguage()	{
+
+		if (is_array($this->TYPO3_CONF_VARS['SC_OPTIONS']['tslib/class.tslib_fe.php']['settingLanguage_preProcess']))	{
+				$_params = array();
+				foreach($this->TYPO3_CONF_VARS['SC_OPTIONS']['tslib/class.tslib_fe.php']['settingLanguage_preProcess'] as $_funcRef)	{
+					t3lib_div::callUserFunction($_funcRef, $_params, $this);
+				}
 			}
-			
-			//overlay of current page is handled in ux_t3lib_pageSelect::getPageOverlay
-			parent::settingLanguage();
-			
+
+		parent::settingLanguage();
+
+		if (is_array($this->TYPO3_CONF_VARS['SC_OPTIONS']['tslib/class.tslib_fe.php']['settingLanguage_postProcess']))	{
+			$_params = array();
+			foreach($this->TYPO3_CONF_VARS['SC_OPTIONS']['tslib/class.tslib_fe.php']['settingLanguage_postProcess'] as $_funcRef)	{
+				t3lib_div::callUserFunction($_funcRef, $_params, $this);
+			}
+		}
 	}
 
 }
