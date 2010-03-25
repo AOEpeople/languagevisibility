@@ -27,35 +27,39 @@ class ux_t3lib_TCEmain extends t3lib_TCEmain	{
 	 *
 	 * @param	string		Record table
 	 * @param	integer		Record UID
+	 * @param	array		Record data
+	 * @param	array		Hook objects
 	 * @return	boolean		Returns true if the user may update the record given by $table and $id
 	 */
-	function checkRecordUpdateAccess($table,$id)	{
-		
+	function checkRecordUpdateAccess($table, $id, $data=false, &$hookObjectsArr=false)	{
 		global $TCA;
 		$res = 0;
 		if ($TCA[$table] && intval($id)>0)	{
 			if (isset($this->recUpdateAccessCache[$table][$id]))	{	// If information is cached, return it
-
 				return $this->recUpdateAccessCache[$table][$id];
 				// Check if record exists and 1) if 'pages' the page may be edited, 2) if page-content the page allows for editing
 			} elseif ($this->doesRecordExist($table,$id,'edit'))	{
 				$res = 1;
-				if (t3lib_extMgm::isLoaded('languagevisibility')) {
-					require_once(t3lib_extMgm::extPath("languagevisibility").'class.tx_languagevisibility_beservices.php');									
-					$visibilityservice=t3lib_div::makeInstance('tx_languagevisibility_beservices');
-					if ($table=='pages') {
-						if (!$visibilityservice->hasUserAccessToPageRecord($id,'edit')) {
-							$res = 0;
-						}
-					}
-					else {
-						if (!$visibilityservice->hasUserAccessToEditRecord($table,$id)) {
-							$res=0;									
-						}
-					}
+			}
+
+			/**
+			 * These two blocks are splitted because this patch is a copy of what I'm about to ask for #485 (bugs.typo3.org)
+			 * But to avoid that this XCLASS covers the process_datamap() aswell this hookObj initialization is inlined in this version
+			 */
+			$hookObjectsArr = array();
+			if (is_array ($TYPO3_CONF_VARS['SC_OPTIONS']['t3lib/class.t3lib_tcemain.php']['processDatamapClass'])) {
+				foreach ($TYPO3_CONF_VARS['SC_OPTIONS']['t3lib/class.t3lib_tcemain.php']['processDatamapClass'] as $classRef) {
+					$hookObjectsArr[] = t3lib_div::getUserObj($classRef);
 				}
 			}
 
+			if (is_array($hookObjectsArr))	{
+				foreach($hookObjectsArr as $hookObj)	{
+					if (method_exists($hookObj, 'checkRecordUpdateAccess')) {
+						$res = $hookObj->checkRecordUpdateAccess($table, $id, $data, $res, $this);
+					}
+				}
+			}
 			$this->recUpdateAccessCache[$table][$id]=$res;	// Cache the result
 		}
 
