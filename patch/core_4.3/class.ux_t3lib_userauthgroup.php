@@ -42,21 +42,23 @@ class ux_t3lib_userAuthGroup extends t3lib_userAuthGroup {
 			if ($TCA[$table]['ctrl']['languageField'])	{
 				if (isset($idOrRow[$TCA[$table]['ctrl']['languageField']]))	{	// Language field must be found in input row - otherwise it does not make sense.
 					if (!$this->checkLanguageAccess($idOrRow[$TCA[$table]['ctrl']['languageField']]))	{
+							//original content of this block
+						//$this->errorMsg = 'ERROR: Language was not allowed.';
+						//return FALSE;
 
-						if ($idOrRow[$TCA[$table]['ctrl']['languageField']] ==0) {
-							$skipLanguageErrorMessage=FALSE;
-								//danielp allow default language for creating new elements as well as editing if languagevisibility allows it
+							//modifed content of this block
+						$skipLanguageErrorMessage=FALSE;
+							//danielp allow default language for creating new elements as well as editing if languagevisibility allows it
 
+						if ($idOrRow[$TCA[$table]['ctrl']['languageField']] == 0) {
 							$editingIsAllowed=FALSE;
-							require_once(t3lib_extMgm::extPath("languagevisibility") . 'class.tx_languagevisibility_beservices.php');
+
 							$visibilityservice=t3lib_div::makeInstance('tx_languagevisibility_beservices');
 							if ($visibilityservice->hasUserAccessToEditRecord($table,$idOrRow['uid'])) {
 								$editingIsAllowed=TRUE;
-
 							}
 							if ($newRecord OR $editingIsAllowed) {
 								$skipLanguageErrorMessage=TRUE;
-
 							}
 						}
 						if (!$skipLanguageErrorMessage) {
