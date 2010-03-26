@@ -18,7 +18,9 @@ if (version_compare(TYPO3_version,'4.4','>')) {
 	$TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['t3lib/class.t3lib_page.php'] = t3lib_extMgm::extPath($_EXTKEY) . 'patch/core_4.3/class.ux_t3lib_page.php';
 	include_once(t3lib_extMgm::extPath($_EXTKEY) . 'patch/core_4.3/class.ux_t3lib_page.php');
 
-	$TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['t3lib/class.t3lib_userauthgroup.php']=t3lib_extMgm::extPath($_EXTKEY) . 'patch/core_4.3/class.ux_t3lib_userauthgroup.php';
+		// that's really odd - due to inheritance we've to XCLASS beuserauth to introduce functionality which is meant to exists in t3lib_userauthgroup
+	$TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['t3lib/class.t3lib_beuserauth.php']=t3lib_extMgm::extPath($_EXTKEY) . 'patch/core_4.3/class.ux_t3lib_beuserauth.php';
+	$TYPO3_CONF_VARS['SC_OPTIONS']['t3lib/class.t3lib_userauthgroup.php']['checkFullLanguagesAccess']['languagevisility'] = 'EXT:languagevisibility/hooks/class.tx_languagevisibility_hooks_t3lib_userauthgroup.php:tx_languagevisibility_hooks_t3lib_userauthgroup->checkFullLanguagesAccess';
 
 	$TYPO3_CONF_VARS['FE']['XCLASS']['tslib/class.tslib_fe.php'] = t3lib_extMgm::extPath($_EXTKEY) . 'patch/core_4.3/class.ux_tslib_fe.php';
 	$TYPO3_CONF_VARS['SC_OPTIONS']['tslib/class.tslib_fe.php']['settingLanguage_preProcess']['languagevisility'] = 'EXT:languagevisibility/hooks/class.tx_languagevisibility_hooks_tslib_fe.php:tx_languagevisibility_hooks_tslib_fe->settingLanguage_preProcess';

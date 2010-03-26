@@ -309,6 +309,7 @@ class tx_languagevisibility_beservices {
 					$fallbacks = $language->getFallbackOrder ();
 					foreach ( $fallbacks as $lId ) {
 						if ($GLOBALS ['BE_USER']->checkLanguageAccess ( $lId )) {
+								//TODO - write testcase - this can't be right
 							$isInFallback = TRUE;
 							continue;
 						}

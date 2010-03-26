@@ -1,6 +1,6 @@
 <?php
 
-class ux_t3lib_userAuthGroup extends t3lib_userAuthGroup {
+class ux_t3lib_beUserAuth extends t3lib_beUserAuth {
 
 	/**
 	 * Checking if a user has editing access to a record from a $TCA table.
@@ -46,12 +46,14 @@ class ux_t3lib_userAuthGroup extends t3lib_userAuthGroup {
 						//$this->errorMsg = 'ERROR: Language was not allowed.';
 						//return FALSE;
 
-							//modifed content of this block
+							//modifed content of this block ----------------------------------- begin
+							//TODO this needs to be moved into some kind of hook
 						$skipLanguageErrorMessage=FALSE;
 							//danielp allow default language for creating new elements as well as editing if languagevisibility allows it
 
 						if ($idOrRow[$TCA[$table]['ctrl']['languageField']] == 0) {
 							$editingIsAllowed=FALSE;
+
 
 							$visibilityservice=t3lib_div::makeInstance('tx_languagevisibility_beservices');
 							if ($visibilityservice->hasUserAccessToEditRecord($table,$idOrRow['uid'])) {
@@ -65,6 +67,9 @@ class ux_t3lib_userAuthGroup extends t3lib_userAuthGroup {
 							$this->errorMsg = 'ERROR: Language ( ' . $idOrRow[$TCA[$table]['ctrl']['languageField']] . ') was not allowed.';
 							return FALSE;
 						}
+
+							//modifed content of this block ----------------------------------- end
+
 					} elseif ($checkFullLanguageAccess && $idOrRow[$TCA[$table]['ctrl']['languageField']]==0 && !$this->checkFullLanguagesAccess($table, $idOrRow)) {
 						$this->errorMsg = 'ERROR: Related/affected language was not allowed.';
 						return FALSE;
@@ -122,5 +127,53 @@ class ux_t3lib_userAuthGroup extends t3lib_userAuthGroup {
 				// Finally, return true if all is well.
 			return TRUE;
 		}
+	}
+
+
+	/**
+	 * Check if user has access to all existing localizations for a certain record
+	 *
+	 * @param string 	the table
+	 * @param array 	the current record
+	 * @return boolean
+	 */
+	function checkFullLanguagesAccess($table, $record) {
+		$recordLocalizationAccess = $this->checkLanguageAccess(0);
+		if ($recordLocalizationAccess && t3lib_BEfunc::isTableLocalizable($table)) {
+
+			$pointerField = $GLOBALS['TCA'][$table]['ctrl']['transOrigPointerField'];
+
+			$recordLocalizations = t3lib_BEfunc::getRecordsByField(
+				$table,
+				$pointerField,
+				$record[$pointerField] > 0 ? $record[$pointerField] : $record['uid'],
+				'',
+				'',
+				'',
+				'1'
+			);
+
+			if (is_array($recordLocalizations)) {
+				foreach($recordLocalizations as $localization) {
+					$recordLocalizationAccess = $recordLocalizationAccess && $this->checkLanguageAccess($localization[$GLOBALS['TCA'][$table]['ctrl']['languageField']]);
+					if (!$recordLocalizationAccess) {
+						break;
+					}
+				}
+			}
+		}
+
+
+		if (is_array($GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['t3lib/class.t3lib_userauthgroup.php']['checkFullLanguagesAccess']))	{
+			foreach($GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['t3lib/class.t3lib_userauthgroup.php']['checkFullLanguagesAccess'] as $_funcRef)	{
+				$_params = array(
+					'table' => $table,
+					'row' => $record,
+					'recordLocalizationAccess' => $recordLocalizationAccess
+				);
+				$recordLocalizationAccess = t3lib_div::callUserFunction($_funcRef, $_params, $this);
+			}
+		}
+		return $recordLocalizationAccess;
 	}
 }
