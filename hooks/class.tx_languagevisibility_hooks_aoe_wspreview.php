@@ -2,7 +2,7 @@
 /***************************************************************
  *  Copyright notice
  *
- *  (c) 2007 Daniel P?tzinger (poetzinger@aoemedia.de)
+ *  (c) 2009 AOE media <dev@aoemedia.de>
  *  All rights reserved
  *
  *  This script is part of the TYPO3 project. The TYPO3 project is
@@ -24,104 +24,11 @@
 /**
  * Class/Function which manipulates the item-array for the  listing (see piFlexform).
  *
- * @author	Daniel P?tzinger <poetzinger@aoemedia.de>
+ * @author	Fabrizio Brance
+ * @author	Timo Schmidt
  */
 
-require_once t3lib_extMgm::extPath('languagevisibility') . 'classes/class.tx_languagevisibility_cacheManager.php';
-
-/**
- * SELECT box processing
- *
- */
-class tx_languagevisibility_behooks {
-
-	private static $updateLanguagevisibilityIds;
-
-	/**
-	 * This function is called my TYPO each time an element is saved in the backend
-	 *
-	 * @param array $incomingFieldArray
-	 * @param string $table
-	 * @param unknown_type $id
-	 * @param unknown_type $reference
-	 */
-	function processDatamap_preProcessFieldArray(&$incomingFieldArray, $table, $id, &$reference) {
-		$data = $incomingFieldArray;
-
-		if (! is_array ( $data ))
-			return; /* some strange DB situation */
-
-		switch ($table) {
-			case 'pages' :
-			case 'tt_content' :
-			case 'tt_news' :
-			case 'pages_language_overlay' :
-
-				/**
-				 * NOTE: This code does not affect new records because the field 'tx_languagevisibility_visibility' is not set
-				 */
-				if (isset ( $incomingFieldArray ['tx_languagevisibility_visibility'] ) && is_array ( $incomingFieldArray ['tx_languagevisibility_visibility'] )) {
-
-					if($table == 'pages'){
-
-						 $incomingFieldArray ['tx_languagevisibility_inheritanceflag_original'] = (in_array('no+',$incomingFieldArray ['tx_languagevisibility_visibility'])) ? '1' : '0';
-					}elseif($table == 'pages_language_overlay'){
-						$incomingFieldArray ['tx_languagevisibility_inheritanceflag_overlayed'] = (in_array('no+',$incomingFieldArray ['tx_languagevisibility_visibility'])) ? '1' : '0';
-					}
-
-					$incomingFieldArray ['tx_languagevisibility_visibility'] = serialize ( $incomingFieldArray ['tx_languagevisibility_visibility'] );
-
-					//flush all caches
-					tx_languagevisibility_cacheManager::getInstance()->flushAllCaches();
-				}
-
-			break;
-			default :
-				return;
-			break;
-		}
-	}
-
-	/**
-	 * This method is used to initialize new Elements with the default
-	 *
-	 * @param unknown_type $status
-	 * @param unknown_type $table
-	 * @param unknown_type $id
-	 * @param unknown_type $fieldArray
-	 * @param unknown_type $reference
-	 */
-	public function processDatamap_afterDatabaseOperations($status, $table, $id, $fieldArray, &$reference) {
-		switch ($table) {
-			/**
-			 * Now we set the default visibility for elements which did not get a defaultvisibility array.
-			 * This can happen, if a user creates a new element AND the user has no access for the languagevisibility_field
-			 */
-			case 'pages' :
-			case 'tt_content' :
-			case 'tt_news' :
-			case 'pages_language_overlay' :
-
-
-				if ($status == 'new') {
-					$row ['uid'] = $reference->substNEWwithIDs [$id];
-
-					if ($fieldArray ['pid'] == '-1') {
-						$row = t3lib_BEfunc::getWorkspaceVersionOfRecord ( $fieldArray ['t3ver_wsid'], $table, $row ['uid'], $fields = '*' );
-					}
-
-					require_once (t3lib_extMgm::extPath ( "languagevisibility" ) . 'class.tx_languagevisibility_beservices.php');
-					$row ['tx_languagevisibility_visibility'] 	= serialize ( tx_languagevisibility_beservices::getDefaultVisibilityArray () );
-					$where 										= "tx_languagevisibility_visibility = '' AND uid=" . $row ['uid'];
-
-					$GLOBALS ['TYPO3_DB']->exec_UPDATEquery ( $table, $where, $row );
-				}
-
-				tx_languagevisibility_cacheManager::getInstance()->flushAllCaches();
-
-			break;
-		}
-	}
+class tx_languagevisibility_hooks_aoe_wspreview {
 
 	/**
 	 * Alternative diff implementation
@@ -189,7 +96,5 @@ class tx_languagevisibility_behooks {
 		return $element;
 	}
 }
-
-
 
 ?>

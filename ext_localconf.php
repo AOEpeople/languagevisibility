@@ -2,7 +2,7 @@
 if (!defined ('TYPO3_MODE')) 	die ('Access denied.');
 
 
-$GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['t3lib/class.t3lib_tcemain.php']['processDatamapClass']['languagevisibility'] = 'EXT:languagevisibility/class.tx_languagevisibility_behooks.php:tx_languagevisibility_behooks';
+	$TYPO3_CONF_VARS['SC_OPTIONS']['t3lib/class.t3lib_tcemain.php']['processDatamapClass']['languagevisibility'] = 'EXT:languagevisibility/hooks/class.tx_languagevisibility_hooks_t3lib_tcemain.php:tx_languagevisibility_hooks_t3lib_tcemain';
 
 if (version_compare(TYPO3_version,'4.4','>')) {
 		// assuming that we get our patch into the TYPO3 core
@@ -10,6 +10,7 @@ if (version_compare(TYPO3_version,'4.4','>')) {
 	$TYPO3_CONF_VARS['SC_OPTIONS']['t3lib/class.t3lib_page.php']['getRecordOverlay']['languagevisility'] = 'EXT:languagevisibility/hooks/class.tx_languagevisibility_hooks_t3lib_page.php:tx_languagevisibility_hooks_t3lib_page';
 	$TYPO3_CONF_VARS['SC_OPTIONS']['tslib/class.tslib_fe.php']['settingLanguage_preProcess']['languagevisility'] = 'EXT:languagevisibility/hooks/class.tx_languagevisibility_hooks_tslib_fe.php:tx_languagevisibility_hooks_tslib_fe->settingLanguage_preProcess';
 	$TYPO3_CONF_VARS['SC_OPTIONS']['t3lib/class.t3lib_tcemain.php']['processDatamapClass']['languagevisibility'] = 'EXT:languagevisibility/hooks/class.tx_languagevisibility_hooks_t3lib_tcemain.php:tx_languagevisibility_hooks_t3lib_tcemain';
+	$TYPO3_CONF_VARS['SC_OPTIONS']['t3lib/class.t3lib_userauthgroup.php']['checkFullLanguagesAccess']['languagevisility'] = 'EXT:languagevisibility/hooks/class.tx_languagevisibility_hooks_t3lib_userauthgroup.php:tx_languagevisibility_hooks_t3lib_userauthgroup->checkFullLanguagesAccess';
 
 } else if (version_compare(TYPO3_version,'4.3','>')) {
 	$TYPO3_CONF_VARS['SC_OPTIONS']['t3lib/class.t3lib_page.php']['getPageOverlay']['languagevisility'] = 'EXT:languagevisibility/hooks/class.tx_languagevisibility_hooks_t3lib_page.php:tx_languagevisibility_hooks_t3lib_page';
@@ -23,7 +24,6 @@ if (version_compare(TYPO3_version,'4.4','>')) {
 	$TYPO3_CONF_VARS['SC_OPTIONS']['tslib/class.tslib_fe.php']['settingLanguage_preProcess']['languagevisility'] = 'EXT:languagevisibility/hooks/class.tx_languagevisibility_hooks_tslib_fe.php:tx_languagevisibility_hooks_tslib_fe->settingLanguage_preProcess';
 
 	$TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['t3lib/class.t3lib_tcemain.php']=t3lib_extMgm::extPath($_EXTKEY) . 'patch/core_4.3/class.ux_t3lib_tcemain.php';
-	$TYPO3_CONF_VARS['SC_OPTIONS']['t3lib/class.t3lib_tcemain.php']['processDatamapClass']['languagevisibility'] = 'EXT:languagevisibility/hooks/class.tx_languagevisibility_hooks_t3lib_tcemain.php:tx_languagevisibility_hooks_t3lib_tcemain';
 
 } else {
 	require_once(t3lib_extMgm::extPath($_EXTKEY) . 'class.tx_languagevisibility_fieldvisibility.php');
@@ -34,6 +34,7 @@ if (version_compare(TYPO3_version,'4.4','>')) {
 
 	$TYPO3_CONF_VARS['FE']['XCLASS']['tslib/class.tslib_fe.php']=t3lib_extMgm::extPath($_EXTKEY) . 'patch/core_4.2/class.ux_tslib_fe.php';
 	$TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['t3lib/class.t3lib_tcemain.php']=t3lib_extMgm::extPath($_EXTKEY) . 'patch/core_4.3/class.ux_t3lib_tcemain.php';
+	$TYPO3_CONF_VARS['SC_OPTIONS']['t3lib/class.t3lib_tcemain.php']['processDatamapClass']['languagevisibility'] = 'EXT:languagevisibility/class.tx_languagevisibility_behooks.php:tx_languagevisibility_behooks';
 }
 
 	// overriding option because this is done by languagevisibility and will not work if set
@@ -68,8 +69,8 @@ $pagesOverlayfields .= (empty($pagesOverlayfields)) ? $NewPagesOverlayfields : '
  */
 
 $GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['templavoila']['pi1']['renderElementClass'][] = 'EXT:languagevisibility/hooks/class.tx_languagevisibility_hooks_templavoila_pi1.php:tx_languagevisibility_hooks_templavoila_pi1';
-$GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['crawler']['processUrls'][] = 'EXT:languagevisibility/hooks/class.tx_languagevisibility_crawler.php:tx_languagevisibility_crawler->processUrls';
+$GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['crawler']['processUrls'][] = 'EXT:languagevisibility/hooks/class.tx_languagevisibility_hooks_crawler.php:tx_languagevisibility_hooks_crawler->processUrls';
 $GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['phpunit']['importExtensions_additionalDatabaseFiles'][] = 'EXT:languagevisibility/ext_tables.sql';
-$GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['aoe_wspreview/system/class.tx_aoewspreview_system_workspaceService.php']['createDiff'][] = 'EXT:languagevisibility/class.tx_languagevisibility_behooks.php:tx_languagevisibility_behooks->aoewspreview_createDiff';
+$GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['aoe_wspreview/system/class.tx_aoewspreview_system_workspaceService.php']['createDiff'][] = 'EXT:languagevisibility/hooks/class.tx_languagevisibility_hooks_aoe_wspreview.php:tx_languagevisibility_hooks_aoe_wspreview->aoewspreview_createDiff';
 
 ?>
