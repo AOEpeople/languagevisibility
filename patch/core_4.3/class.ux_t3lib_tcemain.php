@@ -33,32 +33,42 @@ class ux_t3lib_TCEmain extends t3lib_TCEmain	{
 	 */
 	function checkRecordUpdateAccess($table, $id, $data=false, &$hookObjectsArr=false)	{
 		global $TCA;
-		$res = 0;
-		if ($TCA[$table] && intval($id)>0)	{
-			if (isset($this->recUpdateAccessCache[$table][$id]))	{	// If information is cached, return it
-				return $this->recUpdateAccessCache[$table][$id];
-				// Check if record exists and 1) if 'pages' the page may be edited, 2) if page-content the page allows for editing
-			} elseif ($this->doesRecordExist($table,$id,'edit'))	{
-				$res = 1;
-			}
-
-			/**
-			 * These two blocks are splitted because this patch is a copy of what I'm about to ask for #485 (bugs.typo3.org)
-			 * But to avoid that this XCLASS covers the process_datamap() aswell this hookObj initialization is inlined in this version
-			 */
+		/**
+		 * These two blocks are splitted because this patch is a copy of what I'm about to ask for #485 (bugs.typo3.org)
+		 * But to avoid that this XCLASS covers the process_datamap() aswell this hookObj initialization is inlined in this version
+		 */
+		if($hookObjectsArr === false) {
 			$hookObjectsArr = array();
 			if (is_array ($TYPO3_CONF_VARS['SC_OPTIONS']['t3lib/class.t3lib_tcemain.php']['processDatamapClass'])) {
 				foreach ($TYPO3_CONF_VARS['SC_OPTIONS']['t3lib/class.t3lib_tcemain.php']['processDatamapClass'] as $classRef) {
 					$hookObjectsArr[] = t3lib_div::getUserObj($classRef);
 				}
 			}
+		}
 
-			if (is_array($hookObjectsArr))	{
-				foreach($hookObjectsArr as $hookObj)	{
-					if (method_exists($hookObj, 'checkRecordUpdateAccess')) {
-						$res = $hookObj->checkRecordUpdateAccess($table, $id, $data, $res, $this);
-					}
+		/**
+		 * This part comes from #485 (bugs.typo3.org)
+		 */
+		$res = null;
+		if (is_array($hookObjectsArr))	{
+			foreach($hookObjectsArr as $hookObj)	{
+				if (method_exists($hookObj, 'checkRecordUpdateAccess')) {
+					$res = $hookObj->checkRecordUpdateAccess($table, $id, $data, $res, $this);
 				}
+			}
+		}
+		if($res === 1 || $res === 0) {
+			return $res;
+		} else {
+			$res = 0;
+		}
+
+		if ($TCA[$table] && intval($id)>0)	{
+			if (isset($this->recUpdateAccessCache[$table][$id]))	{	// If information is cached, return it
+				return $this->recUpdateAccessCache[$table][$id];
+				// Check if record exists and 1) if 'pages' the page may be edited, 2) if page-content the page allows for editing
+			} elseif ($this->doesRecordExist($table,$id,'edit'))	{
+				$res = 1;
 			}
 			$this->recUpdateAccessCache[$table][$id]=$res;	// Cache the result
 		}

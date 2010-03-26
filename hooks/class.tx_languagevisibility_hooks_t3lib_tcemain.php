@@ -47,7 +47,6 @@ class tx_languagevisibility_hooks_t3lib_tcemain {
 		} else {
 			$result = $res;
 		}
-
 		return $result;
 	}
 }
