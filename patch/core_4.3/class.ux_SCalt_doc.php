@@ -65,7 +65,8 @@ class ux_SC_alt_doc extends SC_alt_doc {
 										$CALC_PERMS = $BE_USER->calcPerms($calcPRec);	// Permissions for the parent page
 										if ($table=='pages')	{	// If pages:
 											$hasAccess = $CALC_PERMS&8 ? 1 : 0;
-											$this->viewId = $calcPRec['pid'];
+											#$this->viewId = $calcPRec['pid'];
+											$this->viewId = 0;
 										} else {
 											$hasAccess = $CALC_PERMS&16 ? 1 : 0;
 											$this->viewId = $calcPRec['uid'];
@@ -95,34 +96,33 @@ class ux_SC_alt_doc extends SC_alt_doc {
 									}
 
 										// Check internals regarding access:
-									if ($hasAccess)	{										
+									if ($hasAccess)	{
 										$hasAccess = $BE_USER->recordEditAccessInternals($table, $calcPRec);
 										$deniedAccessReason = $BE_USER->errorMsg;
 									}
 								} else $hasAccess = 0;
 							}
 
-							// AT THIS POINT we have checked the access status of the editing/creation of records and we can now proceed with creating the form elements:
-							
-							//danielp: additional permission check:
-							// if user wants to edit/create page record but has no access to default language!
-							if ($table == 'pages' && !$BE_USER->checkLanguageAccess(0)) {
-								if (t3lib_extMgm::isLoaded('languagevisibility')) {
-									require_once(t3lib_extMgm::extPath("languagevisibility").'class.tx_languagevisibility_beservices.php');									
-									$visibilityservice=t3lib_div::makeInstance('tx_languagevisibility_beservices');
-									if (!$visibilityservice->hasUserAccessToPageRecord($theUid,$cmd)) {
-										$hasAccess=FALSE;
-									}									
-								}	
+							if (is_array($GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['typo3/alt_doc.php']['makeEditForm_accessCheck']))	{
+								foreach($GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['typo3/alt_doc.php']['makeEditForm_accessCheck'] as $_funcRef)	{
+									$_params = array(
+										'table' =>$table,
+										'uid' => $theUid,
+										'cmd' => $cmd,
+										'hasAccess' => $hasAccess
+									);
+									$hasAccess = t3lib_div::callUserFunction($_funcRef, $_params, $this);
+								}
 							}
 
+							// AT THIS POINT we have checked the access status of the editing/creation of records and we can now proceed with creating the form elements:
 							if ($hasAccess)	{
 								$prevPageID = is_object($trData)?$trData->prevPageID:'';
 								$trData = t3lib_div::makeInstance('t3lib_transferData');
 								$trData->addRawData = TRUE;
 								$trData->defVals = $this->defVals;
 								$trData->lockRecords=1;
-								$trData->disableRTE = $this->MOD_SETTINGS['disableRTE'];
+								$trData->disableRTE = !$BE_USER->isRTE();
 								$trData->prevPageID = $prevPageID;
 								$trData->fetchRecord($table,$theUid,$cmd=='new'?'new':'');	// 'new'
 								reset($trData->regTableItems_data);
@@ -178,30 +178,25 @@ class ux_SC_alt_doc extends SC_alt_doc {
 									}
 
 										// Display "is-locked" message:
-									if ($lockInfo = t3lib_BEfunc::isRecordLocked($table,$rec['uid']))	{
-										$lockIcon = '
-
-											<!--
-											 	Warning box:
-											-->
-											<table border="0" cellpadding="0" cellspacing="0" class="warningbox">
-												<tr>
-													<td><img'.t3lib_iconWorks::skinImg($this->doc->backPath,'gfx/recordlock_warning3.gif','width="17" height="12"').' alt="" /></td>
-													<td>'.htmlspecialchars($lockInfo['msg']).'</td>
-												</tr>
-											</table>
-										';
-									} else $lockIcon = '';
+									if ($lockInfo = t3lib_BEfunc::isRecordLocked($table, $rec['uid'])) {
+										$lockedMessage = t3lib_div::makeInstance(
+											't3lib_FlashMessage',
+											htmlspecialchars($lockInfo['msg']),
+											'',
+											t3lib_FlashMessage::WARNING
+										);
+										t3lib_FlashMessageQueue::addMessage($lockedMessage);
+									}
 
 										// Combine it all:
-									$editForm.= $lockIcon.$panel;
+									$editForm .= $panel;
 								}
 
 								$thePrevUid = $rec['uid'];
 							} else {
 								$this->errorC++;
 								$editForm.=$LANG->sL('LLL:EXT:lang/locallang_core.php:labels.noEditPermission',1).'<br /><br />'.
-											($deniedAccessReason ? 'Reason: '.htmlspecialchars($deniedAccessReason).'<br/><br/>' : '');
+									($deniedAccessReason ? 'Reason: ' . htmlspecialchars($deniedAccessReason) . '<br /><br />' : '');
 							}
 						}
 					}
