@@ -2,24 +2,41 @@
 
 class ux_t3lib_TCEmain extends t3lib_TCEmain	{
 
+
 	/**
 	 * Used to evaluate if a page can be deleted
+	 *
+	 * The function is patched according to #13941
 	 *
 	 * @param	integer		Page id
 	 * @return	mixed		If array: List of page uids to traverse and delete (means OK), if string: error code.
 	 */
 	function canDeletePage($uid)	{
-		$return = parent::canDeletePage($uid);
-		if (is_array($return)) {
-			if (t3lib_extMgm::isLoaded('languagevisibility')) {
-					require_once(t3lib_extMgm::extPath("languagevisibility").'class.tx_languagevisibility_beservices.php');
-					$visibilityservice=t3lib_div::makeInstance('tx_languagevisibility_beservices');
-					if (!$visibilityservice->hasUserAccessToPageRecord($uid,'delete')) {
-						return 'Attempt to delete records without access to the visible languages';
-					}
-				}
-		}
-		return $return;
+		if ($this->doesRecordExist('pages',$uid,'delete'))	{	// If we may at all delete this page
+			if ($this->deleteTree)	{
+				$brExist = $this->doesBranchExist('',$uid,$this->pMap['delete'],1);	// returns the branch
+				if ($brExist != -1)	{	// Checks if we had permissions
+					if ($this->noRecordsFromUnallowedTables($brExist.$uid))	{
+						$pagesInBranch = t3lib_div::trimExplode(',', $brExist . $uid, 1);
+						foreach ($pagesInBranch as $pageInBranch) {
+							if (!$this->BE_USER->recordEditAccessInternals('pages', $pageInBranch, FALSE, FALSE, TRUE)) {
+								return 'Attempt to delete page which has prohibited localizations.';
+							}
+						}
+						return $pagesInBranch;
+					} else return 'Attempt to delete records from disallowed tables';
+				} else return 'Attempt to delete pages in branch without permissions';
+			} else {
+				$brExist = $this->doesBranchExist('',$uid,$this->pMap['delete'],1);	// returns the branch
+				if ($brExist == '')	{	// Checks if branch exists
+				if ($this->noRecordsFromUnallowedTables($uid))	{
+						if ($this->BE_USER->recordEditAccessInternals('pages', $uid, FALSE, FALSE, TRUE)) {
+							return array($uid);
+						} else return 'Attempt to delete page which has prohibited localizations.';
+					} else return 'Attempt to delete records from disallowed tables';
+				} else return 'Attempt to delete page which has subpages';
+			}
+		} else return 'Attempt to delete page without permissions';
 	}
 
 	/**

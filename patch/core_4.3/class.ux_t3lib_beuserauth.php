@@ -17,6 +17,15 @@ class ux_t3lib_beUserAuth extends t3lib_beUserAuth {
 	 * @return	boolean		True if OK, otherwise false
 	 */
 	function recordEditAccessInternals($table, $idOrRow, $newRecord = FALSE, $deletedRecord = FALSE, $checkFullLanguageAccess = FALSE) {
+
+		/**
+		 * this part is horribly dirty but avoids that page copy & move actions are effected by the changes from #13941
+		 */
+		$bT = debug_backtrace();
+		if( $table == 'pages' && ($bT[1]['function'] == 'copyRecord' || $bT[1]['function'] == 'moveRecord')) {
+			$checkFullLanguageAccess = FALSE;
+		}
+
 		global $TCA;
 
 		if (isset($TCA[$table]))	{
@@ -78,6 +87,9 @@ class ux_t3lib_beUserAuth extends t3lib_beUserAuth {
 					$this->errorMsg = 'ERROR: The "languageField" field named "'.$TCA[$table]['ctrl']['languageField'].'" was not found in testing record!';
 					return FALSE;
 				}
+				// changes related to #13941
+			} elseif (isset($TCA[$table]['ctrl']['transForeignTable']) && $checkFullLanguageAccess && !$this->checkFullLanguagesAccess($table, $idOrRow)) {
+				return FALSE;
 			}
 
 				// Checking authMode fields:
@@ -133,20 +145,35 @@ class ux_t3lib_beUserAuth extends t3lib_beUserAuth {
 	/**
 	 * Check if user has access to all existing localizations for a certain record
 	 *
+	 * Patch adds hook and applies changes due to #13194
+	 *
 	 * @param string 	the table
 	 * @param array 	the current record
 	 * @return boolean
 	 */
 	function checkFullLanguagesAccess($table, $record) {
 		$recordLocalizationAccess = $this->checkLanguageAccess(0);
-		if ($recordLocalizationAccess && t3lib_BEfunc::isTableLocalizable($table)) {
+		if ($recordLocalizationAccess
+				 && (
+					t3lib_BEfunc::isTableLocalizable($table)
+					|| isset($GLOBALS['TCA'][$table]['ctrl']['transForeignTable'])
+				)
+		) {
 
-			$pointerField = $GLOBALS['TCA'][$table]['ctrl']['transOrigPointerField'];
+			if (isset($GLOBALS['TCA'][$table]['ctrl']['transForeignTable'])) {
+				$l10nTable = $GLOBALS['TCA'][$table]['ctrl']['transForeignTable'];
+				$pointerField = $GLOBALS['TCA'][$l10nTable]['ctrl']['transOrigPointerField'];
+				$pointerValue = $record['uid'];
+			} else {
+				$l10nTable = $table;
+				$pointerField = $GLOBALS['TCA'][$l10nTable]['ctrl']['transOrigPointerField'];
+				$pointerValue = $record[$pointerField] > 0 ? $record[$pointerField] : $record['uid'];
+			}
 
 			$recordLocalizations = t3lib_BEfunc::getRecordsByField(
-				$table,
+				$l10nTable,
 				$pointerField,
-				$record[$pointerField] > 0 ? $record[$pointerField] : $record['uid'],
+				$pointerValue,
 				'',
 				'',
 				'',
@@ -155,14 +182,15 @@ class ux_t3lib_beUserAuth extends t3lib_beUserAuth {
 
 			if (is_array($recordLocalizations)) {
 				foreach($recordLocalizations as $localization) {
-					$recordLocalizationAccess = $recordLocalizationAccess && $this->checkLanguageAccess($localization[$GLOBALS['TCA'][$table]['ctrl']['languageField']]);
+					$recordLocalizationAccess = $recordLocalizationAccess
+						&& $this->checkLanguageAccess($localization[$GLOBALS['TCA'][$l10nTable]['ctrl']['languageField']]);
 					if (!$recordLocalizationAccess) {
 						break;
 					}
 				}
 			}
-		}
 
+		}
 
 		if (is_array($GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['t3lib/class.t3lib_userauthgroup.php']['checkFullLanguagesAccess']))	{
 			foreach($GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['t3lib/class.t3lib_userauthgroup.php']['checkFullLanguagesAccess'] as $_funcRef)	{
