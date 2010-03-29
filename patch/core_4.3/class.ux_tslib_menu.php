@@ -25,11 +25,13 @@
 *  This copyright notice MUST APPEAR in all copies of the script!
 ***************************************************************/
 
-
+interface tslib_menu_filterMenuPagesHook {
+	public function tslib_menu_filterMenuPagesHook (array &$data, array $banUidArray, $spacer, tslib_tmenu $obj);
+}
 
 
 class ux_tslib_tmenu extends tslib_tmenu {
-	
+
 	/**
 	 * Checks if a page is OK to include in the final menu item array. Pages can be excluded if the doktype is wrong, if they are hidden in navigation, have a uid in the list of banned uids etc.
 	 *
@@ -38,55 +40,95 @@ class ux_tslib_tmenu extends tslib_tmenu {
 	 * @param	boolean		If set, then the page is a spacer.
 	 * @return	boolean		Returns true if the page can be safely included.
 	 */
-	function filterMenuPages(&$data,$banUidArray,$spacer)	{		
-		
-		if ($data['_NOTVISIBLE']) {
-			return false;
+	function filterMenuPages(&$data,$banUidArray,$spacer)	{
+		$includePage = TRUE;
+		if (is_array($GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['cms/tslib/class.tslib_menu.php']['filterMenuPages'])) {
+			foreach ($GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['cms/tslib/class.tslib_menu.php']['filterMenuPages'] as $classRef) {
+				$hookObject = t3lib_div::getUserObj($classRef);
+
+				if (!($hookObject instanceof tslib_menu_filterMenuPagesHook)) {
+					throw new UnexpectedValueException('$hookObject must implement interface tslib_menu_filterMenuPagesHook', 1251476766);
+				}
+
+				$includePage = $includePage && $hookObject->tslib_menu_filterMenuPagesHook($data, $banUidArray, $spacer, $this);
+			}
 		}
-		else {
+		if (!$includePage) {
+			return false;
+		} else {
 			return parent::filterMenuPages($data,$banUidArray,$spacer);
-		}		
+		}
 	}
 
 }
 
-class ux_tslib_gmenu extends tslib_gmenu {	
-	
-	function filterMenuPages(&$data,$banUidArray,$spacer)	{		
-		
-		if ($data['_NOTVISIBLE']) {
-			return false;
+class ux_tslib_gmenu extends tslib_gmenu {
+
+	function filterMenuPages(&$data,$banUidArray,$spacer)	{
+		$includePage = TRUE;
+		if (is_array($GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['cms/tslib/class.tslib_menu.php']['filterMenuPages'])) {
+			foreach ($GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['cms/tslib/class.tslib_menu.php']['filterMenuPages'] as $classRef) {
+				$hookObject = t3lib_div::getUserObj($classRef);
+
+				if (!($hookObject instanceof tslib_menu_filterMenuPagesHook)) {
+					throw new UnexpectedValueException('$hookObject must implement interface tslib_menu_filterMenuPagesHook', 1251476766);
+				}
+
+				$includePage = $includePage && $hookObject->tslib_menu_filterMenuPagesHook($data, $banUidArray, $spacer, $this);
+			}
 		}
-		else {
+		if (!$includePage) {
+			return false;
+		} else {
 			return parent::filterMenuPages($data,$banUidArray,$spacer);
-		}		
+		}
 	}
 
 }
 
-class ux_tslib_imgmenu extends tslib_imgmenu {	
-	
-	function filterMenuPages(&$data,$banUidArray,$spacer)	{		
-		
-		if ($data['_NOTVISIBLE']) {
-			return false;
+class ux_tslib_imgmenu extends tslib_imgmenu {
+
+	function filterMenuPages(&$data,$banUidArray,$spacer)	{
+		$includePage = TRUE;
+		if (is_array($GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['cms/tslib/class.tslib_menu.php']['filterMenuPages'])) {
+			foreach ($GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['cms/tslib/class.tslib_menu.php']['filterMenuPages'] as $classRef) {
+				$hookObject = t3lib_div::getUserObj($classRef);
+
+				if (!($hookObject instanceof tslib_menu_filterMenuPagesHook)) {
+					throw new UnexpectedValueException('$hookObject must implement interface tslib_menu_filterMenuPagesHook', 1251476766);
+				}
+
+				$includePage = $includePage && $hookObject->tslib_menu_filterMenuPagesHook($data, $banUidArray, $spacer, $this);
+			}
 		}
-		else {
+		if (!$includePage) {
+			return false;
+		} else {
 			return parent::filterMenuPages($data,$banUidArray,$spacer);
-		}		
+		}
 	}
 
 }
-class ux_tslib_jsmenu extends tslib_jsmenu {	
-	
-	function filterMenuPages(&$data,$banUidArray,$spacer)	{		
-		
-		if ($data['_NOTVISIBLE']) {
-			return false;
+class ux_tslib_jsmenu extends tslib_jsmenu {
+
+	function filterMenuPages(&$data,$banUidArray,$spacer)	{
+		$includePage = TRUE;
+		if (is_array($GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['cms/tslib/class.tslib_menu.php']['filterMenuPages'])) {
+			foreach ($GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['cms/tslib/class.tslib_menu.php']['filterMenuPages'] as $classRef) {
+				$hookObject = t3lib_div::getUserObj($classRef);
+
+				if (!($hookObject instanceof tslib_menu_filterMenuPagesHook)) {
+					throw new UnexpectedValueException('$hookObject must implement interface tslib_menu_filterMenuPagesHook', 1251476766);
+				}
+
+				$includePage = $includePage && $hookObject->tslib_menu_filterMenuPagesHook($data, $banUidArray, $spacer, $this);
+			}
 		}
-		else {
+		if (!$includePage) {
+			return false;
+		} else {
 			return parent::filterMenuPages($data,$banUidArray,$spacer);
-		}		
+		}
 	}
 
 }
