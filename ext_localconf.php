@@ -63,9 +63,25 @@ if (version_compare(TYPO3_version,'4.4','>')) {
 	// overriding option because this is done by languagevisibility and will not work if set
 $TYPO3_CONF_VARS['FE']['hidePagesIfNotTranslatedByDefault'] = 0;
 
-$TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['ext/templavoila/pi1/class.tx_templavoila_pi1.php']=t3lib_extMgm::extPath($_EXTKEY) . 'patch/tv/class.ux_tx_templavoila_pi1.php';
-//$TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['ext/templavoila/class.tx_templavoila_api.php']=t3lib_extMgm::extPath($_EXTKEY) . 'patch/tv/class.ux_tx_templavoila_api.php';
+	// TemplaVoila is a bit complicated here - there are optional and non-optional parts
+	// most of the aren't really relevant if used with TemplaVoila 1.4.2 or AOE_TemplaVoila
+$confArr = unserialize($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf']['languagevisibility']);
+if (t3lib_extMgm::isLoaded('templavoila')) {
+	if($confArr['applyPatchTV']==1) {
+		$TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['ext/templavoila/mod1/index.php'] = t3lib_extMgm::extPath($_EXTKEY) . 'patch/tv/class.ux_tx_templavoila_module1.php';
+		$TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['ext/templavoila/class.tx_templavoila_api.php'] = t3lib_extMgm::extPath($_EXTKEY) . 'patch/tv/class.ux_tx_templavoila_api.php';
+	}
 
+	$realExtKey = $_EXTKEY;
+	$_EXTKEY = 'templavoila';
+	include(t3lib_extMgm::extPath($_EXTKEY) . 'ext_emconf.php');
+	$version = $EM_CONF[$_EXTKEY]['version'];
+	if (t3lib_div::int_from_ver($version) < 1004002) {
+		$TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['ext/templavoila/pi1/class.tx_templavoila_pi1.php'] = t3lib_extMgm::extPath($_EXTKEY) . 'patch/tv/class.ux_tx_templavoila_pi1.php';
+	}
+		// Restore the extension key
+	$_EXTKEY = $realExtKey;
+}
 
 	//adding inheriatance flag to the addRootlineField
 $rootlinefields = &$GLOBALS["TYPO3_CONF_VARS"]["FE"]["addRootLineFields"];
