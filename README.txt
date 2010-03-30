@@ -15,4 +15,5 @@ Performance:
 * add index to sys_language_uid  and l18n_parent 
 	
 	
-	
+Known issues:
+debug_backtrace() is used within the TYPO3 4.3 XCLASSes - this might cause errors on systems where this function is blacklisted
