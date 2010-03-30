@@ -1,7 +1,3 @@
-
-  # cat=basic//10; type=boolean; label=Apply Patch: Add PATCH to TemplaVoila PageModul
-applyPatchTV = 1
-
   # cat=basic//20; type=boolean; label=Inheritance: Enable inherited settings for pages
 inheritanceEnabled = 0
 
@@ -11,5 +7,8 @@ translatedAsDefaultEnabled = 0
   # cat=basic//30; type=boolean; label=Cache Layer: Enable this option to use the refetching and caching of records (less db querys, more memory usage)
 useCache = 0
 
-  # cat=basic//30; type=boolean; label=Restrict Cut Copy and Move: This option disables cut, copy and move for elements with overlays
-restrictCutCopyMoveForOverlays = 1
+  # cat=basic//30; type=boolean; label=Restrict Cut Copy and Move: This option disables cut, copy and move for elements with overlays (not relevant if used with TYPO3 4.3+)
+restrictCutCopyMoveForOverlays = 0
+
+  # cat=basic//10; type=boolean; label=Apply Patch: Add PATCH to TemplaVoila PageModul (not relevant if used with TemplaVoila 1.4+)
+applyPatchTV = 0
