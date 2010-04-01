@@ -92,6 +92,11 @@ class tx_visibilityServiceDB_testcase extends tx_languagevisibility_databaseTest
 	 * @see tx_languagevisibility_visibilityService
 	 */
 	function visibility_hiddenOverlayCe() {
+
+		if(version_compare(TYPO3_version,'4.3','>') && !t3lib_extMgm::isLoaded('version')) {
+			$this->markTestSkipped('Not relevant if "version" is not installed');
+		}
+
 			/* @var $element tx_languagevisibility_element */
 		$element = $this->_getContent('tt_content',15 /* element with L1 overlay */);
 			/* @var $visibility tx_languagevisibility_visibilityService */
@@ -197,6 +202,11 @@ class tx_visibilityServiceDB_testcase extends tx_languagevisibility_databaseTest
 	 *
 	 */
 	function test_visibility_ttcontentOverlayForceToNoAffectsVisibilityAlsoInWorkspaces(){
+
+		if(version_compare(TYPO3_version,'4.3','>') && !t3lib_extMgm::isLoaded('version')) {
+			$this->markTestSkipped('Not relevant if "version" is not installed');
+		}
+
 		$this->_fakeWorkspaceContext(4711);
 
 		$language 			= $this->_getLang(1);

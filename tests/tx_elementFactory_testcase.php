@@ -89,6 +89,11 @@ class tx_elementFactory_testcase extends tx_languagevisibility_databaseTestcase 
 	 * @test
 	 */
 	public function canCreateDraftWorkspaceElementFromLiveWorkspaceUidInWorkspaceContext(){
+
+		if(version_compare(TYPO3_version,'4.3','>') && !t3lib_extMgm::isLoaded('version')) {
+			$this->markTestSkipped('Not relevant if "version" is not installed');
+		}
+
 		$this->importDataSet(dirname(__FILE__). '/fixtures/getLiveWorkspaceElementFromWorkspaceUid.xml');
 
 		$dao 			= t3lib_div::makeInstance( 'tx_languagevisibility_daocommon' );

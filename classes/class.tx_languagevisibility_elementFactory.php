@@ -219,9 +219,12 @@ class tx_languagevisibility_elementFactory {
 						// Mount Point page types are allowed ONLY a) if they are the outermost record in rootline and b) if the overlay flag is not set:
 						$uid = $row['pid'];	// Next uid
 					}
-					// Add row to rootline with language overlaid:
-					if(version_compare(TYPO3_version,'4.4','>')) {
+						// Add row to rootline with language overlaid:
+					if(version_compare(TYPO3_version,'4.3','>')) {
+						$langvisHook = $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['t3lib/class.t3lib_page.php']['getPageOverlay']['languagevisility'];
+						unset($GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['t3lib/class.t3lib_page.php']['getPageOverlay']['languagevisility']);
 						$theRowArray[] = $sys_page->getPageOverlay($row,$languageid);
+						$GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['t3lib/class.t3lib_page.php']['getPageOverlay']['languagevisility'] = $langvisHook;
 					} else {
 						$theRowArray[] = $sys_page->_original_getPageOverlay($row,$languageid);
 					}
