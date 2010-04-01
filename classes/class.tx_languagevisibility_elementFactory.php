@@ -220,8 +220,11 @@ class tx_languagevisibility_elementFactory {
 						$uid = $row['pid'];	// Next uid
 					}
 					// Add row to rootline with language overlaid:
-
-					$theRowArray[] = $sys_page->_original_getPageOverlay($row,$languageid);
+					if(version_compare(TYPO3_version,'4.4','>')) {
+						$theRowArray[] = $sys_page->getPageOverlay($row,$languageid);
+					} else {
+						$theRowArray[] = $sys_page->_original_getPageOverlay($row,$languageid);
+					}
 				} else {
 					return array();	// broken rootline.
 				}
