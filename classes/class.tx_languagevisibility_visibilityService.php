@@ -250,8 +250,7 @@ class tx_languagevisibility_visibilityService {
 		if ($local !='' && $local !='-') {
 			$visibility->setVisibilityString($local)->setVisibilityDescription('local setting '.$local);
 			return $visibility;
-		}
-		else {
+		} else {
 			if ($element->isLanguageSetToAll()) {
 				$visibility->setVisibilityString('yes')->setVisibilityDescription('language configured to all');
 				return $visibility;

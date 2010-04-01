@@ -83,7 +83,7 @@ class tx_languagevisibility_recordelement extends tx_languagevisibility_element 
 						' AND '.$TCA[$table]['ctrl']['transOrigPointerField'].'='.intval($useUid).
 						' AND hidden=0 AND deleted=0'.$addWhere,
 					'',
-					'',
+					't3ver_wsid DESC',	// if there's a workspace record we want to make sure that we get this one
 					'1'
 				);
 

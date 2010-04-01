@@ -195,7 +195,6 @@ class tx_visibilityServiceDB_testcase extends tx_languagevisibility_databaseTest
 	 * This testcase is used to test if an "force to no"-setting  in an overlay record in the workspace
 	 * affects the original element in the workspace.
 	 *
-	 * @return
 	 */
 	function test_visibility_ttcontentOverlayForceToNoAffectsVisibilityAlsoInWorkspaces(){
 		$this->_fakeWorkspaceContext(4711);
@@ -207,7 +206,7 @@ class tx_visibilityServiceDB_testcase extends tx_languagevisibility_databaseTest
 
 		$visibilityResult 	= $service->isVisible($language,$element);
 
-		$this->assertFalse($visibilityResult,'page element is visible, but should not be visible');
+		$this->assertFalse($visibilityResult,'element is visible, but should not be visible');
 	}
 
 
