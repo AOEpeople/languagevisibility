@@ -34,6 +34,7 @@ class tx_cachedWorkflow_testcase extends tx_languagevisibility_databaseTestcase{
 		$fixtureElement 	= $elementFactory->getElementForTable('pages',3);
 		
 		$visibilityService 	= new tx_languagevisibility_visibilityService();
+		$visibilityService->setUseInheritance();
 		$visibilityResult	= true;
 		$visibilityResult 	= $visibilityService->isVisible($fixtureLanguage,$fixtureElement);	
 		
