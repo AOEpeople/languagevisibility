@@ -83,6 +83,7 @@ class tx_visibilityService_testcase extends tx_phpunit_testcase {
 	}
 
 	public function test_visibility_fixture_fce_db() {
+		$this->markTestSkipped('covered in other testcases -not useful without DB - causes false positives in TYPO3 4.3+');
 		$language = $this->_fixture_getLanguageThreeWithMultiFallback ();
 		$element = $this->_fixture_getFCEElementWithDefaultVisibility ();
 
