@@ -234,7 +234,14 @@ class tx_element_testcase extends tx_languagevisibility_databaseTestcase {
 	function setUp() {
 		parent::setUp();
 		// order of extension-loading is important !!!!
-		$this->importExtensions ( array ( 'cms', 'static_info_tables', 'templavoila', 'languagevisibility', 'mwimagemap','aoe_xml2array' ) );
+		$import = array ('cms', 'static_info_tables', 'templavoila', 'languagevisibility');
+		$optional = array( 'version', 'mwimagemap', 'aoe_xml2array');
+		foreach($optional as $ext) {
+			if (t3lib_extMgm::isLoaded($ext)) {
+				$import[] = $ext;
+			}
+		}
+		$this->importExtensions($import);
 	}
 
 
