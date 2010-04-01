@@ -66,10 +66,10 @@ class tx_languagevisibility_hooks_t3lib_page implements t3lib_pageSelect_getPage
 
 	/**
 	 *
-	 * @param unknown_type $table
-	 * @param unknown_type $row
-	 * @param unknown_type $sys_language_content
-	 * @param unknown_type $OLmode
+	 * @param string $table
+	 * @param array $row
+	 * @param integer $sys_language_content
+	 * @param string $OLmode
 	 * @param t3lib_pageSelect $parent
 	 * @return void
 	 */
