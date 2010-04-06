@@ -76,11 +76,11 @@ if (t3lib_extMgm::isLoaded('templavoila')) {
 	$_EXTKEY = 'templavoila';
 	include(t3lib_extMgm::extPath($_EXTKEY) . 'ext_emconf.php');
 	$version = $EM_CONF[$_EXTKEY]['version'];
+		// Restore the extension key
+	$_EXTKEY = $realExtKey;
 	if (t3lib_div::int_from_ver($version) < 1004002) {
 		$TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['ext/templavoila/pi1/class.tx_templavoila_pi1.php'] = t3lib_extMgm::extPath($_EXTKEY) . 'patch/tv/class.ux_tx_templavoila_pi1.php';
 	}
-		// Restore the extension key
-	$_EXTKEY = $realExtKey;
 }
 
 	//adding inheriatance flag to the addRootlineField
