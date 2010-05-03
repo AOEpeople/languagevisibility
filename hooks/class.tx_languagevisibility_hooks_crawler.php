@@ -2,7 +2,7 @@
 
 require_once(t3lib_extMgm::extPath('languagevisibility') . 'class.tx_languagevisibility_feservices.php');
 
-class tx_languagevisibility_crawler {
+class tx_languagevisibility_hooks_crawler {
 
 	/**
 	 * Process the prepared crawler urls and check wether these pages have the chance to get crawled or not
