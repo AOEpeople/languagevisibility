@@ -82,22 +82,6 @@ class tx_visibilityService_testcase extends tx_phpunit_testcase {
 		$this->assertEquals ( 0, $visibility->getOverlayLanguageIdForLanguageAndElement ( $language, $element ), "default should be overlay" );
 	}
 
-	public function test_visibility_fixture_fce_db() {
-		$this->markTestSkipped('covered in other testcases -not useful without DB - causes false positives in TYPO3 4.3+');
-		$language = $this->_fixture_getLanguageThreeWithMultiFallback ();
-		$element = $this->_fixture_getFCEElementWithDefaultVisibility ();
-
-		//test
-		$visibility = t3lib_div::makeInstance ( 'tx_languagevisibility_visibilityService' );
-
-		// language 1 should be set local to "t"
-		$this->assertEquals ( '-', $element->getLocalVisibilitySetting ( 1 ), "setting default (-) expected" );
-
-		$this->assertEquals ( 'f', $visibility->getVisibilitySetting ( $language, $element ), "setting f expected (because default is used)" );
-		$this->assertEquals ( true, $visibility->isVisible ( $language, $element ), "in aust it should be visible" );
-		//$this->assertEquals(1, $visibility->getOverlayLanguageIdForLanguageAndElement($language,$element), "default should be overlay");
-	}
-
 	public function test_visibility_fixture_page() {
 
 		$language = $this->_fixture_getLanguageOneWithDefaultFallback ();
