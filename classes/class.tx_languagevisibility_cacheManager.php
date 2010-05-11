@@ -1,25 +1,25 @@
 <?php
 /***************************************************************
- *  Copyright notice
+ * Copyright notice
  *
- *  (c) 2007 AOE media (dev@aoemedia.de)
- *  All rights reserved
+ * (c) 2007 AOE media (dev@aoemedia.de)
+ * All rights reserved
  *
- *  This script is part of the TYPO3 project. The TYPO3 project is
- *  free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
+ * This script is part of the TYPO3 project. The TYPO3 project is
+ * free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
  *
- *  The GNU General Public License can be found at
- *  http://www.gnu.org/copyleft/gpl.html.
+ * The GNU General Public License can be found at
+ * http://www.gnu.org/copyleft/gpl.html.
  *
- *  This script is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
+ * This script is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  *
- *  This copyright notice MUST APPEAR in all copies of the script!
+ * This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 /**
  *
@@ -27,9 +27,9 @@
  * @coauthor Tolleiv Nietsch <nietsch@aoemedia.de>
  * @coauthor Timo Schmidt <schmidt@aoemedia.de>
  */
-require_once (t3lib_extMgm::extPath ( "languagevisibility" ) . 'classes/class.tx_languagevisibility_language.php');
+require_once (t3lib_extMgm::extPath("languagevisibility") . 'classes/class.tx_languagevisibility_language.php');
 
-class tx_languagevisibility_cacheManager{
+class tx_languagevisibility_cacheManager {
 
 	/**
 	 * @var boolean
@@ -40,7 +40,6 @@ class tx_languagevisibility_cacheManager{
 	 * @var boolean
 	 */
 	protected static $enableCache = true;
-
 
 	/**
 	 * @var tx_languagevisibility_cacheManager
@@ -56,13 +55,13 @@ class tx_languagevisibility_cacheManager{
 	 * @param void
 	 * @return  void
 	 */
-	protected function __construct(){
+	protected function __construct() {
 		$this->cache = array();
 	}
 
-	public function __destruct(){
+	public function __destruct() {
 		/*echo round(memory_get_usage()/1048576,2)." megabytes";*/
-		/*	$before = memory_get_usage();
+	/*	$before = memory_get_usage();
 		 unset($this->cache);
 		 $after 	= memory_get_usage();
 
@@ -80,10 +79,10 @@ class tx_languagevisibility_cacheManager{
 	 *
 	 * @return boolean
 	 */
-	public static function isCacheEnabled(){
-		if(!isset(self::$useCache)){
+	public static function isCacheEnabled() {
+		if (! isset(self::$useCache)) {
 			$confArr = unserialize($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf']['languagevisibility']);
-			if(is_array($confArr) && $confArr['useCache']){
+			if (is_array($confArr) && $confArr['useCache']) {
 				self::$useCache = ($confArr['useCache'] == 1);
 			}
 		}
@@ -97,7 +96,7 @@ class tx_languagevisibility_cacheManager{
 	 * @param $boolean
 	 * @return void
 	 */
-	public static function enableCache(){
+	public static function enableCache() {
 		self::$enableCache = true;
 	}
 
@@ -106,7 +105,7 @@ class tx_languagevisibility_cacheManager{
 	 *
 	 * @return void
 	 */
-	public static function disableCache(){
+	public static function disableCache() {
 		self::$enableCache = false;
 	}
 
@@ -115,7 +114,7 @@ class tx_languagevisibility_cacheManager{
 	 *
 	 * @return void
 	 */
-	public function flushAllCaches(){
+	public function flushAllCaches() {
 		$this->cache = array();
 	}
 
@@ -125,10 +124,10 @@ class tx_languagevisibility_cacheManager{
 	 * @param $namespace
 	 * @return array
 	 */
-	public function get($namespace){
-		if(array_key_exists($namespace,$this->cache) && self::isCacheEnabled()){
+	public function get($namespace) {
+		if (array_key_exists($namespace, $this->cache) && self::isCacheEnabled()) {
 			return $this->cache[$namespace];
-		}else{
+		} else {
 			return array();
 		}
 	}
@@ -140,7 +139,7 @@ class tx_languagevisibility_cacheManager{
 	 * @param $content
 	 * @return void
 	 */
-	public function set($namespace,$content){
+	public function set($namespace, $content) {
 		$this->cache[$namespace] = $content;
 	}
 
@@ -149,9 +148,9 @@ class tx_languagevisibility_cacheManager{
 	 *
 	 * @return  tx_languagevisibility_cacheManager
 	 */
-	public static function getInstance(){
-		if(!self::$instance instanceof  tx_languagevisibility_cacheManager){
-			self::$instance = new  tx_languagevisibility_cacheManager();
+	public static function getInstance() {
+		if (! self::$instance instanceof tx_languagevisibility_cacheManager) {
+			self::$instance = new tx_languagevisibility_cacheManager();
 		}
 
 		return self::$instance;

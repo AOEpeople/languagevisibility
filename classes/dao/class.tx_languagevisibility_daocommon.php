@@ -1,25 +1,25 @@
 <?php
 /***************************************************************
- *  Copyright notice
+ * Copyright notice
  *
- *  (c) 2007 AOE media (dev@aoemedia.de)
- *  All rights reserved
+ * (c) 2007 AOE media (dev@aoemedia.de)
+ * All rights reserved
  *
- *  This script is part of the TYPO3 project. The TYPO3 project is
- *  free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
+ * This script is part of the TYPO3 project. The TYPO3 project is
+ * free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
  *
- *  The GNU General Public License can be found at
- *  http://www.gnu.org/copyleft/gpl.html.
+ * The GNU General Public License can be found at
+ * http://www.gnu.org/copyleft/gpl.html.
  *
- *  This script is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
+ * This script is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  *
- *  This copyright notice MUST APPEAR in all copies of the script!
+ * This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 /**
  *
@@ -33,7 +33,7 @@ class tx_languagevisibility_daocommon {
 
 	protected static $recordCache;
 
-	protected static  $cacheLimit = 2000;
+	protected static $cacheLimit = 2000;
 
 	/**
 	 * Returns a record by table and uid.
@@ -43,29 +43,29 @@ class tx_languagevisibility_daocommon {
 	 * @return array
 	 */
 	public static function getRecord($uid, $table) {
-		$cacheManager 		= tx_languagevisibility_cacheManager::getInstance();
+		$cacheManager = tx_languagevisibility_cacheManager::getInstance();
 
-		$isCacheEnabled		= $cacheManager->isCacheEnabled();
-		self::$recordCache 	= $cacheManager->get('daoRecordCache');
+		$isCacheEnabled = $cacheManager->isCacheEnabled();
+		self::$recordCache = $cacheManager->get('daoRecordCache');
 
-		if($isCacheEnabled){
-			if(!isset(self::$recordCache[$table][$uid])){
-					//!TODO we're still running two queries - this can be reduced to one with a tricky search criteria
-				$row = self::getRequestedRecord($uid,$table);
+		if ($isCacheEnabled) {
+			if (! isset(self::$recordCache[$table][$uid])) {
+				//!TODO we're still running two queries - this can be reduced to one with a tricky search criteria
+				$row = self::getRequestedRecord($uid, $table);
 
-				if($row){
+				if ($row) {
 					self::$recordCache[$table][$uid] = $row;
-					if(count(self::$recordCache) < self::$cacheLimit){
-						self::loadSimilarRecordsIntoCache($row,$table);
+					if (count(self::$recordCache) < self::$cacheLimit) {
+						self::loadSimilarRecordsIntoCache($row, $table);
 					}
 				}
 			}
 
-			$cacheManager->set('daoRecordCache',self::$recordCache);
+			$cacheManager->set('daoRecordCache', self::$recordCache);
 
 			$result = self::$recordCache[$table][$uid];
-		}else{
-			$result = self::getRequestedRecord($uid,$table);
+		} else {
+			$result = self::getRequestedRecord($uid, $table);
 		}
 
 		return $result;
@@ -78,17 +78,17 @@ class tx_languagevisibility_daocommon {
 	 * @param $table
 	 * @return array
 	 */
-	protected static function getRequestedRecord($uid,$table){
+	protected static function getRequestedRecord($uid, $table) {
 		// fix settings
 		$fields = '*';
 		$table = $table;
 		$groupBy = null;
 		$orderBy = '';
-		$where = 'uid=' . intval ( $uid );
+		$where = 'uid=' . intval($uid);
 
-		$result = $GLOBALS ['TYPO3_DB']->exec_SELECTquery ( $fields, $table, $where, $groupBy, $orderBy );
-		$row = $GLOBALS ['TYPO3_DB']->sql_fetch_assoc ( $result );
-		$GLOBALS['TYPO3_DB']-> sql_free_result($result);
+		$result = $GLOBALS['TYPO3_DB']->exec_SELECTquery($fields, $table, $where, $groupBy, $orderBy);
+		$row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($result);
+		$GLOBALS['TYPO3_DB']->sql_free_result($result);
 
 		return $row;
 	}
@@ -101,39 +101,40 @@ class tx_languagevisibility_daocommon {
 	 * @param $table
 	 * @return void
 	 */
-	protected function loadSimilarRecordsIntoCache($row,$table){
+	protected function loadSimilarRecordsIntoCache($row, $table) {
 
-		if($row['pid'] > 0){
-			$fields 		= '*';
-			$tablename 		= $table;
-			$orderBy 		= '';
-			$groupBy		= null;
+		if ($row['pid'] > 0) {
+			$fields = '*';
+			$tablename = $table;
+			$orderBy = '';
+			$groupBy = null;
 
-			$uidsInCache 	= implode(',',array_keys(self::$recordCache[$table]));
+			$uidsInCache = implode(',', array_keys(self::$recordCache[$table]));
 			//get deleted hidden and workspace field from tca
+
 
 			global $TCA;
 			t3lib_div::loadTCA($table);
 
-			if(is_array($TCA[$table]['ctrl'])){
+			if (is_array($TCA[$table]['ctrl'])) {
 				$deleteField = $TCA[$table]['ctrl']['delete'];
 			}
 
-			$where 	= 'uid !='.$row['uid'].' AND pid = '.$row['pid'].' AND uid NOT IN ('.$uidsInCache.')';
-			$where	.= array_key_exists('hidden', $row)?' AND hidden=0':'';
+			$where = 'uid !=' . $row['uid'] . ' AND pid = ' . $row['pid'] . ' AND uid NOT IN (' . $uidsInCache . ')';
+			$where .= array_key_exists('hidden', $row) ? ' AND hidden=0' : '';
 
-			if($deleteField != ''){
-				$where .= ' AND '.$deleteField.'=0';
+			if ($deleteField != '') {
+				$where .= ' AND ' . $deleteField . '=0';
 			}
 
-			$limit 			= 500;
-			$result 		= $GLOBALS ['TYPO3_DB']->exec_SELECTquery ( $fields, $tablename, $where, $groupBy, $orderBy, $limit );
+			$limit = 500;
+			$result = $GLOBALS['TYPO3_DB']->exec_SELECTquery($fields, $tablename, $where, $groupBy, $orderBy, $limit);
 
-			while($row = $GLOBALS ['TYPO3_DB']->sql_fetch_assoc ( $result )){
+			while ( $row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($result) ) {
 				self::$recordCache[$table][$row['uid']] = $row;
 			}
 
-			$GLOBALS['TYPO3_DB']-> sql_free_result($result);
+			$GLOBALS['TYPO3_DB']->sql_free_result($result);
 		}
 	}
 }

@@ -1,25 +1,25 @@
 <?php
 /***************************************************************
- *  Copyright notice
+ * Copyright notice
  *
- *  (c) 2007 AOE media (dev@aoemedia.de)
- *  All rights reserved
+ * (c) 2007 AOE media (dev@aoemedia.de)
+ * All rights reserved
  *
- *  This script is part of the TYPO3 project. The TYPO3 project is
- *  free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
+ * This script is part of the TYPO3 project. The TYPO3 project is
+ * free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
  *
- *  The GNU General Public License can be found at
- *  http://www.gnu.org/copyleft/gpl.html.
+ * The GNU General Public License can be found at
+ * http://www.gnu.org/copyleft/gpl.html.
  *
- *  This script is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
+ * This script is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  *
- *  This copyright notice MUST APPEAR in all copies of the script!
+ * This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 /**
  *
@@ -27,7 +27,7 @@
  * @coauthor Tolleiv Nietsch <nietsch@aoemedia.de>
  * @coauthor Timo Schmidt <schmidt@aoemedia.de>
  */
-require_once (t3lib_extMgm::extPath ( "languagevisibility" ) . 'classes/class.tx_languagevisibility_element.php');
+require_once (t3lib_extMgm::extPath("languagevisibility") . 'classes/class.tx_languagevisibility_element.php');
 
 class tx_languagevisibility_pageelement extends tx_languagevisibility_element {
 
@@ -82,25 +82,25 @@ class tx_languagevisibility_pageelement extends tx_languagevisibility_element {
 		##
 		# Ensure we have the live version
 		##
-		$row 	= $this->row;
-		$useUid = $row ['uid'];
+		$row = $this->row;
+		$useUid = $row['uid'];
 
-		if ($row ['pid'] == - 1) {
-			$useUid = $row ['t3ver_oid'];
+		if ($row['pid'] == - 1) {
+			$useUid = $row['t3ver_oid'];
 		}
 
-		if ($GLOBALS ['BE_USER']->workspace == 0) {
+		if ($GLOBALS['BE_USER']->workspace == 0) {
 			$addWhere = ' AND t3ver_state!=1'; //// Shadow state for new items MUST be ignored
 		}
 
-		$where 	= 'deleted = 0 AND hidden = 0 AND sys_language_uid=' . intval ( $id ) . ' AND pid=' . intval ( $useUid ) . $addWhere;
+		$where = 'deleted = 0 AND hidden = 0 AND sys_language_uid=' . intval($id) . ' AND pid=' . intval($useUid) . $addWhere;
 		$fields = '*';
-		$table 	= 'pages_language_overlay';
+		$table = 'pages_language_overlay';
 
-		$result = $GLOBALS ['TYPO3_DB']->exec_SELECTquery ( $fields, $table, $where, '', '' );
+		$result = $GLOBALS['TYPO3_DB']->exec_SELECTquery($fields, $table, $where, '', '');
 
-		$olrow 	= $GLOBALS ['TYPO3_DB']->sql_fetch_assoc ( $result );
-		$olrow 	= $this->getContextIndependentWorkspaceOverlay($table,$olrow);
+		$olrow = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($result);
+		$olrow = $this->getContextIndependentWorkspaceOverlay($table, $olrow);
 		$GLOBALS['TYPO3_DB']->sql_free_result($result);
 
 		return $olrow;
@@ -123,10 +123,10 @@ class tx_languagevisibility_pageelement extends tx_languagevisibility_element {
 	function hasOverLayRecordForAnyLanguageInAnyWorkspace() {
 
 		//if we handle a workspace record, we need to get it's live version
-		if ($this->row ['pid'] == - 1) {
-			$useUid = $this->row ['t3ver_oid'];
+		if ($this->row['pid'] == - 1) {
+			$useUid = $this->row['t3ver_oid'];
 		} else {
-			$useUid = $this->row ['uid'];
+			$useUid = $this->row['uid'];
 		}
 
 		// if a workspace record has an overlay, an overlay also exists in the livews with versionstate = 1
@@ -135,8 +135,8 @@ class tx_languagevisibility_pageelement extends tx_languagevisibility_element {
 		$table = 'pages_language_overlay';
 		$where = 'deleted = 0 AND pid=' . $useUid;
 
-		$rows = $GLOBALS ['TYPO3_DB']->exec_SELECTgetRows ( $fields, $table, $where );
-		$anz = $rows [0] ['anz'];
+		$rows = $GLOBALS['TYPO3_DB']->exec_SELECTgetRows($fields, $table, $where);
+		$anz = $rows[0]['anz'];
 
 		return ($anz > 0);
 	}
@@ -147,7 +147,7 @@ class tx_languagevisibility_pageelement extends tx_languagevisibility_element {
 	 * @param void
 	 * @return boolean
 	 */
-	public function supportsInheritance(){
+	public function supportsInheritance() {
 		return true;
 	}
 }

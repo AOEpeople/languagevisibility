@@ -1,25 +1,25 @@
 <?php
 /***************************************************************
- *  Copyright notice
+ * Copyright notice
  *
- *  (c) 2007 AOE media (dev@aoemedia.de)
- *  All rights reserved
+ * (c) 2007 AOE media (dev@aoemedia.de)
+ * All rights reserved
  *
- *  This script is part of the TYPO3 project. The TYPO3 project is
- *  free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
+ * This script is part of the TYPO3 project. The TYPO3 project is
+ * free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
  *
- *  The GNU General Public License can be found at
- *  http://www.gnu.org/copyleft/gpl.html.
+ * The GNU General Public License can be found at
+ * http://www.gnu.org/copyleft/gpl.html.
  *
- *  This script is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
+ * This script is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  *
- *  This copyright notice MUST APPEAR in all copies of the script!
+ * This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 /**
  *
@@ -27,7 +27,7 @@
  * @coauthor Tolleiv Nietsch <nietsch@aoemedia.de>
  * @coauthor Timo Schmidt <schmidt@aoemedia.de>
  */
-require_once (t3lib_extMgm::extPath ( "languagevisibility" ) . 'classes/class.tx_languagevisibility_cacheManager.php');
+require_once (t3lib_extMgm::extPath("languagevisibility") . 'classes/class.tx_languagevisibility_cacheManager.php');
 
 class tx_languagevisibility_languagerepository {
 
@@ -40,19 +40,19 @@ class tx_languagevisibility_languagerepository {
 	 * @param void
 	 * @return void
 	 */
-	protected function fetchAllLanguageRows(){
-		$cacheManager	= tx_languagevisibility_cacheManager::getInstance();
-		$cacheData 		= $cacheManager->get('allLanguageRows');
+	protected function fetchAllLanguageRows() {
+		$cacheManager = tx_languagevisibility_cacheManager::getInstance();
+		$cacheData = $cacheManager->get('allLanguageRows');
 
-		if(count($cacheData) <= 0){
-			$res = $GLOBALS ['TYPO3_DB']->exec_SELECTquery ( '*', 'sys_language', '', '', '', '' );
-			while ( $row = $GLOBALS ['TYPO3_DB']->sql_fetch_assoc ( $res ) ) {
+		if (count($cacheData) <= 0) {
+			$res = $GLOBALS['TYPO3_DB']->exec_SELECTquery('*', 'sys_language', '', '', '', '');
+			while ( $row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res) ) {
 				$cacheData[$row['uid']] = $row;
 			}
 
 			$GLOBALS['TYPO3_DB']->sql_free_result($res);
 
-			$cacheManager->set('allLanguageRows',$cacheData);
+			$cacheManager->set('allLanguageRows', $cacheData);
 		}
 	}
 
@@ -62,16 +62,16 @@ class tx_languagevisibility_languagerepository {
 	 *
 	 * @return array
 	 */
-	protected function getCachedOrUncacheResults(){
-		$cacheManager	= tx_languagevisibility_cacheManager::getInstance();
-		$isCacheEnabled	= $cacheManager->isCacheEnabled();
+	protected function getCachedOrUncacheResults() {
+		$cacheManager = tx_languagevisibility_cacheManager::getInstance();
+		$isCacheEnabled = $cacheManager->isCacheEnabled();
 
-		if($isCacheEnabled){
+		if ($isCacheEnabled) {
 			$this->fetchAllLanguageRows();
 			$results = $cacheManager->get('allLanguageRows');
-		}else{
-			$res = $GLOBALS ['TYPO3_DB']->exec_SELECTquery ( '*', 'sys_language', '', '', '', '' );
-			while ( $row = $GLOBALS ['TYPO3_DB']->sql_fetch_assoc ( $res ) ) {
+		} else {
+			$res = $GLOBALS['TYPO3_DB']->exec_SELECTquery('*', 'sys_language', '', '', '', '');
+			while ( $row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res) ) {
 				$results[] = $row;
 			}
 			$GLOBALS['TYPO3_DB']->sql_free_result($res);
@@ -87,14 +87,14 @@ class tx_languagevisibility_languagerepository {
 	 * @return array
 	 */
 	function getLanguages() {
-		$return 	= array ();
-		$results 	= $this->getCachedOrUncacheResults();
+		$return = array();
+		$results = $this->getCachedOrUncacheResults();
 
-		$return [] = $this->getDefaultLanguage ();
-		foreach($results as $row){
-			$language = t3lib_div::makeInstance ( 'tx_languagevisibility_language' );
-			$language->setData ( $row );
-			$return [] = $language;
+		$return[] = $this->getDefaultLanguage();
+		foreach ( $results as $row ) {
+			$language = t3lib_div::makeInstance('tx_languagevisibility_language');
+			$language->setData($row);
+			$return[] = $language;
 		}
 
 		return $return;
@@ -106,18 +106,18 @@ class tx_languagevisibility_languagerepository {
 	 * @return array
 	 */
 	function getLanguagesForBEUser() {
-		$return = array ();
-		$results 	= $this->getCachedOrUncacheResults();
+		$return = array();
+		$results = $this->getCachedOrUncacheResults();
 
-		if ($GLOBALS ['BE_USER']->checkLanguageAccess ( 0 )) {
-			$return [] = $this->getDefaultLanguage ();
+		if ($GLOBALS['BE_USER']->checkLanguageAccess(0)) {
+			$return[] = $this->getDefaultLanguage();
 		}
 
-		foreach($results as $row){
-			if ($GLOBALS ['BE_USER']->checkLanguageAccess ( $row ['uid'] )) {
-				$language = t3lib_div::makeInstance ( 'tx_languagevisibility_language' );
-				$language->setData ( $row );
-				$return [] = $language;
+		foreach ( $results as $row ) {
+			if ($GLOBALS['BE_USER']->checkLanguageAccess($row['uid'])) {
+				$language = t3lib_div::makeInstance('tx_languagevisibility_language');
+				$language->setData($row);
+				$return[] = $language;
 			}
 		}
 
@@ -131,11 +131,11 @@ class tx_languagevisibility_languagerepository {
 	 * @return tx_languagevisibility_language
 	 */
 	public function getDefaultLanguage() {
-		$language = t3lib_div::makeInstance ( 'tx_languagevisibility_language' );
-		$row ['uid'] = 0;
-		$row ['title'] = 'Default';
+		$language = t3lib_div::makeInstance('tx_languagevisibility_language');
+		$row['uid'] = 0;
+		$row['title'] = 'Default';
 
-		$language->setData ( $row );
+		$language->setData($row);
 		return $language;
 	}
 
@@ -147,23 +147,23 @@ class tx_languagevisibility_languagerepository {
 	 * @return tx_languagevisibility_language
 	 */
 	public function getLanguageById($id) {
-		$cacheManager	= tx_languagevisibility_cacheManager::getInstance();
-		$cacheData 		= $cacheManager->get('languagesCache');
-		$isCacheEnabled	= $cacheManager->isCacheEnabled();
+		$cacheManager = tx_languagevisibility_cacheManager::getInstance();
+		$cacheData = $cacheManager->get('languagesCache');
+		$isCacheEnabled = $cacheManager->isCacheEnabled();
 
-		if(!$isCacheEnabled || !isset($cacheData[$id]) ){
+		if (! $isCacheEnabled || ! isset($cacheData[$id])) {
 			if ($id == 0) {
-				$cacheData[$id] = $this->getDefaultLanguage ();
+				$cacheData[$id] = $this->getDefaultLanguage();
 			} else {
-				$res = $GLOBALS ['TYPO3_DB']->exec_SELECTquery ( '*', 'sys_language', 'uid=' . intval ( $id ), '', '', '' );
-				$row = $GLOBALS ['TYPO3_DB']->sql_fetch_assoc ( $res );
-				$language = t3lib_div::makeInstance ( 'tx_languagevisibility_language' );
+				$res = $GLOBALS['TYPO3_DB']->exec_SELECTquery('*', 'sys_language', 'uid=' . intval($id), '', '', '');
+				$row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res);
+				$language = t3lib_div::makeInstance('tx_languagevisibility_language');
 
-				$language->setData ( $row );
+				$language->setData($row);
 				$cacheData[$id] = $language;
 				$GLOBALS['TYPO3_DB']->sql_free_result($res);
 
-				$cacheManager->set('languagesCache',$cacheData);
+				$cacheManager->set('languagesCache', $cacheData);
 			}
 		}
 		return $cacheData[$id];
@@ -175,9 +175,9 @@ class tx_languagevisibility_languagerepository {
 	 * @param void
 	 * @return tx_languagevisibility_languagerepository
 	 */
-	public static function makeInstance(){
-		if(!self::$instance instanceof tx_languagevisibility_languagerepository) {
-			self::$instance	= t3lib_div::makeInstance ( 'tx_languagevisibility_languagerepository' );
+	public static function makeInstance() {
+		if (! self::$instance instanceof tx_languagevisibility_languagerepository) {
+			self::$instance = t3lib_div::makeInstance('tx_languagevisibility_languagerepository');
 		}
 
 		return self::$instance;

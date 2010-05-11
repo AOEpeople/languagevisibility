@@ -1,25 +1,25 @@
 <?php
 /***************************************************************
- *  Copyright notice
+ * Copyright notice
  *
- *  (c) 2007 Daniel Pötzinger (poetzinger@aoemedia.de)
- *  All rights reserved
+ * (c) 2007 AOE media (dev@aoemedia.de)
+ * All rights reserved
  *
- *  This script is part of the TYPO3 project. The TYPO3 project is
- *  free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
+ * This script is part of the TYPO3 project. The TYPO3 project is
+ * free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
  *
- *  The GNU General Public License can be found at
- *  http://www.gnu.org/copyleft/gpl.html.
+ * The GNU General Public License can be found at
+ * http://www.gnu.org/copyleft/gpl.html.
  *
- *  This script is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
+ * This script is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  *
- *  This copyright notice MUST APPEAR in all copies of the script!
+ * This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 /**
  * Abstract basis class for all elements (elements are any translateable records in the system)
@@ -28,11 +28,11 @@
  * @coauthor Tolleiv Nietsch <nietsch@aoemedia.de>
  * @coauthor Timo Schmidt <schmidt@aoemedia.de>
  */
-require_once (t3lib_extMgm::extPath ( "languagevisibility" ) . 'classes/class.tx_languagevisibility_languagerepository.php');
+require_once (t3lib_extMgm::extPath("languagevisibility") . 'classes/class.tx_languagevisibility_languagerepository.php');
 
 require_once (t3lib_extMgm::extPath('languagevisibility') . 'classes/class.tx_languagevisibility_cacheManager.php');
 
-require_once (t3lib_extMgm::extPath ( "languagevisibility" ) . 'classes/exceptions/class.tx_languagevisibility_InvalidRowException.php');
+require_once (t3lib_extMgm::extPath("languagevisibility") . 'classes/exceptions/class.tx_languagevisibility_InvalidRowException.php');
 
 abstract class tx_languagevisibility_element {
 
@@ -51,7 +51,6 @@ abstract class tx_languagevisibility_element {
 	 */
 	private $overlayVisibilitySetting;
 
-
 	/**
 	 *
 	 * @param $row
@@ -59,22 +58,22 @@ abstract class tx_languagevisibility_element {
 	 */
 	public function __construct($row) {
 
-		if(!$this->isRowOriginal($row)){
+		if (! $this->isRowOriginal($row)) {
 			throw new tx_languagevisibility_InvalidRowException();
 		}
 
 		$this->row = $row;
-		$this->localVisibilitySetting = @unserialize ( $this->row ['tx_languagevisibility_visibility'] );
+		$this->localVisibilitySetting = @unserialize($this->row['tx_languagevisibility_visibility']);
 
-		if (! is_array ( $this->localVisibilitySetting )) {
-			$this->localVisibilitySetting = array ();
+		if (! is_array($this->localVisibilitySetting)) {
+			$this->localVisibilitySetting = array();
 		}
 
-		if (! is_array ( $this->overlayVisibilitySetting )) {
-			$this->overlayVisibilitySetting = array ();
+		if (! is_array($this->overlayVisibilitySetting)) {
+			$this->overlayVisibilitySetting = array();
 		}
 
-		$this->initialisations ();
+		$this->initialisations();
 	}
 
 	/**
@@ -83,7 +82,7 @@ abstract class tx_languagevisibility_element {
 	 * @param string $table
 	 */
 	function setTable($table) {
-		$this->table=$table;
+		$this->table = $table;
 	}
 
 	/**
@@ -91,7 +90,7 @@ abstract class tx_languagevisibility_element {
 	 *
 	 * @return string
 	 */
-	public function getTable(){
+	public function getTable() {
 		return $this->table;
 	}
 
@@ -99,8 +98,8 @@ abstract class tx_languagevisibility_element {
 	 * Method to deternmine that an Element will not be instanciated with
 	 * data of an overlay.
 	 */
-	protected function isRowOriginal($row){
-		return $row ['l18n_parent'] == 0;
+	protected function isRowOriginal($row) {
+		return $row['l18n_parent'] == 0;
 	}
 
 	/**
@@ -119,7 +118,7 @@ abstract class tx_languagevisibility_element {
 	 * @return int
 	 */
 	public function getUid() {
-		return $this->row ['uid'];
+		return $this->row['uid'];
 	}
 
 	/**
@@ -128,7 +127,7 @@ abstract class tx_languagevisibility_element {
 	 * @return int
 	 */
 	public function getPid() {
-		return $this->row ['pid'];
+		return $this->row['pid'];
 	}
 
 	/**
@@ -137,7 +136,7 @@ abstract class tx_languagevisibility_element {
 	 * @return unknown
 	 */
 	public function getTitle() {
-		return $this->row ['title'];
+		return $this->row['title'];
 	}
 
 	/**
@@ -147,7 +146,7 @@ abstract class tx_languagevisibility_element {
 	 * @return int
 	 */
 	public function getOrigElementUid() {
-		return $this->row ['l18n_parent'];
+		return $this->row['l18n_parent'];
 	}
 
 	/**
@@ -156,7 +155,7 @@ abstract class tx_languagevisibility_element {
 	 * @return unknown
 	 */
 	public function getWorkspaceUid() {
-		return $this->row ['t3ver_wsid'];
+		return $this->row['t3ver_wsid'];
 	}
 
 	/**
@@ -165,7 +164,7 @@ abstract class tx_languagevisibility_element {
 	 * @return int
 	 */
 	public function getLiveWorkspaceUid() {
-		return $this->_getLiveUIDIfWorkspace ( $this->row );
+		return $this->_getLiveUIDIfWorkspace($this->row);
 	}
 
 	/**
@@ -174,7 +173,7 @@ abstract class tx_languagevisibility_element {
 	 * @return string
 	 */
 	public function getInformativeDescription() {
-		if (! $this->isLanguageSetToDefault ()) {
+		if (! $this->isLanguageSetToDefault()) {
 			return 'this content element is already a translated version therefore content overlays are not suppoted';
 		} else {
 			return 'this is a normal content element (translations are managed with overlay records)';
@@ -189,42 +188,44 @@ abstract class tx_languagevisibility_element {
 	 * @return string
 	 **/
 	public function getLocalVisibilitySetting($languageid) {
-		$overlayVisibility 	= $this->getVisibilitySettingStoredInOverlayRecord($languageid);
-		$localVisibility 	= $this->getVisibilitySettingStoredInDefaultRecord($languageid);
+		$overlayVisibility = $this->getVisibilitySettingStoredInOverlayRecord($languageid);
+		$localVisibility = $this->getVisibilitySettingStoredInDefaultRecord($languageid);
 
-		if ($overlayVisibility == 'no+' || $localVisibility == 'no+'){
+		if ($overlayVisibility == 'no+' || $localVisibility == 'no+') {
 			$res = 'no+';
-		} elseif ($overlayVisibility  == 'no'){
-			$res 	= $overlayVisibility ;
+		} elseif ($overlayVisibility == 'no') {
+			$res = $overlayVisibility;
 		} else {
-			$res 	= $localVisibility;
+			$res = $localVisibility;
 		}
 
 		return $res;
 	}
+
 	//make protected?
 	/**
-	* Returns the global visibility setting for the element (saved in the overlay)
-	*
-	* @return string
-	*/
-	public function getVisibilitySettingStoredInOverlayRecord($languageid){
+	 * Returns the global visibility setting for the element (saved in the overlay)
+	 *
+	 * @return string
+	 */
+	public function getVisibilitySettingStoredInOverlayRecord($languageid) {
 		//if global visibility has not been determined, determine and cache it
 
-		if(is_array($this->overlayVisibilitySetting)){
-			if(!isset($this->overlayVisibilitySetting [$languageid])){
-				$overlay 					= $this->getOverLayRecordForCertainLanguage($languageid);
-				$overlayVisibilitySettings 	= @unserialize ($overlay ['tx_languagevisibility_visibility'] );
 
-				if(is_array($overlayVisibilitySettings)){
-					$this->overlayVisibilitySetting [$languageid] = $overlayVisibilitySettings[$languageid];
-				}else{
-					$this->overlayVisibilitySetting [$languageid] = '-';
+		if (is_array($this->overlayVisibilitySetting)) {
+			if (! isset($this->overlayVisibilitySetting[$languageid])) {
+				$overlay = $this->getOverLayRecordForCertainLanguage($languageid);
+				$overlayVisibilitySettings = @unserialize($overlay['tx_languagevisibility_visibility']);
+
+				if (is_array($overlayVisibilitySettings)) {
+					$this->overlayVisibilitySetting[$languageid] = $overlayVisibilitySettings[$languageid];
+				} else {
+					$this->overlayVisibilitySetting[$languageid] = '-';
 				}
 			}
 		}
 
-		return $this->overlayVisibilitySetting [$languageid];
+		return $this->overlayVisibilitySetting[$languageid];
 	}
 
 	/**
@@ -233,10 +234,9 @@ abstract class tx_languagevisibility_element {
 	 * @param int $languageid
 	 * @return string
 	 */
-	public function getVisibilitySettingStoredInDefaultRecord($languageid){
-		return $this->localVisibilitySetting [$languageid];
+	public function getVisibilitySettingStoredInDefaultRecord($languageid) {
+		return $this->localVisibilitySetting[$languageid];
 	}
-
 
 	/**
 	 * This method returns an overlay of a record, independent from
@@ -246,17 +246,15 @@ abstract class tx_languagevisibility_element {
 	 * @param string $olrow
 	 * @return array
 	 */
-	protected function getContextIndependentWorkspaceOverlay($table,$olrow){
+	protected function getContextIndependentWorkspaceOverlay($table, $olrow) {
 		if (is_object($GLOBALS['TSFE']->sys_page)) {
-			$GLOBALS['TSFE']->sys_page->versionOL($table,$olrow);
-		}
-		else {
-			t3lib_BEfunc::workspaceOL($table,$olrow);
+			$GLOBALS['TSFE']->sys_page->versionOL($table, $olrow);
+		} else {
+			t3lib_BEfunc::workspaceOL($table, $olrow);
 		}
 
 		return $olrow;
 	}
-
 
 	/**
 	 * Returns all VisibilitySetting for this element.
@@ -273,7 +271,7 @@ abstract class tx_languagevisibility_element {
 	 * receive relevant fallbackOrder
 	 */
 	function getFallbackOrder(tx_languagevisibility_language $language) {
-		return $language->getFallbackOrder ();
+		return $language->getFallbackOrder();
 	}
 
 	/**
@@ -311,7 +309,7 @@ abstract class tx_languagevisibility_element {
 	 * @return boolean
 	 */
 	function isLanguageSetToDefault() {
-		return $this->row ['sys_language_uid'] == '0';
+		return $this->row['sys_language_uid'] == '0';
 	}
 
 	/**
@@ -320,7 +318,7 @@ abstract class tx_languagevisibility_element {
 	 * @return boolean
 	 */
 	protected function isOrigElement() {
-		return ($this->row ['l18n_parent'] == '0');
+		return ($this->row['l18n_parent'] == '0');
 	}
 
 	/**
@@ -329,9 +327,9 @@ abstract class tx_languagevisibility_element {
 	 * @return unknown
 	 */
 	function isLanguageSetToAll() {
-		if ($this->row ['sys_language_uid'] == '-1'){
+		if ($this->row['sys_language_uid'] == '-1') {
 			return true;
-		}else{
+		} else {
 			return false;
 		}
 	}
@@ -342,7 +340,7 @@ abstract class tx_languagevisibility_element {
 	 * @return boolean
 	 */
 	function isLiveWorkspaceElement() {
-		return ($this->row ['pid'] != - 1);
+		return ($this->row['pid'] != - 1);
 	}
 
 	/**
@@ -356,7 +354,7 @@ abstract class tx_languagevisibility_element {
 		 * and the languagevisibility_pages class only represent elements from the table pages not
 		 * from page_language_overlay
 		 */
-		return (! $this->isLanguageSetToDefault ()) && $this->isOrigElement ();
+		return (! $this->isLanguageSetToDefault()) && $this->isOrigElement();
 	}
 
 	/**
@@ -366,7 +364,7 @@ abstract class tx_languagevisibility_element {
 	 * @return boolean
 	 */
 	public function languageEquals(tx_languagevisibility_language $language) {
-		return $this->row ['sys_language_uid'] == $language->getUid ();
+		return $this->row['sys_language_uid'] == $language->getUid();
 	}
 
 	/**
@@ -375,7 +373,7 @@ abstract class tx_languagevisibility_element {
 	 * @return boolean
 	 **/
 	public function hasTranslation($languageid) {
-		if (! is_numeric ( $languageid )) {
+		if (! is_numeric($languageid)) {
 			return false;
 		}
 
@@ -384,7 +382,7 @@ abstract class tx_languagevisibility_element {
 			return true;
 		}
 
-		$hasOverlay = $this->_hasOverlayRecordForLanguage ( $languageid );
+		$hasOverlay = $this->_hasOverlayRecordForLanguage($languageid);
 		if ($hasOverlay) {
 			return true;
 		} else {
@@ -398,7 +396,7 @@ abstract class tx_languagevisibility_element {
 	 * @return boolean
 	 */
 	public function hasAnyTranslationInAnyWorkspace() {
-		if ($this->hasOverLayRecordForAnyLanguageInAnyWorkspace ()) {
+		if ($this->hasOverLayRecordForAnyLanguageInAnyWorkspace()) {
 			return true;
 		} else {
 			return false;
@@ -412,9 +410,9 @@ abstract class tx_languagevisibility_element {
 	 * @param int $langid
 	 */
 	protected function _hasOverlayRecordForLanguage($langid) {
-		$row = $this->getOverLayRecordForCertainLanguage ( $langid, true );
+		$row = $this->getOverLayRecordForCertainLanguage($langid, true);
 
-		if ($row ['uid'] != '') {
+		if ($row['uid'] != '') {
 			return true;
 		} else {
 			return false;
@@ -430,27 +428,27 @@ abstract class tx_languagevisibility_element {
 	 * @param string $table
 	 */
 	protected function _getLiveRowIfWorkspace($row, $table, $fields = '*') {
-		if (! isset ( $row ['pid'] ) || ! isset ( $row ['uid'] )) {
+		if (! isset($row['pid']) || ! isset($row['uid'])) {
 			return false;
 		}
 
-		$cacheManager 	= tx_languagevisibility_cacheManager::getInstance();
+		$cacheManager = tx_languagevisibility_cacheManager::getInstance();
 
-		$cacheData 		= $cacheManager->get('liveRecordCache');
-		$isCacheEnabled	= $cacheManager->isCacheEnabled();
+		$cacheData = $cacheManager->get('liveRecordCache');
+		$isCacheEnabled = $cacheManager->isCacheEnabled();
 
-		if(!$isCacheEnabled || !isset($cacheData[$table.' '.$row['uid'].' '.$fields])){
-			if ($row ['pid'] == - 1) {
-				$result = t3lib_BEfunc::getLiveVersionOfRecord ( $table, $row ['uid'] , $fields);
+		if (! $isCacheEnabled || ! isset($cacheData[$table . ' ' . $row['uid'] . ' ' . $fields])) {
+			if ($row['pid'] == - 1) {
+				$result = t3lib_BEfunc::getLiveVersionOfRecord($table, $row['uid'], $fields);
 			} else {
 				$result = $row;
 			}
 
-			$cacheData[$table.' '.$row['uid'].' '.$fields] = $result;
-			$cacheManager->set('liveRecordCache',$cacheData);
+			$cacheData[$table . ' ' . $row['uid'] . ' ' . $fields] = $result;
+			$cacheManager->set('liveRecordCache', $cacheData);
 		}
 
-		return $cacheData[$table.' '.$row['uid'].' '.$fields];
+		return $cacheData[$table . ' ' . $row['uid'] . ' ' . $fields];
 	}
 
 	/**
@@ -461,10 +459,10 @@ abstract class tx_languagevisibility_element {
 	 * @param array $row
 	 */
 	protected function _getLiveUIDIfWorkspace($row) {
-		if (! isset ( $row ['pid'] ) || ! isset ( $row ['t3ver_oid'] ) || ! isset ( $row ['uid'] )) {
+		if (! isset($row['pid']) || ! isset($row['t3ver_oid']) || ! isset($row['uid'])) {
 			return false;
 		}
-		return $row ['t3ver_oid'];
+		return $row['t3ver_oid'];
 	}
 
 	/**
@@ -492,13 +490,14 @@ abstract class tx_languagevisibility_element {
 	 * @param void
 	 * @return boolean
 	 */
-	public function supportsInheritance(){
+	public function supportsInheritance() {
 		return false;
 	}
 
 	################
 	# ABSTRACT METHODS
 	################
+
 
 	/**
 	 * Abstract method to determine if there exsists any translation in any workspace.
@@ -514,20 +513,20 @@ abstract class tx_languagevisibility_element {
 	 * @param $onlyUid
 	 * @return array
 	 */
-	public function getOverLayRecordForCertainLanguage($languageId,$onlyUid=false){
+	public function getOverLayRecordForCertainLanguage($languageId, $onlyUid = false) {
 		//get caching hints
-		$table		= $this->getTable();
-		$uid 		= $this->getUid();
-		$workspace	= intval($GLOBALS['BE_USER']->workspace);
+		$table = $this->getTable();
+		$uid = $this->getUid();
+		$workspace = intval($GLOBALS['BE_USER']->workspace);
 
-		$cacheManager 	= tx_languagevisibility_cacheManager::getInstance();
+		$cacheManager = tx_languagevisibility_cacheManager::getInstance();
 
-		$cacheData 		= $cacheManager->get('overlayRecordCache');
-		$isCacheEnabled	= $cacheManager->isCacheEnabled();
+		$cacheData = $cacheManager->get('overlayRecordCache');
+		$isCacheEnabled = $cacheManager->isCacheEnabled();
 
-		if(!$isCacheEnabled || !isset($cacheData[$table][$uid][$languageId][$workspace])){
+		if (! $isCacheEnabled || ! isset($cacheData[$table][$uid][$languageId][$workspace])) {
 			$cacheData[$table][$uid][$languageId][$workspace] = $this->getOverLayRecordForCertainLanguageImplementation($languageId);
-			$cacheManager->set('overlayRecordCache',$cacheData);
+			$cacheManager->set('overlayRecordCache', $cacheData);
 		}
 
 		return $cacheData[$table][$uid][$languageId][$workspace];
