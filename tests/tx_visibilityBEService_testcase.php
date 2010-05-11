@@ -1,28 +1,28 @@
 <?php
 /***************************************************************
- *  Copyright notice
+ * Copyright notice
  *
- *  Copyright (c) 2009, AOE media GmbH <dev@aoemedia.de>
- *  All rights reserved
+ * Copyright (c) 2009, AOE media GmbH <dev@aoemedia.de>
+ * All rights reserved
  *
- *  This script is part of the TYPO3 project. The TYPO3 project is
- *  free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
+ * This script is part of the TYPO3 project. The TYPO3 project is
+ * free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
  *
- *  The GNU General Public License can be found at
- *  http://www.gnu.org/copyleft/gpl.html.
+ * The GNU General Public License can be found at
+ * http://www.gnu.org/copyleft/gpl.html.
  *
- *  This script is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
+ * This script is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  *
- *  This copyright notice MUST APPEAR in all copies of the script!
+ * This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
-require_once(t3lib_extMgm::extPath("languagevisibility").'tests/tx_languagevisibility_databaseTestcase.php');
+require_once (t3lib_extMgm::extPath("languagevisibility") . 'tests/tx_languagevisibility_databaseTestcase.php');
 
 /**
  * This testcase is used to test the functionallity of the beservice
@@ -42,38 +42,38 @@ require_once(t3lib_extMgm::extPath("languagevisibility").'tests/tx_languagevisib
  * @subpackage languagevisibility
  * @access public
  */
- 
-class tx_visibilityBEService_testcase extends tx_languagevisibility_databaseTestcase {	
+
+class tx_visibilityBEService_testcase extends tx_languagevisibility_databaseTestcase {
 
 	/**
-	* Simple test to check that supported tables can be determined correctly
-	* 
-	* @param void
-	* @return void
-	* @author Timo Schmidt <timo.schmidt@aoemedia.de>
-	* @test
-	*/
-	public function canDetermineSupportedTables(){
-		$this->assertTrue(tx_languagevisibility_beservices::isSupportedTable('tt_news'));
-		$this->assertTrue(tx_languagevisibility_beservices::isSupportedTable('pages'));
-		$this->assertTrue(tx_languagevisibility_beservices::isSupportedTable('tt_content'));	
-	}
-	
-	/**
-	 * Simple test with a tt_content element and a translation.
-	 * The beService should return true, because an translation for
-	 * the element exists.
-	 * 
+	 * Simple test to check that supported tables can be determined correctly
+	 *
 	 * @param void
 	 * @return void
 	 * @author Timo Schmidt <timo.schmidt@aoemedia.de>
 	 * @test
 	 */
-	public function canDetectTranslationsInAnyLanguage(){
-		$this->importDataSet(dirname(__FILE__).'/fixtures/canDetectTranslationsInAnyLanguage.xml');
-		$hasTranslation = tx_languagevisibility_beservices::hasTranslationInAnyLanguage(1,'tt_content');
-		
-		$this->assertTrue($hasTranslation,'Determined no translations for a translated element');
+	public function canDetermineSupportedTables() {
+		$this->assertTrue(tx_languagevisibility_beservices::isSupportedTable('tt_news'));
+		$this->assertTrue(tx_languagevisibility_beservices::isSupportedTable('pages'));
+		$this->assertTrue(tx_languagevisibility_beservices::isSupportedTable('tt_content'));
+	}
+
+	/**
+	 * Simple test with a tt_content element and a translation.
+	 * The beService should return true, because an translation for
+	 * the element exists.
+	 *
+	 * @param void
+	 * @return void
+	 * @author Timo Schmidt <timo.schmidt@aoemedia.de>
+	 * @test
+	 */
+	public function canDetectTranslationsInAnyLanguage() {
+		$this->importDataSet(dirname(__FILE__) . '/fixtures/canDetectTranslationsInAnyLanguage.xml');
+		$hasTranslation = tx_languagevisibility_beservices::hasTranslationInAnyLanguage(1, 'tt_content');
+
+		$this->assertTrue($hasTranslation, 'Determined no translations for a translated element');
 	}
 }
 
