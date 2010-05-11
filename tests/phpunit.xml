@@ -1,0 +1,16 @@
+<phpunit colors="true" backupGlobals="false"
+	backupStaticAttributes="false" syntaxCheck="false" stopOnFailure="false"
+	convertErrorsToExceptions="true" convertNoticesToExceptions="true"
+	convertWarningsToExceptions="true">
+	
+	<testsuites>
+		<testsuite name="languagevisibility">
+			<directory suffix="testcase.php">.</directory>
+		</testsuite>
+	</testsuites>
+
+	<php>
+		<ini name="memory_limit" value="50000M" />
+		<ini name="max_execution_time" value="5000" />
+	</php>
+</phpunit>
