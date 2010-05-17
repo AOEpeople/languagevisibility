@@ -84,9 +84,13 @@ class tx_languagevisibility_hooks_t3lib_page implements t3lib_pageSelect_getPage
 			return;
 		}
 
-		if ($overlayLanguage === false || $overlayLanguage === 0) {
-			unset($row);
+		if ($overlayLanguage === false) {
+			$row['uid'] = 0;
+			$row['pid'] = 0;
 			return;
+		/*} else if ($overlayLanguage === 0) {
+				//TODO - what happens here?
+			return;*/
 		} else {
 			$sys_language_content = $overlayLanguage;
 		}
