@@ -34,5 +34,6 @@ return array(
 	'tx_languagevisibility_beuser' => $extensionPath . 'patch/lib/class.tx_languagevisibility_beUser.php',
 	'tx_languagevisibility_commandmap' => $extensionPath . 'patch/lib/class.tx_languagevisibility_commandMap.php',
 	'tx_languagevisibility_databasetestcase' => $extensionPath . 'tests/tx_languagevisibility_databaseTestcase.php',
+	'tx_languagevisibility_reports_configurationstatus' => $extensionPath . 'classes/class.tx_languagevisibility_reports_ConfigurationStatus.php',
 );
 ?>

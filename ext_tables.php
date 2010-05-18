@@ -207,4 +207,6 @@ if (TYPO3_MODE=="BE")    {
         "LLL:EXT:languagevisibility/locallang_db.xml:moduleFunction.tx_languagevisibility_modfunc1"
     );
 }
+
+$GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['reports']['tx_reports']['status']['providers']['configuration'][] = 'tx_languagevisibility_reports_ConfigurationStatus';
 ?>

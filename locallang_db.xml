@@ -40,6 +40,10 @@
 			<label index="visibility_in_overlay">visibility of overlay</label>
 			<label index="moduleFunction.tx_languagevisibility_modfunc1">Language Visibility Overview</label>
 			<label index="be_groups.allow_movecutdelete_foroverlays">Allow move, copy, cut and delete for elements with overlays:</label>
+			<label index="reports.fail.value">Unsupported (might work, but don't blame us)</label>
+			<label index="reports.fail.message">Unsupported values (other than "ignore") used on:</label>
+			<label index="reports.fail.message.detail">Page %1$d and its subpages - uses mode "%3$s" (sys_template:%2$d)</label>
+			<label index="reports.ok.value">OK</label>
 		</languageKey>
 	</data>
 </T3locallang>
