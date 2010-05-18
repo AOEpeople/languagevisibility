@@ -67,11 +67,6 @@ $TYPO3_CONF_VARS['FE']['hidePagesIfNotTranslatedByDefault'] = 0;
 	// most of the aren't really relevant if used with TemplaVoila 1.4.2 or AOE_TemplaVoila
 $confArr = unserialize($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf']['languagevisibility']);
 if (t3lib_extMgm::isLoaded('templavoila')) {
-	if($confArr['applyPatchTV']==1) {
-		$TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['ext/templavoila/mod1/index.php'] = t3lib_extMgm::extPath($_EXTKEY) . 'patch/tv/class.ux_tx_templavoila_module1.php';
-		$TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['ext/templavoila/class.tx_templavoila_api.php'] = t3lib_extMgm::extPath($_EXTKEY) . 'patch/tv/class.ux_tx_templavoila_api.php';
-	}
-
 	$realExtKey = $_EXTKEY;
 	$_EXTKEY = 'templavoila';
 	include(t3lib_extMgm::extPath($_EXTKEY) . 'ext_emconf.php');
@@ -79,6 +74,10 @@ if (t3lib_extMgm::isLoaded('templavoila')) {
 		// Restore the extension key
 	$_EXTKEY = $realExtKey;
 	if (t3lib_div::int_from_ver($version) < 1004002) {
+		if($confArr['applyPatchTV']==1 && !t3lib_extMgm::isLoaded('aoe_templavoila')) {
+			$TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['ext/templavoila/mod1/index.php'] = t3lib_extMgm::extPath($_EXTKEY) . 'patch/tv/class.ux_tx_templavoila_module1.php';
+			$TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['ext/templavoila/class.tx_templavoila_api.php'] = t3lib_extMgm::extPath($_EXTKEY) . 'patch/tv/class.ux_tx_templavoila_api.php';
+		}
 		$TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['ext/templavoila/pi1/class.tx_templavoila_pi1.php'] = t3lib_extMgm::extPath($_EXTKEY) . 'patch/tv/class.ux_tx_templavoila_pi1.php';
 	}
 }
