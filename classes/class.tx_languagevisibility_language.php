@@ -213,8 +213,13 @@ class tx_languagevisibility_language {
 		global $BACK_PATH;
 
 		$cache_key = 'pid:' . $pidForDefault . 'uid:' . $this->getUid();
-		if (! isset(self::$flagCache[$cache_key])) {
-			self::$flagCache[$cache_key] = '<img src="' . $this->getFlagImgPath($pidForDefault, $BACK_PATH) . '" title="' . $this->getTitle($pidForDefault) . '-' . $this->getIsoCode() . ' [' . $this->getUid() . ']">';
+		if ( !isset(self::$flagCache[$cache_key]) ) {
+			$flagPath = $this->getFlagImgPath($pidForDefault, $BACK_PATH);
+			if ($flagPath) {
+				self::$flagCache[$cache_key] = '<img src="' . $flagPath . '" title="' . $this->getTitle($pidForDefault) . '-' . $this->getIsoCode() . ' [' . $this->getUid() . ']">';
+			} else {
+				self::$flagCache[$cache_key] = '';
+			}
 		}
 
 		return self::$flagCache[$cache_key];
