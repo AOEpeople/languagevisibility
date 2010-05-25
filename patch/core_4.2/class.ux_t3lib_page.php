@@ -1,43 +1,37 @@
 <?php
 /***************************************************************
- *  Copyright notice
+ * Copyright notice
  *
- *  (c) 1999-2006 Kasper Skaarhoj (kasperYYYY@typo3.com)
- *  All rights reserved
+ * (c) 2009 AOE media <dev@aoemedia.de>
+ * All rights reserved
  *
- *  This script is part of the TYPO3 project. The TYPO3 project is
- *  free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
+ * This script is part of the TYPO3 project. The TYPO3 project is
+ * free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
  *
- *  The GNU General Public License can be found at
- *  http://www.gnu.org/copyleft/gpl.html.
- *  A copy is found in the textfile GPL.txt and important notices to the license
- *  from the author is found in LICENSE.txt distributed with these scripts.
+ * The GNU General Public License can be found at
+ * http://www.gnu.org/copyleft/gpl.html.
  *
+ * This script is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  *
- *  This script is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  This copyright notice MUST APPEAR in all copies of the script!
+ * This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 /**
  * Contains a class with "Page functions" mainly for the frontend
  *
- * $Id: class.t3lib_page.php 2470 2007-08-29 15:52:38Z typo3 $
- * Revised for TYPO3 3.6 2/2003 by Kasper Skaarhoj
- * XHTML-trans compliant
- *
- * @author	Kasper Skaarhoj <kasperYYYY@typo3.com>
+ * @author	Daniel P�tzinger
+ * @author	Tolleiv Nietsch
  */
 
 require_once (t3lib_extMgm::extPath ( "languagevisibility" ) . 'class.tx_languagevisibility_feservices.php');
 
 class ux_t3lib_pageSelect extends t3lib_pageSelect {
-	
+
 	/**
 	 * Returns the relevant page overlay record fields
 	 *
@@ -46,22 +40,22 @@ class ux_t3lib_pageSelect extends t3lib_pageSelect {
 	 * @return	array		Page row which is overlayed with language_overlay record (or the overlay record alone)
 	 */
 	function getPageOverlay($pageInput, $lUid = -1) {
-		
+
 		if ($lUid < 0) {
 			$lUid = $this->sys_language_uid;
 		}
-			
-		
+
+
 		if (is_array ( $pageInput )) {
 			$page_id = $pageInput ['uid'];
 		} else {
-			
+
 			return $this->_original_getPageOverlay ( $pageInput, $lUid );
 		}
-		
+
 		//call service to know if element is visible and which overlay language to use
 		$overlayLanguage = tx_languagevisibility_feservices::getOverlayLanguageIdForElementRecord ( $page_id, 'pages', $lUid );
-		
+
 		if ($overlayLanguage === false) {
 			$overlayLanguageForced = tx_languagevisibility_feservices::getOverlayLanguageIdForElementRecordForced ( $page_id, 'pages', $lUid );
 			// $pageInput['title'].=' [[not visible]]';
@@ -70,13 +64,13 @@ class ux_t3lib_pageSelect extends t3lib_pageSelect {
 			return $pageInput;
 		} else {
 			//$pageInput['title'].='-allowed- '.$lUid.'-'.$page_id.'-'.$overlayLanguage;
-			
+
 
 			return $this->_original_getPageOverlay ( $pageInput, $overlayLanguage );
 		}
-	
+
 	}
-	
+
 	/**
 	 * Creates language-overlay for records in general (where translation is found in records from the same table)
 	 *
@@ -90,11 +84,11 @@ class ux_t3lib_pageSelect extends t3lib_pageSelect {
 		//echo $table.'--'.$row['uid'].'--'.$sys_language_content.'--'.$OLmode;
 		//echo '<hr>';
 		//return parent::getRecordOverlay($table,$row,$sys_language_content,$OLmode);
-		
+
 
 		global $TCA;
 		//echo $row['uid'].'-';  //39348
-		
+
 
 		//unset olmode
 		$OLmode = '';
@@ -103,7 +97,7 @@ class ux_t3lib_pageSelect extends t3lib_pageSelect {
 		try {
 			$element = tx_languagevisibility_feservices::getElement ( $row ['uid'], $table );
 			$overlayLanguage = tx_languagevisibility_feservices::getOverlayLanguageIdForElement ( $element, $sys_language_content );
-		
+
 		} catch ( Exception $e ) {
 			//for any other tables:
 			return parent::getRecordOverlay ( $table, $row, $sys_language_content, $OLmode );
@@ -117,7 +111,7 @@ class ux_t3lib_pageSelect extends t3lib_pageSelect {
 		} else {
 			//visible:
 			if ($overlayLanguage != 0) {
-				
+
 				if ($element instanceof tx_languagevisibility_fceelement) {
 					//for FCE the overlay processing is handled by templavoila module, so mark the row with additional infos:
 					$languageRep = t3lib_div::makeInstance ( 'tx_languagevisibility_languagerepository' );
@@ -137,7 +131,7 @@ class ux_t3lib_pageSelect extends t3lib_pageSelect {
 					if (! is_array ( $this->_callbackVar_overlayXML ))
 						$this->_callbackVar_overlayXML = array ();
 					$return = $flexObj->traverseFlexFormXMLData ( 'tt_content', 'tx_templavoila_flex', $row, $this, '_callback_checkXMLFieldsForFallback' );
-					
+
 					$row = parent::getRecordOverlay ( $table, $row, $overlayLanguage, $OLmode );
 					$row ['tx_templavoila_flex'] = t3lib_div::array2xml ( $this->_callbackVar_overlayXML );
 					return $row;
@@ -150,13 +144,13 @@ class ux_t3lib_pageSelect extends t3lib_pageSelect {
 			}
 		}
 	}
-	
+
 	/** It a callbackfunction (see getRecordOverlay)
 		 function traverses default row XML and checks for fields with 'mergeIfNotBlank' l10n_mode.
 		then in the overlay record XML this field is replaced by default one.
 		TO-DO: replace in fallbackOrder
 	 **/
-	
+
 	function _callback_checkXMLFieldsForFallback($dsArr, $dataValue, $PA, $structurePath, &$pObj) {
 		if ($dataValue != '' && ($dsArr ['TCEforms'] ['l10n_mode'] == 'mergeIfNotBlank' || $dsArr ['TCEforms'] ['l10n_mode'] == 'exclude')) {
 			//echo 'check '.$structurePath;
@@ -170,7 +164,7 @@ class ux_t3lib_pageSelect extends t3lib_pageSelect {
 			}
 		}
 	}
-	
+
 	function _getDatabaseTranslationOverlayRecord($table, $row, $languageId) {
 		global $TCA;
 		// Select overlay record:
@@ -180,13 +174,13 @@ class ux_t3lib_pageSelect extends t3lib_pageSelect {
 		$GLOBALS['TYPO3_DB']->sql_free_result($res);
 		return $olrow;
 	}
-	
+
 	/*******************************************
 	 *
 	 * Page related: Menu, Domain record, Root line
 	 *
 	 ******************************************/
-	
+
 	/**
 	 * Returns an array with pagerows for subpages with pid=$uid (which is pid here!). This is used for menus.
 	 * If there are mount points in overlay mode the _MP_PARAM field is set to the corret MPvar.
@@ -201,7 +195,7 @@ class ux_t3lib_pageSelect extends t3lib_pageSelect {
 	 * @see tslib_fe::getPageShortcut(), tslib_menu::makeMenu(), tx_wizardcrpages_webfunc_2, tx_wizardsortpages_webfunc_2
 	 */
 	function getMenu($uid, $fields = '*', $sortField = 'sorting', $addWhere = '', $checkShortcuts = 1) {
-		
+
 		$output = Array ();
 		$res = $GLOBALS ['TYPO3_DB']->exec_SELECTquery ( $fields, 'pages', 'pid=' . intval ( $uid ) . $this->where_hid_del . $this->where_groupAccess . ' ' . $addWhere, '', $sortField );
 		while ( $row = $GLOBALS ['TYPO3_DB']->sql_fetch_assoc ( $res ) ) {
@@ -218,7 +212,7 @@ class ux_t3lib_pageSelect extends t3lib_pageSelect {
 					} else
 						unset ( $row ); // If the mount point could not be fetched with respect to enableFields, unset the row so it does not become a part of the menu!
 				}
-				
+
 				// if shortcut, look up if the target exists and is currently visible
 				if ($row ['doktype'] == 4 && ($row ['shortcut'] || $row ['shortcut_mode']) && $checkShortcuts) {
 					if ($row ['shortcut_mode'] == 0) {
@@ -238,7 +232,7 @@ class ux_t3lib_pageSelect extends t3lib_pageSelect {
 					// Neither shortcut target nor mode is set. Remove the page from the menu.
 					unset ( $row );
 				}
-				
+
 				// Add to output array after overlaying language:
 				if (is_array ( $row )) {
 					$output [$origUid] = $this->getPageOverlay ( $row );
@@ -248,7 +242,7 @@ class ux_t3lib_pageSelect extends t3lib_pageSelect {
 		$GLOBALS['TYPO3_DB']->sql_free_result($res);
 		return $output;
 	}
-	
+
 	/**
 	 * Returns the relevant page overlay record fields
 	 *
@@ -257,12 +251,12 @@ class ux_t3lib_pageSelect extends t3lib_pageSelect {
 	 * @return	array		Page row which is overlayed with language_overlay record (or the overlay record alone)
 	 */
 	function _original_getPageOverlay($pageInput, $lUid = -1) {
-		
+
 		// Initialize:
 		if ($lUid < 0)
 			$lUid = $this->sys_language_uid;
 		$row = NULL;
-		
+
 		// If language UID is different from zero, do overlay:
 		if ($lUid) {
 			$fieldArr = explode ( ',', $GLOBALS ['TYPO3_CONF_VARS'] ['FE'] ['pageOverlayFields'] );
@@ -272,24 +266,24 @@ class ux_t3lib_pageSelect extends t3lib_pageSelect {
 			} else {
 				$page_id = $pageInput; // Was the id
 			}
-			
+
 			if (count ( $fieldArr )) {
 				/*
 					NOTE to enabledFields('pages_language_overlay'):
 					Currently the showHiddenRecords of TSFE set will allow pages_language_overlay records to be selected as they are child-records of a page.
 					However you may argue that the showHiddenField flag should determine this. But that's not how it's done right now.
 				*/
-				
+
 				// Selecting overlay record:
 				$res = $GLOBALS ['TYPO3_DB']->exec_SELECTquery ( implode ( ',', $fieldArr ), 'pages_language_overlay', 'pid=' . intval ( $page_id ) . '
 								AND sys_language_uid=' . intval ( $lUid ) . $this->enableFields ( 'pages_language_overlay' ), '', '', '1' );
 				$row = $GLOBALS ['TYPO3_DB']->sql_fetch_assoc ( $res );
 				$GLOBALS['TYPO3_DB']->sql_free_result($res);
 				$this->versionOL ( 'pages_language_overlay', $row );
-				
+
 				if (is_array ( $row )) {
 					$row ['_PAGES_OVERLAY'] = TRUE;
-					
+
 					// Unset vital fields that are NOT allowed to be overlaid:
 					unset ( $row ['uid'] );
 					unset ( $row ['pid'] );
@@ -301,7 +295,7 @@ class ux_t3lib_pageSelect extends t3lib_pageSelect {
 			unset ( $row ['url'] );
 		if (isset ( $row ['urltype'] ) && empty ( $row ['urltype'] ))
 			unset ( $row ['urltype'] );
-			
+
 		// Create output:
 		if (is_array ( $pageInput )) {
 			return is_array ( $row ) ? array_merge ( $pageInput, $row ) : $pageInput; // If the input was an array, simply overlay the newfound array and return...
@@ -309,8 +303,8 @@ class ux_t3lib_pageSelect extends t3lib_pageSelect {
 			return is_array ( $row ) ? $row : array (); // always an array in return
 		}
 	}
-	
-	
+
+
 
 
 }
