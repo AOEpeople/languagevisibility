@@ -2,7 +2,7 @@
 /***************************************************************
  * Copyright notice
  *
- * (c) 2009 AOE media <dev@aoemedia.de>
+ * (c) 2010 AOE media <dev@aoemedia.de>
  * All rights reserved
  *
  * This script is part of the TYPO3 project. The TYPO3 project is
@@ -24,7 +24,7 @@
 /**
  *
  *
- * @author	Daniel Pötzinger
+ * @author	Daniel PÃ¶tzinger
  * @author	Tolleiv Nietsch
  */
 
@@ -50,83 +50,86 @@ class ux_t3lib_beUserAuth extends t3lib_beUserAuth {
 		 * this part is horribly dirty but avoids that page copy & move actions are effected by the changes from #13941
 		 */
 		$bT = debug_backtrace();
-		if( $table == 'pages' && ($bT[1]['function'] == 'copyRecord' || $bT[1]['function'] == 'moveRecord')) {
+		if ($table == 'pages' && ($bT[1]['function'] == 'copyRecord' || $bT[1]['function'] == 'moveRecord')) {
 			$checkFullLanguageAccess = FALSE;
 		}
 
 		global $TCA;
 
-		if (isset($TCA[$table]))	{
+		if (isset($TCA[$table])) {
 			t3lib_div::loadTCA($table);
 
-				// Always return true for Admin users.
-			if ($this->isAdmin())	return TRUE;
+			// Always return true for Admin users.
+			if ($this->isAdmin())
+				return TRUE;
 
-				// Fetching the record if the $idOrRow variable was not an array on input:
-			if (!is_array($idOrRow))	{
+			// Fetching the record if the $idOrRow variable was not an array on input:
+			if (! is_array($idOrRow)) {
 				if ($deletedRecord) {
 					$idOrRow = t3lib_BEfunc::getRecord($table, $idOrRow, '*', '', FALSE);
 				} else {
 					$idOrRow = t3lib_BEfunc::getRecord($table, $idOrRow);
 				}
-				if (!is_array($idOrRow))	{
+				if (! is_array($idOrRow)) {
 					$this->errorMsg = 'ERROR: Record could not be fetched.';
 					return FALSE;
 				}
 			}
 
-				// Checking languages:
-			if ($TCA[$table]['ctrl']['languageField'])	{
-				if (isset($idOrRow[$TCA[$table]['ctrl']['languageField']]))	{	// Language field must be found in input row - otherwise it does not make sense.
-					if (!$this->checkLanguageAccess($idOrRow[$TCA[$table]['ctrl']['languageField']]))	{
-							//original content of this block
+			// Checking languages:
+			if ($TCA[$table]['ctrl']['languageField']) {
+				if (isset($idOrRow[$TCA[$table]['ctrl']['languageField']])) { // Language field must be found in input row - otherwise it does not make sense.
+					if (! $this->checkLanguageAccess($idOrRow[$TCA[$table]['ctrl']['languageField']])) {
+						//original content of this block
 						//$this->errorMsg = 'ERROR: Language was not allowed.';
 						//return FALSE;
 
-							//modifed content of this block ----------------------------------- begin
-							//TODO this needs to be moved into some kind of hook
-						$skipLanguageErrorMessage=FALSE;
-							//danielp allow default language for creating new elements as well as editing if languagevisibility allows it
+
+						//modifed content of this block ----------------------------------- begin
+						//TODO this needs to be moved into some kind of hook
+						$skipLanguageErrorMessage = FALSE;
+						//danielp allow default language for creating new elements as well as editing if languagevisibility allows it
+
 
 						if ($idOrRow[$TCA[$table]['ctrl']['languageField']] == 0) {
-							$editingIsAllowed=FALSE;
+							$editingIsAllowed = FALSE;
 
-
-							$visibilityservice=t3lib_div::makeInstance('tx_languagevisibility_beservices');
-							if ($visibilityservice->hasUserAccessToEditRecord($table,$idOrRow['uid'])) {
-								$editingIsAllowed=TRUE;
+							$visibilityservice = t3lib_div::makeInstance('tx_languagevisibility_beservices');
+							if ($visibilityservice->hasUserAccessToEditRecord($table, $idOrRow['uid'])) {
+								$editingIsAllowed = TRUE;
 							}
-							if ($newRecord OR $editingIsAllowed) {
-								$skipLanguageErrorMessage=TRUE;
+							if ($newRecord or $editingIsAllowed) {
+								$skipLanguageErrorMessage = TRUE;
 							}
 						}
-						if (!$skipLanguageErrorMessage) {
+						if (! $skipLanguageErrorMessage) {
 							$this->errorMsg = 'ERROR: Language ( ' . $idOrRow[$TCA[$table]['ctrl']['languageField']] . ') was not allowed.';
 							return FALSE;
 						}
 
-							//modifed content of this block ----------------------------------- end
+					//modifed content of this block ----------------------------------- end
 
-					} elseif ($checkFullLanguageAccess && $idOrRow[$TCA[$table]['ctrl']['languageField']]==0 && !$this->checkFullLanguagesAccess($table, $idOrRow)) {
+
+					} elseif ($checkFullLanguageAccess && $idOrRow[$TCA[$table]['ctrl']['languageField']] == 0 && ! $this->checkFullLanguagesAccess($table, $idOrRow)) {
 						$this->errorMsg = 'ERROR: Related/affected language was not allowed.';
 						return FALSE;
 					}
 				} else {
-					$this->errorMsg = 'ERROR: The "languageField" field named "'.$TCA[$table]['ctrl']['languageField'].'" was not found in testing record!';
+					$this->errorMsg = 'ERROR: The "languageField" field named "' . $TCA[$table]['ctrl']['languageField'] . '" was not found in testing record!';
 					return FALSE;
 				}
 				// changes related to #13941
-			} elseif (isset($TCA[$table]['ctrl']['transForeignTable']) && $checkFullLanguageAccess && !$this->checkFullLanguagesAccess($table, $idOrRow)) {
+			} elseif (isset($TCA[$table]['ctrl']['transForeignTable']) && $checkFullLanguageAccess && ! $this->checkFullLanguagesAccess($table, $idOrRow)) {
 				return FALSE;
 			}
 
-				// Checking authMode fields:
-			if (is_array($TCA[$table]['columns']))	{
-				foreach($TCA[$table]['columns'] as $fN => $fV)	{
-					if (isset($idOrRow[$fN]))	{	//
-						if ($fV['config']['type']=='select' && $fV['config']['authMode'] && !strcmp($fV['config']['authMode_enforce'],'strict')) {
-							if (!$this->checkAuthMode($table,$fN,$idOrRow[$fN],$fV['config']['authMode']))	{
-								$this->errorMsg = 'ERROR: authMode "'.$fV['config']['authMode'].'" failed for field "'.$fN.'" with value "'.$idOrRow[$fN].'" evaluated';
+			// Checking authMode fields:
+			if (is_array($TCA[$table]['columns'])) {
+				foreach ( $TCA[$table]['columns'] as $fN => $fV ) {
+					if (isset($idOrRow[$fN])) { //
+						if ($fV['config']['type'] == 'select' && $fV['config']['authMode'] && ! strcmp($fV['config']['authMode_enforce'], 'strict')) {
+							if (! $this->checkAuthMode($table, $fN, $idOrRow[$fN], $fV['config']['authMode'])) {
+								$this->errorMsg = 'ERROR: authMode "' . $fV['config']['authMode'] . '" failed for field "' . $fN . '" with value "' . $idOrRow[$fN] . '" evaluated';
 								return FALSE;
 							}
 						}
@@ -134,41 +137,37 @@ class ux_t3lib_beUserAuth extends t3lib_beUserAuth {
 				}
 			}
 
-				// Checking "editlock" feature (doesn't apply to new records)
-			if (!$newRecord && $TCA[$table]['ctrl']['editlock'])	{
-				if (isset($idOrRow[$TCA[$table]['ctrl']['editlock']]))	{
-					if ($idOrRow[$TCA[$table]['ctrl']['editlock']])	{
+			// Checking "editlock" feature (doesn't apply to new records)
+			if (! $newRecord && $TCA[$table]['ctrl']['editlock']) {
+				if (isset($idOrRow[$TCA[$table]['ctrl']['editlock']])) {
+					if ($idOrRow[$TCA[$table]['ctrl']['editlock']]) {
 						$this->errorMsg = 'ERROR: Record was locked for editing. Only admin users can change this state.';
 						return FALSE;
 					}
 				} else {
-					$this->errorMsg = 'ERROR: The "editLock" field named "'.$TCA[$table]['ctrl']['editlock'].'" was not found in testing record!';
+					$this->errorMsg = 'ERROR: The "editLock" field named "' . $TCA[$table]['ctrl']['editlock'] . '" was not found in testing record!';
 					return FALSE;
 				}
 			}
 
-				// Checking record permissions
+			// Checking record permissions
 			// THIS is where we can include a check for "perms_" fields for other records than pages...
 
-				// Process any hooks
-			if (is_array($GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['t3lib/class.t3lib_userauthgroup.php']['recordEditAccessInternals']))	{
-				foreach ($GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['t3lib/class.t3lib_userauthgroup.php']['recordEditAccessInternals'] as $funcRef)	{
-					$params = array(
-						'table' => $table,
-						'idOrRow' => $idOrRow,
-						'newRecord' => $newRecord
-					);
-					if (!t3lib_div::callUserFunction($funcRef, $params, $this)) {
+
+			// Process any hooks
+			if (is_array($GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['t3lib/class.t3lib_userauthgroup.php']['recordEditAccessInternals'])) {
+				foreach ( $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['t3lib/class.t3lib_userauthgroup.php']['recordEditAccessInternals'] as $funcRef ) {
+					$params = array('table' => $table, 'idOrRow' => $idOrRow, 'newRecord' => $newRecord );
+					if (! t3lib_div::callUserFunction($funcRef, $params, $this)) {
 						return FALSE;
 					}
 				}
 			}
 
-				// Finally, return true if all is well.
+			// Finally, return true if all is well.
 			return TRUE;
 		}
 	}
-
 
 	/**
 	 * Check if user has access to all existing localizations for a certain record
@@ -181,12 +180,7 @@ class ux_t3lib_beUserAuth extends t3lib_beUserAuth {
 	 */
 	function checkFullLanguagesAccess($table, $record) {
 		$recordLocalizationAccess = $this->checkLanguageAccess(0);
-		if ($recordLocalizationAccess
-				 && (
-					t3lib_BEfunc::isTableLocalizable($table)
-					|| isset($GLOBALS['TCA'][$table]['ctrl']['transForeignTable'])
-				)
-		) {
+		if ($recordLocalizationAccess && (t3lib_BEfunc::isTableLocalizable($table) || isset($GLOBALS['TCA'][$table]['ctrl']['transForeignTable']))) {
 
 			if (isset($GLOBALS['TCA'][$table]['ctrl']['transForeignTable'])) {
 				$l10nTable = $GLOBALS['TCA'][$table]['ctrl']['transForeignTable'];
@@ -198,21 +192,12 @@ class ux_t3lib_beUserAuth extends t3lib_beUserAuth {
 				$pointerValue = $record[$pointerField] > 0 ? $record[$pointerField] : $record['uid'];
 			}
 
-			$recordLocalizations = t3lib_BEfunc::getRecordsByField(
-				$l10nTable,
-				$pointerField,
-				$pointerValue,
-				'',
-				'',
-				'',
-				'1'
-			);
+			$recordLocalizations = t3lib_BEfunc::getRecordsByField($l10nTable, $pointerField, $pointerValue, '', '', '', '1');
 
 			if (is_array($recordLocalizations)) {
-				foreach($recordLocalizations as $localization) {
-					$recordLocalizationAccess = $recordLocalizationAccess
-						&& $this->checkLanguageAccess($localization[$GLOBALS['TCA'][$l10nTable]['ctrl']['languageField']]);
-					if (!$recordLocalizationAccess) {
+				foreach ( $recordLocalizations as $localization ) {
+					$recordLocalizationAccess = $recordLocalizationAccess && $this->checkLanguageAccess($localization[$GLOBALS['TCA'][$l10nTable]['ctrl']['languageField']]);
+					if (! $recordLocalizationAccess) {
 						break;
 					}
 				}
@@ -220,13 +205,9 @@ class ux_t3lib_beUserAuth extends t3lib_beUserAuth {
 
 		}
 
-		if (is_array($GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['t3lib/class.t3lib_userauthgroup.php']['checkFullLanguagesAccess']))	{
-			foreach($GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['t3lib/class.t3lib_userauthgroup.php']['checkFullLanguagesAccess'] as $_funcRef)	{
-				$_params = array(
-					'table' => $table,
-					'row' => $record,
-					'recordLocalizationAccess' => $recordLocalizationAccess
-				);
+		if (is_array($GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['t3lib/class.t3lib_userauthgroup.php']['checkFullLanguagesAccess'])) {
+			foreach ( $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['t3lib/class.t3lib_userauthgroup.php']['checkFullLanguagesAccess'] as $_funcRef ) {
+				$_params = array('table' => $table, 'row' => $record, 'recordLocalizationAccess' => $recordLocalizationAccess );
 				$recordLocalizationAccess = t3lib_div::callUserFunction($_funcRef, $_params, $this);
 			}
 		}
