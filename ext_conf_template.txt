@@ -7,6 +7,9 @@ translatedAsDefaultEnabled = 0
   # cat=basic//30; type=boolean; label=Cache Layer: Enable this option to use the refetching and caching of records (less db querys, more memory usage)
 useCache = 0
 
+  # cat=basic//30; type=boolean; label=Enable Cut Copy and Move restrictioons: Option makes sure this user has the rights to perform C,C&M actions on elements before the action is triggered (not relevant if used with TYPO3 4.3+)
+observeCutCopyMoveAction = true
+
   # cat=basic//30; type=boolean; label=Restrict Cut Copy and Move: This option disables cut, copy and move for elements with overlays (not relevant if used with TYPO3 4.3+)
 restrictCutCopyMoveForOverlays = 0
 

@@ -91,17 +91,34 @@ class ux_t3lib_TCEmain extends t3lib_TCEmain {
 	}
 
 	/**
+	 *
+	 * @return boolean
+	 */
+	protected function isConfigBooleanSet($key, $default) {
+		$confArr = unserialize($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf']['languagevisibility']);
+		if (is_array($confArr)) {
+			return ($confArr[$key] == 1);
+		} else {
+			return $default;
+		}
+	}
+
+	/**
 	 * Method to check if cut copy or move is restricted for overlays
 	 *
 	 * @return boolean
 	 */
 	protected function isCutCopyAndMoveRestrictedForOverlays() {
-		$confArr = unserialize($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf']['languagevisibility']);
-		if (is_array($confArr)) {
-			return ($confArr['restrictCutCopyMoveForOverlays'] == 1);
-		} else {
-			return false;
-		}
+		return $this->isConfigBooleanSet('restrictCutCopyMoveForOverlays', false);
+	}
+
+	/**
+	 * Method to check if cut copy or move is restricted for overlays
+	 *
+	 * @return boolean
+	 */
+	protected function isCutCopyAndMoveObservationEnabled() {
+		return $this->isConfigBooleanSet('observeCutCopyMoveAction', true);
 	}
 
 	/**
@@ -112,7 +129,7 @@ class ux_t3lib_TCEmain extends t3lib_TCEmain {
 	 *
 	 */
 	function process_cmdmap() {
-		if (t3lib_extMgm::isLoaded('languagevisibility')) {
+		if (t3lib_extMgm::isLoaded('languagevisibility') && $this->isCutCopyAndMoveObservationEnabled()) {
 			require_once (t3lib_extMgm::extPath("languagevisibility") . 'patch/lib/class.tx_languagevisibility_commandMap.php');
 
 			//user has no rights to cut move copy or delete, therefore the commands need to be filtered
