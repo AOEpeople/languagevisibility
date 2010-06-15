@@ -23,8 +23,10 @@
  ***************************************************************/
 
 require_once (t3lib_extMgm::extPath("languagevisibility") . 'tests/tx_languagevisibility_databaseTestcase.php');
+require_once (t3lib_extMgm::extPath("languagevisibility") . 'classes/class.tx_languagevisibility_element.php');
 
 class tx_languageDB_testcase extends tx_languagevisibility_databaseTestcase {
+
 
 	/**
 	 * The fallback order property is cached. This testcase
@@ -34,17 +36,20 @@ class tx_languageDB_testcase extends tx_languagevisibility_databaseTestcase {
 	 * @return void
 	 */
 	public function getFallBackOrderMultipleTimes() {
+
+		$el = $this->getMockForAbstractClass('tx_languagevisibility_element', array(), '', false);
+
 		$languageRepository = new tx_languagevisibility_languagerepository();
 
 		/* @var $language tx_languagevisibility_language */
 		$language = $languageRepository->getLanguageById(1);
 
-		$this->assertEquals(array(0 => 0 ), $language->getFallbackOrder());
+		$this->assertEquals(array(0 => 0 ), $language->getFallbackOrder($el));
 		$this->assertEquals(count(array(0 => 0 )), 1);
-		$this->assertEquals(array(0 => 0 ), $language->getFallbackOrder());
+		$this->assertEquals(array(0 => 0 ), $language->getFallbackOrder($el));
 
-		$this->assertFalse($language->isLanguageUidInFallbackOrder(22));
-		$this->assertTrue($language->isLanguageUidInFallbackOrder(0));
+		$this->assertFalse($language->isLanguageUidInFallbackOrder(22, $el));
+		$this->assertTrue($language->isLanguageUidInFallbackOrder(0, $el));
 	}
 
 	/**
@@ -53,6 +58,7 @@ class tx_languageDB_testcase extends tx_languagevisibility_databaseTestcase {
 	function setUp() {
 		parent::setUp();
 		$this->importDataSet(dirname(__FILE__) . '/fixtures/dbDefaultLangs.xml');
+		unset($GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['languagevisibility']);
 	}
 }
 

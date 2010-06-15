@@ -74,15 +74,14 @@ class tx_languagevisibility_language {
 	 *
 	 * @return array
 	 */
-	public function getFallbackOrder() {
+	public function getFallbackOrder(tx_languagevisibility_element $contextElement) {
 		//determine and explode only once
 		if (! isset($this->defaultFallBackOrderArray)) {
 			//unfortunatly defaultlangauge is 999 instead of 0 (reason in formrendering of typo3):
 			$tx_languagevisibility_fallbackorder = str_replace('999', '0', $this->row['tx_languagevisibility_fallbackorder']);
 			$this->defaultFallBackOrderArray = t3lib_div::trimExplode(',', $tx_languagevisibility_fallbackorder);
 		}
-
-		return $this->defaultFallBackOrderArray;
+		return $this->triggerFallbackHooks('getFallbackOrder', $this->defaultFallBackOrderArray, $contextElement);
 	}
 
 	/**
@@ -90,18 +89,18 @@ class tx_languagevisibility_language {
 	 *
 	 * @return array
 	 */
-	public function getFallbackOrderElement() {
+	public function getFallbackOrderElement(tx_languagevisibility_element $contextElement) {
 		//determine and explode only once
 		if (! isset($this->elementFallBackOrderArray)) {
 			if ($this->usesComplexFallbackSettings()) {
 				$tx_languagevisibility_fallbackorderel = str_replace('999', '0', $this->row['tx_languagevisibility_fallbackorderel']);
 				$this->elementFallBackOrderArray = t3lib_div::trimExplode(',', $tx_languagevisibility_fallbackorderel);
 			} else {
-				$this->elementFallBackOrderArray = $this->getFallbackOrder();
+				$this->elementFallBackOrderArray = $this->getFallbackOrder($contextElement);
 			}
 		}
 
-		return $this->elementFallBackOrderArray;
+		return $this->triggerFallbackHooks('getFallbackOrderElement', $this->elementFallBackOrderArray, $contextElement);
 	}
 
 	/**
@@ -109,19 +108,42 @@ class tx_languagevisibility_language {
 	 *
 	 * @return array
 	 */
-	public function getFallbackOrderTTNewsElement() {
+	public function getFallbackOrderTTNewsElement(tx_languagevisibility_element $contextElement) {
 		//determine and explode only once
 		if (! isset($this->newsFallBackOrderArray)) {
 			if ($this->usesComplexFallbackSettings()) {
 				$tx_languagevisibility_fallbackorderttnewel = str_replace('999', '0', $this->row['tx_languagevisibility_fallbackorderttnewsel']);
 				$this->newsFallBackOrderArray = t3lib_div::trimExplode(',', $tx_languagevisibility_fallbackorderttnewel);
 			} else {
-				$this->newsFallBackOrderArray = $this->getFallbackOrder();
+				$this->newsFallBackOrderArray = $this->getFallbackOrder($contextElement);
 			}
 		}
 
-		return $this->newsFallBackOrderArray;
+		return $this->triggerFallbackHooks('getFallbackOrderTTNewsElement', $this->newsFallBackOrderArray, $contextElement);
 	}
+
+
+	protected function triggerFallbackHooks($key, $fallbackorder, tx_languagevisibility_element $contextElement) {
+		$result = array(
+			'priority' => 10,
+			'fallbackorder' => $fallbackorder,
+		);
+		$fallback = $result;
+		if (is_array ($GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['languagevisibility'][$key])) {
+
+			foreach ($GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['languagevisibility'][$key] as $classRef) {
+				$hookObj = t3lib_div::getUserObj($classRef);
+				if (method_exists($hookObj, $key)) {
+					$result = $hookObj->$key($this, $fallback, $contextElement);
+					if ($result['priority'] > $fallback['priority']) {
+						$fallback = $result;
+					}
+				}
+			}
+		}
+		return $fallback['fallbackorder'];
+	}
+
 
 	/**
 	 * Method to check if complex fallback settings should be used.
@@ -137,8 +159,8 @@ class tx_languagevisibility_language {
 	 *
 	 * @return string
 	 */
-	public function getDefaultVisibilityForPage() {
-		return $this->row['tx_languagevisibility_defaultvisibility'];
+	public function getDefaultVisibilityForPage( tx_languagevisibility_element $contextElement) {
+		return $this->triggerDefaultVisibilityHooks('getDefaultVisibilityForPage', $this->row['tx_languagevisibility_defaultvisibility'], $contextElement);
 	}
 
 	/**
@@ -146,8 +168,8 @@ class tx_languagevisibility_language {
 	 *
 	 * @return string
 	 */
-	public function getDefaultVisibilityForElement() {
-		return $this->row['tx_languagevisibility_defaultvisibilityel'];
+	public function getDefaultVisibilityForElement( tx_languagevisibility_element $contextElement) {
+		return $this->triggerDefaultVisibilityHooks('getDefaultVisibilityForElement', $this->row['tx_languagevisibility_defaultvisibilityel'], $contextElement);
 	}
 
 	/**
@@ -155,8 +177,30 @@ class tx_languagevisibility_language {
 	 *
 	 * @return boolean
 	 */
-	public function getDefaultVisibilityForTTNewsElement() {
-		return $this->row['tx_languagevisibility_defaultvisibilityttnewsel'];
+	public function getDefaultVisibilityForTTNewsElement( tx_languagevisibility_element $contextElement) {
+		return $this->triggerDefaultVisibilityHooks('getDefaultVisibilityForTTNewsElement', $this->row['tx_languagevisibility_defaultvisibilityttnewsel'], $contextElement);
+	}
+
+
+	protected function triggerDefaultVisibilityHooks($key, $visibilityDefault, tx_languagevisibility_element $contextElement) {
+		$result = array(
+			'priority' => 10,
+			'visibility' => $visibilityDefault,
+		);
+		$visibility = $result;
+		if (is_array ($GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['languagevisibility'][$key])) {
+
+			foreach ($GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['languagevisibility'][$key] as $classRef) {
+				$hookObj = t3lib_div::getUserObj($classRef);
+				if (method_exists($hookObj, $key)) {
+					$result = $hookObj->$key($this, $visibility, $contextElement);
+					if ($result['priority'] > $fallback['priority']) {
+						$visibility = $result;
+					}
+				}
+			}
+		}
+		return $visibility['visibility'];
 	}
 
 	/**
@@ -251,8 +295,8 @@ class tx_languagevisibility_language {
 	 * @param int uid
 	 * @return boolean
 	 **/
-	public function isLanguageUidInFallbackOrder($uid) {
-		$fallbacks = $this->getFallbackOrder();
+	public function isLanguageUidInFallbackOrder($uid, tx_languagevisibility_element $el) {
+		$fallbacks = $this->getFallbackOrder($el);
 		return in_array($uid, $fallbacks);
 	}
 }

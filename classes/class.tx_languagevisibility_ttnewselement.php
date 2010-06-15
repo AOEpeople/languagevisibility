@@ -66,7 +66,7 @@ class tx_languagevisibility_ttnewselement extends tx_languagevisibility_recordel
 	 * @see classes/tx_languagevisibility_recordelement#getFallbackOrder($language)
 	 */
 	function getFallbackOrder(tx_languagevisibility_language $language) {
-		return $language->getFallbackOrderTTNewsElement();
+		return $language->getFallbackOrderTTNewsElement($this);
 	}
 }
 ?>

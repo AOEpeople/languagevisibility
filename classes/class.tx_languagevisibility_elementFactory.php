@@ -165,6 +165,9 @@ class tx_languagevisibility_elementFactory {
 					}
 				}
 			}
+		} else {
+			$parentPage = $this->getElementForTable('pages', $element->getUid());
+			$elements = $this->getParentElementsFromElement($parentPage, $language);
 		}
 
 		return $elements;

@@ -32,12 +32,17 @@
  */
 
 require_once (t3lib_extMgm::extPath("languagevisibility") . 'classes/class.tx_languagevisibility_language.php');
+require_once (t3lib_extMgm::extPath("languagevisibility") . 'classes/class.tx_languagevisibility_element.php');
 
 // require_once (t3lib_extMgm::extPath('phpunit').'class.tx_phpunit_test.php');
 require_once (PATH_t3lib . 'class.t3lib_tcemain.php');
 
 class tx_language_testcase extends tx_phpunit_testcase {
 
+	function setUp() {
+		parent::setUp();
+		unset($GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['languagevisibility']);
+	}
 	/**
 	 *
 	 * @test
@@ -60,29 +65,32 @@ class tx_language_testcase extends tx_phpunit_testcase {
 	 * @return void
 	 */
 	public function getFallbackOrder() {
+
+		$el = $this->getMockForAbstractClass('tx_languagevisibility_element', array(), 'tx_languagevisibility_element_x', false);
+
 		// Create the Array fixture.
 		$fixture = array('uid' => 1, 'tx_languagevisibility_complexfallbacksetting' => '0', 'tx_languagevisibility_fallbackorder' => '0,1,2', 'tx_languagevisibility_fallbackorderel' => '0,1', 'tx_languagevisibility_fallbackorderttnewsel' => '0,2' );
 
 		$language = new tx_languagevisibility_language();
 		$language->setData($fixture);
 
-		$this->assertEquals(array('0', '1', '2' ), $language->getFallbackOrder(), "wrong getFallbackOrder");
-		$this->assertEquals(array('0', '1', '2' ), $language->getFallbackOrderElement(), "wrong getFallbackOrder - complex applied where normal is excepted");
-		$this->assertEquals(array('0', '1', '2' ), $language->getFallbackOrderTTNewsElement(), "wrong getFallbackOrder - complex applied where normal is excepted"); // Create the Array fixture.
+		$this->assertEquals(array('0', '1', '2' ), $language->getFallbackOrder($el), "wrong getFallbackOrder");
+		$this->assertEquals(array('0', '1', '2' ), $language->getFallbackOrderElement($el), "wrong getFallbackOrder - complex applied where normal is excepted");
+		$this->assertEquals(array('0', '1', '2' ), $language->getFallbackOrderTTNewsElement($el), "wrong getFallbackOrder - complex applied where normal is excepted"); // Create the Array fixture.
 
 
-		$this->assertTrue($language->isLanguageUidInFallbackOrder(0));
-		$this->assertTrue($language->isLanguageUidInFallbackOrder(2));
-		$this->assertFalse($language->isLanguageUidInFallbackOrder(4711));
+		$this->assertTrue($language->isLanguageUidInFallbackOrder(0, $el));
+		$this->assertTrue($language->isLanguageUidInFallbackOrder(2, $el));
+		$this->assertFalse($language->isLanguageUidInFallbackOrder(4711, $el));
 
 		$fixture = array('uid' => 1, 'tx_languagevisibility_complexfallbacksetting' => '1', 'tx_languagevisibility_fallbackorder' => '0,1,2', 'tx_languagevisibility_fallbackorderel' => '0,1', 'tx_languagevisibility_fallbackorderttnewsel' => '0,2' );
 
 		$language = new tx_languagevisibility_language();
 		$language->setData($fixture);
 
-		$this->assertEquals(array('0', '1', '2' ), $language->getFallbackOrder(), "wrong getFallbackOrder");
-		$this->assertEquals(array('0', '1' ), $language->getFallbackOrderElement(), "wrong getFallbackOrder");
-		$this->assertEquals(array('0', '2' ), $language->getFallbackOrderTTNewsElement(), "wrong getFallbackOrder");
+		$this->assertEquals(array('0', '1', '2' ), $language->getFallbackOrder($el), "wrong getFallbackOrder");
+		$this->assertEquals(array('0', '1' ), $language->getFallbackOrderElement($el), "wrong getFallbackOrder");
+		$this->assertEquals(array('0', '2' ), $language->getFallbackOrderTTNewsElement($el), "wrong getFallbackOrder");
 	}
 
 	/**

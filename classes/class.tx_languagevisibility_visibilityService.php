@@ -184,6 +184,19 @@ class tx_languagevisibility_visibilityService {
 				}
 			}
 		}
+
+		if (is_array ($GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['languagevisibility']['getInheritedVisibility'])) {
+			foreach ($GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['languagevisibility']['getInheritedVisibility'] as $classRef) {
+				$hookObj = t3lib_div::getUserObj($classRef);
+				if (method_exists($hookObj, 'getInheritedVisibility')) {
+					$visibility = $hookObj->getInheritedVisibility($language, $elements, $element);
+					if (substr($visibility->getVisibilityString(),-1)=='+') {
+						return $visibility;
+					}
+				}
+			}
+		}
+
 		$visibility = new tx_languagevisibility_visibility();
 		$visibility->setVisibilityString('-');
 
@@ -272,17 +285,21 @@ class tx_languagevisibility_visibilityService {
 							$visibility->setVisibilityString('yes')->setVisibilityDescription('force to yes (' . $inheritedVisibility->getVisibilityDescription() . ')');
 							break;
 						default :
-							$visibility->setVisibilityString($language->getDefaultVisibilityForPage())->setVisibilityDescription('default visibility for page');
+							$setting = $language->getDefaultVisibilityForPage($element);
+							$visibility->setVisibilityString($setting)->setVisibilityDescription('default visibility  for page (' . $setting . ')');
 							break;
 					}
 				} else {
-					//inheritance is disabled
-					$visibility->setVisibilityString($language->getDefaultVisibilityForPage())->setVisibilityDescription('default visibility for page');
+						//inheritance is disabled
+					$setting = $language->getDefaultVisibilityForPage($element);
+					$visibility->setVisibilityString($setting)->setVisibilityDescription('default visibility  for page (' . $setting . ')');
 				}
 			} elseif ($element->getFieldToUseForDefaultVisibility() == 'tt_news') {
-				$visibility->setVisibilityString($language->getDefaultVisibilityForTTNewsElement())->setVisibilityDescription('default visibility for news');
+					$setting = $language->getDefaultVisibilityForTTNewsElement($element);
+					$visibility->setVisibilityString($setting)->setVisibilityDescription('default visibility  for news (' . $setting . ')');
 			} else {
-				$visibility->setVisibilityString($language->getDefaultVisibilityForElement())->setVisibilityDescription('default visibility for element');
+				$setting = $language->getDefaultVisibilityForElement($element);
+				$visibility->setVisibilityString($setting)->setVisibilityDescription('default visibility  for element (' . $setting . ')');
 			}
 
 			if ($visibility->getVisibilityString() == '') {

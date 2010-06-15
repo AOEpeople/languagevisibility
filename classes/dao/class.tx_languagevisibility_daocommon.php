@@ -94,6 +94,64 @@ class tx_languagevisibility_daocommon {
 	}
 
 	/**
+	 * Returns a record by table and uid.
+	 *
+	 * @param $uid
+	 * @param $table
+	 * @return array
+	 */
+	public static function getRecords($table, $where) {
+		$cacheManager = tx_languagevisibility_cacheManager::getInstance();
+
+		$isCacheEnabled = $cacheManager->isCacheEnabled();
+		self::$recordCache = $cacheManager->get('daoRecordCache');
+
+		if ($isCacheEnabled) {
+			if (! isset(self::$recordCache[$table][$where])) {
+				//!TODO we're still running two queries - this can be reduced to one with a tricky search criteria
+				$rows = self::getRequestedRecords($table, $where);
+
+				if ($row) {
+					self::$recordCache[$table][$where] = $rows;
+				}
+			}
+
+			$cacheManager->set('daoRecordCache', self::$recordCache);
+
+			$result = self::$recordCache[$table][$where];
+		} else {
+			$result = self::getRequestedRecords($table, $where);
+		}
+
+		return $result;
+	}
+
+	/**
+	 *
+	 *
+	 * @param $table
+	 * @param $where
+	 * @return array
+	 */
+	protected static function getRequestedRecords($table, $where) {
+		// fix settings
+		$fields = '*';
+		$table = $table;
+		$groupBy = null;
+		$orderBy = '';
+		$where = $where;
+
+		$result = $GLOBALS['TYPO3_DB']->exec_SELECTquery($fields, $table, $where, $groupBy, $orderBy);
+		$rows = array();
+		while($row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($result)) {
+			$rows[] = $row;
+		}
+		$GLOBALS['TYPO3_DB']->sql_free_result($result);
+
+		return $rows;
+	}
+
+	/**
 	 * Method trys to load similar records into the cache which will maybe requested in the future.
 	 * Requires more memory usage, but reduces the amount of querys.
 	 *

@@ -119,7 +119,7 @@ class tx_languagevisibility_recordelement extends tx_languagevisibility_element 
 	 * @see classes/tx_languagevisibility_element#getFallbackOrder($language)
 	 */
 	function getFallbackOrder(tx_languagevisibility_language $language) {
-		return $language->getFallbackOrderElement();
+		return $language->getFallbackOrderElement($this);
 	}
 }
 ?>

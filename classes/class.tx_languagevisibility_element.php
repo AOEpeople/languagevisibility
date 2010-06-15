@@ -271,7 +271,7 @@ abstract class tx_languagevisibility_element {
 	 * receive relevant fallbackOrder
 	 */
 	function getFallbackOrder(tx_languagevisibility_language $language) {
-		return $language->getFallbackOrder();
+		return $language->getFallbackOrder($this);
 	}
 
 	/**
