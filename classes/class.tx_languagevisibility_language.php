@@ -72,6 +72,7 @@ class tx_languagevisibility_language {
 	/**
 	 * Returns the fallback order of this language as array.
 	 *
+	 * @param tx_languagevisibility_element $contextElement
 	 * @return array
 	 */
 	public function getFallbackOrder(tx_languagevisibility_element $contextElement) {
@@ -87,6 +88,7 @@ class tx_languagevisibility_language {
 	/**
 	 * Returns the fallback order for this language for elements
 	 *
+	 * @param tx_languagevisibility_element $contextElement
 	 * @return array
 	 */
 	public function getFallbackOrderElement(tx_languagevisibility_element $contextElement) {
@@ -106,6 +108,7 @@ class tx_languagevisibility_language {
 	/**
 	 * Returns the fallback order for news elements as array
 	 *
+	 * @param tx_languagevisibility_element $contextElement
 	 * @return array
 	 */
 	public function getFallbackOrderTTNewsElement(tx_languagevisibility_element $contextElement) {
@@ -122,7 +125,13 @@ class tx_languagevisibility_language {
 		return $this->triggerFallbackHooks('getFallbackOrderTTNewsElement', $this->newsFallBackOrderArray, $contextElement);
 	}
 
-
+	/**
+	 *
+	 * @param unknown_type $key
+	 * @param unknown_type $fallbackorder
+	 * @param tx_languagevisibility_element $contextElement
+	 * @return array
+	 */
 	protected function triggerFallbackHooks($key, $fallbackorder, tx_languagevisibility_element $contextElement) {
 		$result = array(
 			'priority' => 10,

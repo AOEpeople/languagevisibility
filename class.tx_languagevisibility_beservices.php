@@ -277,7 +277,7 @@ class tx_languagevisibility_beservices {
 				if (! $BE_USER->checkLanguageAccess($language->getUid())) {
 					//no access to a visible language: check fallbacks
 					$isInFallback = FALSE;
-					$fallbacks = $language->getFallbackOrder();
+					$fallbacks = $language->getFallbackOrder(self::getContextElement('pages', $id));
 					foreach ( $fallbacks as $lId ) {
 						if ($GLOBALS['BE_USER']->checkLanguageAccess($lId)) {
 							$isInFallback = TRUE;
@@ -328,7 +328,7 @@ class tx_languagevisibility_beservices {
 				if (! $BE_USER->checkLanguageAccess($language->getUid())) {
 					//no access to a visible language: check fallbacks
 					$isInFallback = FALSE;
-					$fallbacks = $language->getFallbackOrder();
+					$fallbacks = $language->getFallbackOrder(self::getContextElement($table, $id));
 					foreach ( $fallbacks as $lId ) {
 						if ($GLOBALS['BE_USER']->checkLanguageAccess($lId)) {
 							//TODO - write testcase - this can't be right
@@ -343,6 +343,29 @@ class tx_languagevisibility_beservices {
 		}
 		return true;
 	}
+
+	/**
+	 *
+	 * @param unknown_type $table
+	 * @param unknown_type $id
+	 * @return
+	 */
+	protected function getContextElement($table, $id) {
+		$dao = t3lib_div::makeInstance('tx_languagevisibility_daocommon');
+		if (version_compare(TYPO3_version, '4.3.0', '<')) {
+			$elementfactoryName = t3lib_div::makeInstanceClassName('tx_languagevisibility_elementFactory');
+			$elementfactory = new $elementfactoryName($dao);
+		} else {
+			$elementfactory = t3lib_div::makeInstance('tx_languagevisibility_elementFactory', $dao);
+		}
+		try {
+			$element = $elementfactory->getElementForTable('pages', $uid);
+		} catch ( Exception $e ) {
+			return '-';
+		}
+		return $element;
+	}
+
 
 	/**
 	 * Method to check if the inheritance is enabled or not
@@ -378,7 +401,12 @@ class tx_languagevisibility_beservices {
 	 * @param tx_languagevisibility_language $language
 	 * @return array
 	 */
-	public static function getAvailableOptionsForLanguage(tx_languagevisibility_language $language, $isOverlay = false, $elementSupportsInheritance = false) {
+	public static function getAvailableOptionsForLanguage(tx_languagevisibility_language $language, $isOverlay = false, $element = null) {
+
+		$element = $element === null ? self::getContextElement('pages', self::_guessCurrentPid()) : $element;
+
+		$elementSupportsInheritance = $element->supportsInheritance();
+
 		$uid = $language->getUid();
 		$select = array();
 		$useInheritance = ($elementSupportsInheritance && self::isInheritanceEnabled());
@@ -405,9 +433,10 @@ class tx_languagevisibility_beservices {
 			//check permissions, if user has no permission only no for the language is allowed
 			// if the user has permissions for languages that act as fallbacklanguage: then the languages that falls back can have "-" in the options!
 			if (! $GLOBALS['BE_USER']->checkLanguageAccess($uid)) {
+
 				//check if the language falls back to one of the languages the user has permissions:
 				$isInFallback = FALSE;
-				$fallbacks = $language->getFallbackOrder();
+				$fallbacks = $language->getFallbackOrder($element);
 				foreach ( $fallbacks as $lId ) {
 					if ($GLOBALS['BE_USER']->checkLanguageAccess($lId)) {
 						$isInFallback = TRUE;
@@ -447,6 +476,10 @@ class tx_languagevisibility_beservices {
 		}
 
 		return $select;
+	}
+
+	protected static function _guessCurrentPid() {
+		return t3lib_div::_GP('id');
 	}
 
 	/**

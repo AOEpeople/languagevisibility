@@ -135,7 +135,7 @@ class tx_languagevisibility_fieldvisibility {
 			//if there is no access to language - and localsettings exist, then do not show select box
 			//this is to not be able as an translator to override languagesetting
 			$currentSetting = $changeableElement->getLocalVisibilitySetting($language->getUid());
-			$currentOptionsForUserAndLanguage = tx_languagevisibility_beservices::getAvailableOptionsForLanguage($language, $isOverlay, $changeableElement->supportsInheritance());
+			$currentOptionsForUserAndLanguage = tx_languagevisibility_beservices::getAvailableOptionsForLanguage($language, $isOverlay, $changeableElement);
 			if ($currentSetting == '' || isset($currentOptionsForUserAndLanguage[$currentSetting])) {
 
 				if ($isOverlay) {
