@@ -111,9 +111,9 @@ class tx_languagevisibility_beservices {
 	 * @param int $languageUid
 	 * @return boolean
 	 */
-	public static function isVisible($uid, $table, $languageUid) {
+	public static function isVisible($uid, $table, $languageUid, $omitLocal=false) {
 
-		$cacheKey = sprintf('%s:%d:%d', $table, $uid, $languageUid);
+		$cacheKey = sprintf('%s:%d:%d:%d', $table, $uid, $languageUid, $omitLocal);
 
 		if (! isset(self::$cache_isVisible[$cacheKey])) {
 
@@ -136,13 +136,13 @@ class tx_languagevisibility_beservices {
 
 			$visibility = t3lib_div::makeInstance('tx_languagevisibility_visibilityService');
 
-			self::$cache_isVisible[$cacheKey] = $visibility->isVisible($language, $element);
+			self::$cache_isVisible[$cacheKey] = $visibility->isVisible($language, $element, $omitLocal);
 		}
 
 		return self::$cache_isVisible[$cacheKey];
 	}
 
-	/**
+        /**
 	 * Helper function to check if the current backend user has rights to cut,copy or delete
 	 *
 	 * @return boolean

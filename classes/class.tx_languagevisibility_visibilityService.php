@@ -102,11 +102,13 @@ class tx_languagevisibility_visibilityService {
 	 *
 	 * @param tx_languagevisibility_language $language
 	 * @param tx_languagevisibility_element
+	 * @param boolean
+	 * @return boolean
 	 **/
-	public function isVisible(tx_languagevisibility_language $language, tx_languagevisibility_element $element) {
+	public function isVisible(tx_languagevisibility_language $language, tx_languagevisibility_element $element, $omitLocal=false) {
 		$this->_relevantOverlayLanguageId = $language->getUid();
 
-		$visibility = $this->getVisibilitySetting($language, $element);
+		$visibility = $this->getVisibilitySetting($language, $element, $omitLocal);
 
 		if ($visibility == 'yes') {
 			$result = true;
@@ -211,9 +213,10 @@ class tx_languagevisibility_visibilityService {
 	 *
 	 * @param tx_languagevisibility_language $language
 	 * @param tx_languagevisibility_element $element
+	 * @param boolean
 	 * @return string
 	 */
-	public function getVisibilitySetting(tx_languagevisibility_language $language, tx_languagevisibility_element $element) {
+	public function getVisibilitySetting(tx_languagevisibility_language $language, tx_languagevisibility_element $element, $omitLocal=false) {
 		$cacheManager = tx_languagevisibility_cacheManager::getInstance();
 		$cacheData = $cacheManager->get('visibilitySettingCache');
 		$isCacheEnabled = $cacheManager->isCacheEnabled();
@@ -222,12 +225,13 @@ class tx_languagevisibility_visibilityService {
 		$elementUid = $element->getUid();
 		$languageUid = $language->getUid();
 
-		if (! $isCacheEnabled || ! isset($cacheData[$languageUid . '_' . $elementUid . '_' . $elementTable])) {
-			$cacheData[$languageUid . '_' . $elementUid . '_' . $elementTable] = $this->getVisibility($language, $element)->getVisibilityString();
+		$cacheKey = $languageUid . '_' . $elementUid . '_' . $elementTable.'_'.$omitLocal;
+		if (! $isCacheEnabled || ! isset($cacheData[$cacheKey])) {
+			$cacheData[$cacheKey] = $this->getVisibility($language, $element, $omitLocal)->getVisibilityString();
 			$cacheManager->set('visibilitySettingCache', $cacheData);
 		}
 
-		return $cacheData[$languageUid . '_' . $elementUid . '_' . $elementTable];
+		return $cacheData[$cacheKey];
 	}
 
 	/**
@@ -246,13 +250,14 @@ class tx_languagevisibility_visibilityService {
 
 	 * @param tx_languagevisibility_language $language
 	 * @param tx_languagevisibility_element $element
+	 * @param boolean $omitLocal
 	 * @return tx_languagevisibility_visibility
 	 */
-	protected function getVisibility(tx_languagevisibility_language $language, tx_languagevisibility_element $element) {
+	protected function getVisibility(tx_languagevisibility_language $language, tx_languagevisibility_element $element, $omitLocal=false) {
 		$visibility = new tx_languagevisibility_visibility();
 		$local = $element->getLocalVisibilitySetting($language->getUid());
 
-		if ($local != '' && $local != '-') {
+		if (!$omitLocal && ($local != '' && $local != '-')) {
 			$visibility->setVisibilityString($local)->setVisibilityDescription('local setting ' . $local);
 			return $visibility;
 		} else {
