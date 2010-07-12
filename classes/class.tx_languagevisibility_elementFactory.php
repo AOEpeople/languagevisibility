@@ -145,7 +145,7 @@ class tx_languagevisibility_elementFactory {
 	 * This method is used to retrieve all parent elements (an parent elements needs to
 	 * have the flag 'tx_languagevisibility_inheritanceflag_original' or
 	 * needs to be orverlayed with a record, that has the field 'tx_languagevisibility_inheritanceflag_overlayed'
-	 * configured
+	 * configured or is the first element of the rootline
 	 *
 	 * @param tx_languagevisibility_element $element
 	 * @return array $elements (collection of tx_languagevisibility_element)
@@ -155,14 +155,20 @@ class tx_languagevisibility_elementFactory {
 
 		if ($element instanceof tx_languagevisibility_pageelement) {
 			/* @var $sys_page t3lib_pageSelect */
-
 			$rootline = $this->getOverlayedRootLine($element->getUid(), $language->getUid());
 
 			if (is_array($rootline)) {
 				foreach ( $rootline as $rootlineElement ) {
-					if ($rootlineElement['tx_languagevisibility_inheritanceflag_original'] == 1 || $rootlineElement['tx_languagevisibility_inheritanceflag_overlayed'] == 1) {
+					if ($rootlineElement['tx_languagevisibility_inheritanceflag_original'] == 1 ||
+						$rootlineElement['tx_languagevisibility_inheritanceflag_overlayed'] == 1
+					) {
 						$elements[] = self::getElementForTable('pages', $rootlineElement['uid']);
 					}
+				}
+
+				if(sizeof($elements) == 0) {
+					$root = end($rootline);
+					$elements[] = self::getElementForTable('pages', $root['uid']);
 				}
 			}
 		} else {
