@@ -34,6 +34,8 @@ abstract class tx_languagevisibility_databaseTestcase extends tx_phpunit_databas
 	 */
 	protected $restoredPageOverlayFields;
 
+	protected $restoredSCOptions;
+
 	/**
 	 *
 	 */
@@ -45,9 +47,11 @@ abstract class tx_languagevisibility_databaseTestcase extends tx_phpunit_databas
 		/* save current enviroment values */
 		$this->restoredAddRootlineFields = $GLOBALS["TYPO3_CONF_VARS"]["FE"]["addRootLineFields"];
 		$this->restoredPageOverlayFields = $GLOBALS["TYPO3_CONF_VARS"]["FE"]["pageOverlayFields"];
+		$this->restoredSCOptions = $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['languagevisibility'];
 
 		$GLOBALS["TYPO3_CONF_VARS"]["FE"]["addRootLineFields"] = "tx_languagevisibility_inheritanceflag_original,tx_languagevisibility_inheritanceflag_overlayed";
 		$GLOBALS["TYPO3_CONF_VARS"]["FE"]["pageOverlayFields"] = "uid,title,subtitle,nav_title,media,keywords,description,abstract,author,author_email,sys_language_uid,tx_languagevisibility_inheritanceflag_overlayed";
+		unset($GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['languagevisibility']);
 
 		// order of extension-loading is important !!!!
 		$this->importExtensions(array('cms', 'languagevisibility' ));
@@ -61,6 +65,7 @@ abstract class tx_languagevisibility_databaseTestcase extends tx_phpunit_databas
 	function tearDown() {
 		$GLOBALS["TYPO3_CONF_VARS"]["FE"]["addRootLineFields"] = $this->restoredAddRootlineFields;
 		$GLOBALS["TYPO3_CONF_VARS"]["FE"]["pageOverlayFields"] = $this->restoredPageOverlayFields;
+		$GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['languagevisibility'] = $this->restoredSCOptions;
 
 		$this->cleanDatabase();
 		$this->dropDatabase();
