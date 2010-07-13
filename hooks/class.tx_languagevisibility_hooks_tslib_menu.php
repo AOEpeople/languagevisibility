@@ -22,6 +22,11 @@
  * This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
+if (!interface_exists('tslib_menu_filterMenuPagesHook') && version_compare(TYPO3_version,'4.4','>')) {
+		// @todo this should be loaded with the Core's autoloader but obviously that doesn't happen in 4.4.0
+	require_once PATH_tslib . 'interfaces/interface.tslib_menu_filterMenuPagesHook.php';
+}
+
 /**
  *
  * @author	 Tolleiv
