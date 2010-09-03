@@ -49,8 +49,7 @@ class ux_t3lib_pageSelect extends t3lib_pageSelect {
 		if (is_array ( $pageInput )) {
 			$page_id = $pageInput ['uid'];
 		} else {
-
-			return $this->_original_getPageOverlay ( $pageInput, $lUid );
+			$page_id = $pageInput;
 		}
 
 		//call service to know if element is visible and which overlay language to use
