@@ -63,6 +63,53 @@ class tx_visibilityServiceDB_testcase extends tx_languagevisibility_databaseTest
 	}
 
 	/**
+	 * Check the visibility of a regular content element
+	 *
+	 * @test
+	 * @param void
+	 * @return void
+	 * @see tx_languagevisibility_visibilityService
+	 */
+	function visibility_ceForcedToYesWithoutOverlay() {
+		$language = $this->_getLang(1);
+		$visibility = t3lib_div::makeInstance('tx_languagevisibility_visibilityService');
+
+		$fixturesWithoutOverlay = array('tt_content' => 19);
+
+		foreach ( $fixturesWithoutOverlay as $table => $uid ) {
+			$element = $this->_getContent($table, $uid);
+			$this->assertEquals('yes', $element->getLocalVisibilitySetting(1), "setting d expected");
+			$this->assertEquals('yes', $visibility->getVisibilitySetting($language, $element), "setting f expected (because default is used)");
+			$this->assertEquals(true, $visibility->isVisible($language, $element), "element should be visible");
+			$this->assertEquals(0, $visibility->getOverlayLanguageIdForLanguageAndElement($language, $element), sprintf("default language should be choosen here table:%s uid:%d", $table, $uid));
+		}
+	}
+
+	/**
+	 * Check the visibility of a regular content element
+	 *
+	 * @test
+	 * @param void
+	 * @return void
+	 * @see tx_languagevisibility_visibilityService
+	 */
+	function visibility_ceForcedToYesWithOverlay() {
+		$language = $this->_getLang(1);
+		$visibility = t3lib_div::makeInstance('tx_languagevisibility_visibilityService');
+
+		$fixturesWithoutOverlay = array('tt_content' => 20);
+
+		foreach ( $fixturesWithoutOverlay as $table => $uid ) {
+			$element = $this->_getContent($table, $uid);
+			$this->assertEquals('yes', $element->getLocalVisibilitySetting(1), "setting d expected");
+			$this->assertEquals('yes', $visibility->getVisibilitySetting($language, $element), "setting f expected (because default is used)");
+			$this->assertEquals(true, $visibility->isVisible($language, $element), "element should be visible");
+			$this->assertEquals(true, $element->hasTranslation(1), "translation should be detected");
+			$this->assertEquals(1, $visibility->getOverlayLanguageIdForLanguageAndElement($language, $element), sprintf("language 1 should be choosen here table:%s uid:%d", $table, $uid));
+		}
+	}
+
+	/**
 	 * Check the visibility of some content elements with overlay-records
 	 *
 	 * @test
