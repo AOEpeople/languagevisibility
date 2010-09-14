@@ -77,6 +77,7 @@ class tx_languagevisibility_hooks_t3lib_page implements t3lib_pageSelect_getPage
 		if (! is_array($row) || ! isset($row['uid'])) {
 			return;
 		}
+
 		try {
 			$element = tx_languagevisibility_feservices::getElement($row['uid'], $table);
 			$overlayLanguage = tx_languagevisibility_feservices::getOverlayLanguageIdForElement($element, $sys_language_content);
@@ -93,6 +94,15 @@ class tx_languagevisibility_hooks_t3lib_page implements t3lib_pageSelect_getPage
 			return;*/
 		} else {
 			$sys_language_content = $overlayLanguage;
+		}
+
+			/**
+			 *	the original value will be replaced by the original getRecordOverlay process
+			 *	therefore we've to store this elsewhere to make sure that the flexdata is available 
+			 *	for the postProcess
+			 **/
+		if ($element instanceof tx_languagevisibility_fceoverlayelement) {
+			$row['_ORIG_tx_templavoila_flex'] = $row['tx_templavoila_flex'];
 		}
 	}
 
@@ -117,17 +127,19 @@ class tx_languagevisibility_hooks_t3lib_page implements t3lib_pageSelect_getPage
 		}
 
 		if ($element instanceof tx_languagevisibility_fceelement) {
-			//for FCE the overlay processing is handled by templavoila module, so mark the row with additional infos:
+				//for FCE the overlay processing is handled by templavoila module, so mark the row with additional infos:
 			$languageRep = t3lib_div::makeInstance('tx_languagevisibility_languagerepository');
 			$overlayLanguageObj = $languageRep->getLanguageById($overlayLanguage);
 			$row['_OVERLAYLANGUAGEISOCODE'] = $overlayLanguageObj->getIsoCode();
 		} elseif ($element instanceof tx_languagevisibility_fceoverlayelement) {
-			//now its getting tricky: we need to return overlay record with merged XML
+				//now its getting tricky: we need to return overlay record with merged XML
+			$row['tx_templavoila_flex'] = $row['_ORIG_tx_templavoila_flex'];
+			unset($row['_ORIG_tx_templavoila_flex']);
 			$olrow = $this->_getDatabaseTranslationOverlayRecord('tt_content', $row, $overlayLanguage);
 			if ($GLOBALS['TSFE']) {
 				$GLOBALS['TSFE']->includeTCA('tt_content');
 			}
-			//parse fce xml, and where a xml field is empty in olrow -> use default one
+				//parse fce xml, and where a xml field is empty in olrow -> use default one
 			$flexObj = t3lib_div::makeInstance('t3lib_flexformtools');
 			$this->_callbackVar_defaultXML = t3lib_div::xml2array($row['tx_templavoila_flex']);
 			$this->_callbackVar_overlayXML = t3lib_div::xml2array($olrow['tx_templavoila_flex']);
@@ -148,14 +160,12 @@ class tx_languagevisibility_hooks_t3lib_page implements t3lib_pageSelect_getPage
 	 *
 	 */
 	public function _callback_checkXMLFieldsForFallback($dsArr, $dataValue, $PA, $structurePath, &$pObj) {
-		if ($dataValue != '' && ($dsArr['TCEforms']['l10n_mode'] == 'mergeIfNotBlank' || $dsArr['TCEforms']['l10n_mode'] == 'exclude')) {
-			if ($dsArr['TCEforms']['l10n_mode'] == 'exclude') {
+		if ($dsArr['TCEforms']['l10n_mode'] == 'exclude') {
+			$pObj->setArrayValueByPath($structurePath, $this->_callbackVar_overlayXML, $dataValue);
+		} elseif ($dataValue != '' && $dsArr['TCEforms']['l10n_mode'] == 'mergeIfNotBlank') {
+			$overlayValue = $pObj->getArrayValueByPath($structurePath, $this->_callbackVar_overlayXML);
+			if ($overlayValue == '') {
 				$pObj->setArrayValueByPath($structurePath, $this->_callbackVar_overlayXML, $dataValue);
-			} else {
-				$overlayValue = $pObj->getArrayValueByPath($structurePath, $this->_callbackVar_overlayXML);
-				if ($overlayValue == '' && $dsArr['TCEforms']['l10n_mode'] == 'mergeIfNotBlank') {
-					$pObj->setArrayValueByPath($structurePath, $this->_callbackVar_overlayXML, $dataValue);
-				}
 			}
 		}
 	}
