@@ -255,7 +255,7 @@ class tx_visibilityServiceDB_testcase extends tx_languagevisibility_databaseTest
 		$this->_fakeWorkspaceContext(4711);
 
 		$language = $this->_getLang(1);
-		$element = $this->_getContent('tt_content', 8);
+		$element = $this->_getContent('tt_content', 6);
 		$visibilityResult = true;
 		$service = new tx_languagevisibility_visibilityService();
 
