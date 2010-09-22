@@ -3,13 +3,18 @@
 	<tt_content>
 		<uid>10</uid>
 		<pid>1</pid>
+		<header>Live header</header>
+		<deleted>0</deleted>
 	</tt_content>
 	
 	<tt_content>
 		<uid>11</uid>
 		<pid>-1</pid>
+		<header>WS header</header>
 		<t3ver_wsid>12</t3ver_wsid>
 		<t3ver_oid>10</t3ver_oid>
-		<t3_origuid>10</t3_origuid>
+		<t3ver_state>0</t3ver_state>
+		<t3ver_stage>10</t3ver_stage>
+		<deleted>0</deleted>
 	</tt_content>
 </testdata>

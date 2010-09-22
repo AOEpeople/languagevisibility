@@ -62,11 +62,10 @@ class tx_languagevisibility_elementFactory {
 			 **/
 			if (is_object($GLOBALS['BE_USER']) && $GLOBALS['BE_USER']->workspace != 0 && $overlay_ids) {
 				$row = $this->dao->getRecord($uid, $table);
-				if ($row['pid'] != - 1) {
-					//we are in workspace context, but we have a record with a none workspace id
-					//therefore we need to retrieve the workspace uid of the record.
-					$uid = t3lib_BEfunc::wsMapId($table, $uid);
-					$row = $this->dao->getRecord($uid, $table);
+				if (is_object($GLOBALS['TSFE'])) {
+					$GLOBALS['TSFE']->sys_page->versionOL($table, $row);
+				} else {
+					t3lib_BEfunc::workspaceOL($table, $row);
 				}
 			} else {
 				$row = $this->dao->getRecord($uid, $table);

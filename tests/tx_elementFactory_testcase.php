@@ -93,6 +93,9 @@ class tx_elementFactory_testcase extends tx_languagevisibility_databaseTestcase 
 		if (version_compare(TYPO3_version, '4.3', '>') && ! t3lib_extMgm::isLoaded('version')) {
 			$this->markTestSkipped('Not relevant if "version" is not installed');
 		}
+		if (is_object($GLOBALS['TSFE'])) {
+			$this->markTestSkipped('Please turn off the fake frontend - this test work work which "fake" frontends ;)');
+		}
 
 		$this->importDataSet(dirname(__FILE__) . '/fixtures/getLiveWorkspaceElementFromWorkspaceUid.xml');
 
@@ -101,18 +104,15 @@ class tx_elementFactory_testcase extends tx_languagevisibility_databaseTestcase 
 		/* @var $factory tx_languagevisibility_elementFactory */
 		$factory = new tx_languagevisibility_elementFactory($dao);
 
-		//store context
+			//store context
 		$oldWS = $GLOBALS['BE_USER']->workspace;
-
 		$GLOBALS['BE_USER']->workspace = 12;
 
 		/* @var $element tx_languagevisibility_celement */
 		$element = $factory->getElementForTable('tt_content', 10);
+		$this->assertEquals($element->getTitle(), 'WS header');
 
-		$this->assertEquals($element->getUid(), 11, 'Uid of element should be workspace uid in workspace context.');
-		$this->assertEquals($element->getPid(), - 1, 'Pid should be -1 because the content element is a workspace content element.');
-
-		//restore context
+			//restore context
 		$GLOBALS['BE_USER']->workspace = $oldWS;
 	}
 

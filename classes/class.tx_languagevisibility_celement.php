@@ -40,5 +40,14 @@ class tx_languagevisibility_celement extends tx_languagevisibility_recordelement
 	protected function initialisations() {
 
 	}
+
+	/**
+	 * Return the content of the title field
+	 *
+	 * @return unknown
+	 */
+	public function getTitle() {
+		return $this->row['header'];
+	}
 }
 ?>

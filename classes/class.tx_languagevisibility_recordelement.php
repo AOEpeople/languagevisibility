@@ -52,38 +52,26 @@ class tx_languagevisibility_recordelement extends tx_languagevisibility_element 
 	protected function getOverLayRecordForCertainLanguageImplementation($languageId) {
 		global $TCA;
 
-		$table = $this->table;
-		$uid = $this->row['uid'];
 		$workspace = intval($GLOBALS['BE_USER']->workspace);
-		//actual row in live WS
 
-
-		$row = $this->_getLiveRowIfWorkspace($this->row, $table);
-		if ($row === false) {
-			$result = false;
+		if ($workspace == 0) {
+			// Shadow state for new items MUST be ignored	in workspace
+			$addWhere = ' AND t3ver_state!=1 AND pid > 0 AND t3ver_wsid=0';
 		} else {
+			//else search get workspace version
+			$addWhere = ' AND (t3ver_wsid=0 OR t3ver_wsid=' . $workspace . ')';
+		}
 
-			$useUid = $row['uid'];
-			$usePid = $row['pid'];
-
-			if ($workspace == 0) {
-				// Shadow state for new items MUST be ignored	in workspace
-				$addWhere = ' AND t3ver_state!=1 AND pid > 0 AND t3ver_wsid=0';
-			} else {
-				//else search get workspace version
-				$addWhere = ' AND (t3ver_wsid=0 OR t3ver_wsid=' . $workspace . ')';
-			}
-
-			// Select overlay record:
-			$res = $GLOBALS['TYPO3_DB']->exec_SELECTquery('*', $table, $TCA[$table]['ctrl']['languageField'] . '=' . intval($languageId) . ' AND ' . $TCA[$table]['ctrl']['transOrigPointerField'] . '=' . intval($useUid) . ' AND hidden=0 AND deleted=0' . $addWhere, '', 't3ver_wsid DESC', // if there's a workspace record we want to make sure that we get this one
+		// Select overlay record:
+		$res = $GLOBALS['TYPO3_DB']->exec_SELECTquery('*', $this->table, $TCA[$this->table]['ctrl']['languageField'] . '=' . intval($languageId) . ' AND ' . $TCA[$this->table]['ctrl']['transOrigPointerField'] . '=' . intval($this->getUid()) . ' AND hidden=0 AND deleted=0' . $addWhere, '', 't3ver_wsid DESC', // if there's a workspace record we want to make sure that we get this one
 '1');
 
-			$olrow = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res);
-			$olrow = $this->getContextIndependentWorkspaceOverlay($table, $olrow);
-			$GLOBALS['TYPO3_DB']->sql_free_result($res);
+		$olrow = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res);
+		$olrow = $this->getContextIndependentWorkspaceOverlay($this->table, $olrow);
+		$GLOBALS['TYPO3_DB']->sql_free_result($res);
 
-			$result = $olrow;
-		}
+		$result = $olrow;
+		
 
 		return $result;
 	}
@@ -98,11 +86,9 @@ class tx_languagevisibility_recordelement extends tx_languagevisibility_element 
 		$table = $this->table;
 
 		if ($this->isOrigElement()) {
-			//get live record of workspace record
-			$row = $this->_getLiveRowIfWorkspace($this->row, $table);
 			$fields = 'count(*) as ANZ';
 
-			$where = 'deleted = 0 AND ' . $TCA[$table]['ctrl']['transOrigPointerField'] . '=' . $row['uid'];
+			$where = 'deleted = 0 AND ' . $TCA[$table]['ctrl']['transOrigPointerField'] . '=' . $this->getUid();
 			$res = $GLOBALS['TYPO3_DB']->exec_SELECTgetRows($fields, $table, $where);
 
 			return ($res[0]['ANZ'] > 0);
