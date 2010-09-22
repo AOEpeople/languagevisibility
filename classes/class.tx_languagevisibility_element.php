@@ -159,15 +159,6 @@ abstract class tx_languagevisibility_element {
 	}
 
 	/**
-	 * Returns the uid or the LiveWorkspace Record
-	 *
-	 * @return int
-	 */
-	public function getLiveWorkspaceUid() {
-		return $this->_getLiveUIDIfWorkspace($this->row);
-	}
-
-	/**
 	 * Returns an description of the element.
 	 *
 	 * @return string
@@ -273,32 +264,6 @@ abstract class tx_languagevisibility_element {
 	function getFallbackOrder(tx_languagevisibility_language $language) {
 		return $language->getFallbackOrder($this);
 	}
-
-	/**
-	 * Uses the abstract function getTable to get all Workspaceversion-UIDs of this
-	 * record.
-	 *
-	 * @return array
-	 */
-	/*	protected function getWorkspaceVersionUids() {
-		$uids = array ();
-
-		if ($this->isLiveWorkspaceElement ()) {
-		$table = $this->getTable ();
-		$uid = $this->row ['uid'];
-		if ($table != '' && $uid != 0) {
-		$res = $GLOBALS ['TYPO3_DB']->exec_SELECTquery ( 'uid', $table, 't3ver_oid=' . $GLOBALS ['TYPO3_DB']->fullQuoteStr ( $this->row ['uid'], $table ) . ' AND uid !=' . $GLOBALS ['TYPO3_DB']->fullQuoteStr ( $this->row ['uid'], $table ) . t3lib_BEfunc::deleteClause ( $table ) );
-
-		while ( $row = $GLOBALS ['TYPO3_DB']->sql_fetch_assoc ( $res ) ) {
-		$uids [] = $row ['uid'];
-		}
-
-		$GLOBALS['TYPO3_DB']->sql_free_result($res);
-		}
-		}
-
-		return $uids;
-		}*/
 
 	################
 	# STATE METHODS
@@ -417,52 +382,6 @@ abstract class tx_languagevisibility_element {
 		} else {
 			return false;
 		}
-	}
-
-	/**
-	 * This method is used to determine the row of the live workspace, if the given row
-	 * is a row from any workspace.
-	 *
-	 * @return array
-	 * @param array $row
-	 * @param string $table
-	 */
-	protected function _getLiveRowIfWorkspace($row, $table, $fields = '*') {
-		if (! isset($row['pid']) || ! isset($row['uid'])) {
-			return false;
-		}
-
-		$cacheManager = tx_languagevisibility_cacheManager::getInstance();
-
-		$cacheData = $cacheManager->get('liveRecordCache');
-		$isCacheEnabled = $cacheManager->isCacheEnabled();
-
-		if (! $isCacheEnabled || ! isset($cacheData[$table . ' ' . $row['uid'] . ' ' . $fields])) {
-			if ($row['pid'] == - 1) {
-				$result = t3lib_BEfunc::getLiveVersionOfRecord($table, $row['uid'], $fields);
-			} else {
-				$result = $row;
-			}
-
-			$cacheData[$table . ' ' . $row['uid'] . ' ' . $fields] = $result;
-			$cacheManager->set('liveRecordCache', $cacheData);
-		}
-
-		return $cacheData[$table . ' ' . $row['uid'] . ' ' . $fields];
-	}
-
-	/**
-	 * Method is used to determine only the live uid of a row if it is a workspace version.
-	 * if this is a unversiond record it returns false.
-	 *
-	 * @return mixed int if uid can be determined boolean false if not
-	 * @param array $row
-	 */
-	protected function _getLiveUIDIfWorkspace($row) {
-		if (! isset($row['pid']) || ! isset($row['t3ver_oid']) || ! isset($row['uid'])) {
-			return false;
-		}
-		return $row['t3ver_oid'];
 	}
 
 	/**
