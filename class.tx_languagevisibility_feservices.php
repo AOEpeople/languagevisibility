@@ -35,6 +35,21 @@ require_once (t3lib_extMgm::extPath("languagevisibility") . 'classes/dao/class.t
  **/
 class tx_languagevisibility_feservices {
 
+	public static function getFallbackOrderForElement($uid, $table, $lUid) {
+		$dao = t3lib_div::makeInstance('tx_languagevisibility_daocommon');
+		if (version_compare(TYPO3_version, '4.3.0', '<')) {
+			$elementfactoryName = t3lib_div::makeInstanceClassName('tx_languagevisibility_elementFactory');
+			$elementfactory = new $elementfactoryName($dao);
+		} else {
+			$elementfactory = t3lib_div::makeInstance('tx_languagevisibility_elementFactory', $dao);
+		}
+		$element = $elementfactory->getElementForTable($table, $uid);
+		$languageRep = t3lib_div::makeInstance('tx_languagevisibility_languagerepository');
+		$language = $languageRep->getLanguageById($lUid);
+
+		return $language->getFallbackOrderElement($element);
+	}
+
 	public static function checkVisiblityForElement($uid, $table, $lUid) {
 		$dao = t3lib_div::makeInstance('tx_languagevisibility_daocommon');
 		if (version_compare(TYPO3_version, '4.3.0', '<')) {
