@@ -74,36 +74,51 @@ class tx_languagevisibility_pageelement extends tx_languagevisibility_element {
 	/**
 	 * Method to get an overlay of an element for a certain langugae
 	 *
-	 * @param int $id
+	 * @param int $lUid
 	 * @param boolean $onlyUid
 	 * @return array return the database row
 	 */
-	protected function getOverLayRecordForCertainLanguageImplementation($id) {
-		##
-		# Ensure we have the live version
-		##
-		$row = $this->row;
-		$useUid = $row['uid'];
+	protected function getOverLayRecordForCertainLanguageImplementation($lUid) {
+		if ($lUid>0) {
+			$fieldArr = explode(',', $GLOBALS['TYPO3_CONF_VARS']['FE']['pageOverlayFields']);
 
-		if ($row['pid'] == - 1) {
-			$useUid = $row['t3ver_oid'];
+			$page_id = $this->row['t3ver_oid']?$this->row['t3ver_oid']:$this->getUid();	// Was the whole record
+			$fieldArr = array_intersect($fieldArr,array_keys($this->row));		// Make sure that only fields which exist in the incoming record are overlaid!
+
+			if (count($fieldArr))	{
+				$table = 'pages_language_overlay';
+				if (is_object($GLOBALS['TSFE']->sys_page)) {
+					$enableFields = $GLOBALS['TSFE']->sys_page->enableFields($table);
+				} else {
+					$enableFields = '';
+				}
+				$fieldArr[] = 'deleted';
+				$fieldArr[] = 'hidden';				
+					// Selecting overlay record:
+				$res = $GLOBALS['TYPO3_DB']->exec_SELECTquery(
+					implode(',',$fieldArr),
+					'pages_language_overlay',
+					'pid='.intval($page_id).'
+						AND sys_language_uid='.intval($lUid).
+						$enableFields,
+					'',
+					'',
+					'1'
+				);
+				$olrow = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res);
+				$olrow = $this->getContextIndependentWorkspaceOverlay($table, $olrow);
+				$GLOBALS['TYPO3_DB']->sql_free_result($res);
+
+				if (!$olrow['hidden'] && !$olrow['deleted']) {
+					$overlayRecord = $olrow;
+				}
+			} else {
+				$overlayRecord =  $this->row;
+			}
+		} else {
+			$overlayRecord =  $this->row;
 		}
-
-		if ($GLOBALS['BE_USER']->workspace == 0) {
-			$addWhere = ' AND t3ver_state!=1'; //// Shadow state for new items MUST be ignored
-		}
-
-		$where = 'deleted = 0 AND hidden = 0 AND sys_language_uid=' . intval($id) . ' AND pid=' . intval($useUid) . $addWhere;
-		$fields = '*';
-		$table = 'pages_language_overlay';
-
-		$result = $GLOBALS['TYPO3_DB']->exec_SELECTquery($fields, $table, $where, '', '');
-
-		$olrow = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($result);
-		$olrow = $this->getContextIndependentWorkspaceOverlay($table, $olrow);
-		$GLOBALS['TYPO3_DB']->sql_free_result($result);
-
-		return $olrow;
+		return $overlayRecord;
 	}
 
 	/**
