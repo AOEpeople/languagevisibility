@@ -52,26 +52,30 @@ class tx_languagevisibility_recordelement extends tx_languagevisibility_element 
 	protected function getOverLayRecordForCertainLanguageImplementation($languageId) {
 		global $TCA;
 
-		$workspace = intval($GLOBALS['BE_USER']->workspace);
-
-		if ($workspace == 0) {
-			// Shadow state for new items MUST be ignored	in workspace
-			$addWhere = ' AND t3ver_state!=1 AND pid > 0 AND t3ver_wsid=0';
+		if (is_object($GLOBALS['TSFE']->sys_page)) {
+			$deleteClause = $GLOBALS['TSFE']->sys_page->deleteClause($this->table);
 		} else {
-			//else search get workspace version
-			$addWhere = ' AND (t3ver_wsid=0 OR t3ver_wsid=' . $workspace . ')';
+			$deleteClause .= t3lib_BEfunc::deleteClause($this->table);
 		}
 
 		// Select overlay record:
-		$res = $GLOBALS['TYPO3_DB']->exec_SELECTquery('*', $this->table, $TCA[$this->table]['ctrl']['languageField'] . '=' . intval($languageId) . ' AND ' . $TCA[$this->table]['ctrl']['transOrigPointerField'] . '=' . intval($this->getUid()) . ' AND hidden=0 AND deleted=0' . $addWhere, '', 't3ver_wsid DESC', // if there's a workspace record we want to make sure that we get this one
-'1');
+		$res = $GLOBALS['TYPO3_DB']->exec_SELECTquery(
+			'*', 
+			$this->table, 
+			'pid='.intval($this->getPid()). ' AND ' .
+				$TCA[$this->table]['ctrl']['languageField'] . '=' . intval($languageId) . ' AND ' . 
+				$TCA[$this->table]['ctrl']['transOrigPointerField'] . '=' . intval($this->getUid()) . 
+				$deleteClause, 
+			'', 
+			'', 
+			'1'
+		);
 
 		$olrow = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res);
 		$olrow = $this->getContextIndependentWorkspaceOverlay($this->table, $olrow);
 		$GLOBALS['TYPO3_DB']->sql_free_result($res);
 
 		$result = $olrow;
-		
 
 		return $result;
 	}
