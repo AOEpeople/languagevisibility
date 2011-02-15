@@ -67,34 +67,24 @@ class tx_languagevisibility_hooks_t3lib_tcemain {
 		if (! is_array($data))
 			return; /* some strange DB situation */
 
-		switch ($table) {
-			case 'pages' :
-			case 'tt_content' :
-			case 'tt_news' :
-			case 'pages_language_overlay' :
+		if(in_array($table, tx_languagevisibility_visibilityService::getSupportedTables())) {
+			/**
+			 * NOTE: This code does not affect new records because the field 'tx_languagevisibility_visibility' is not set
+			 */
+			if (isset($incomingFieldArray['tx_languagevisibility_visibility']) && is_array($incomingFieldArray['tx_languagevisibility_visibility'])) {
 
-				/**
-				 * NOTE: This code does not affect new records because the field 'tx_languagevisibility_visibility' is not set
-				 */
-				if (isset($incomingFieldArray['tx_languagevisibility_visibility']) && is_array($incomingFieldArray['tx_languagevisibility_visibility'])) {
+				if ($table == 'pages') {
 
-					if ($table == 'pages') {
-
-						$incomingFieldArray['tx_languagevisibility_inheritanceflag_original'] = (in_array('no+', $incomingFieldArray['tx_languagevisibility_visibility'])) ? '1' : '0';
-					} elseif ($table == 'pages_language_overlay') {
-						$incomingFieldArray['tx_languagevisibility_inheritanceflag_overlayed'] = (in_array('no+', $incomingFieldArray['tx_languagevisibility_visibility'])) ? '1' : '0';
-					}
-
-					$incomingFieldArray['tx_languagevisibility_visibility'] = serialize($incomingFieldArray['tx_languagevisibility_visibility']);
-
-					//flush all caches
-					tx_languagevisibility_cacheManager::getInstance()->flushAllCaches();
+					$incomingFieldArray['tx_languagevisibility_inheritanceflag_original'] = (in_array('no+', $incomingFieldArray['tx_languagevisibility_visibility'])) ? '1' : '0';
+				} elseif ($table == 'pages_language_overlay') {
+					$incomingFieldArray['tx_languagevisibility_inheritanceflag_overlayed'] = (in_array('no+', $incomingFieldArray['tx_languagevisibility_visibility'])) ? '1' : '0';
 				}
 
-				break;
-			default :
-				return;
-				break;
+				$incomingFieldArray['tx_languagevisibility_visibility'] = serialize($incomingFieldArray['tx_languagevisibility_visibility']);
+
+				//flush all caches
+				tx_languagevisibility_cacheManager::getInstance()->flushAllCaches();
+			}
 		}
 	}
 
@@ -108,34 +98,29 @@ class tx_languagevisibility_hooks_t3lib_tcemain {
 	 * @param unknown_type $reference
 	 */
 	public function processDatamap_afterDatabaseOperations($status, $table, $id, $fieldArray, &$reference) {
-		switch ($table) {
+
+		if (in_array($table, tx_languagevisibility_visibilityService::getSupportedTables())) {
 			/**
 			 * Now we set the default visibility for elements which did not get a defaultvisibility array.
 			 * This can happen, if a user creates a new element AND the user has no access for the languagevisibility_field
 			 */
-			case 'pages' :
-			case 'tt_content' :
-			case 'tt_news' :
-			case 'pages_language_overlay' :
+			if ($status == 'new') {
+				$row['uid'] = $reference->substNEWwithIDs[$id];
 
-				if ($status == 'new') {
-					$row['uid'] = $reference->substNEWwithIDs[$id];
-
-					if ($fieldArray['pid'] == '-1') {
-						$row = t3lib_BEfunc::getWorkspaceVersionOfRecord($fieldArray['t3ver_wsid'], $table, $row['uid'], $fields = '*');
-					}
-
-					require_once (t3lib_extMgm::extPath("languagevisibility") . 'class.tx_languagevisibility_beservices.php');
-					$row['tx_languagevisibility_visibility'] = serialize(tx_languagevisibility_beservices::getDefaultVisibilityArray());
-					$where = "tx_languagevisibility_visibility = '' AND uid=" . $row['uid'];
-
-					$GLOBALS['TYPO3_DB']->exec_UPDATEquery($table, $where, $row);
+				if ($fieldArray['pid'] == '-1') {
+					$row = t3lib_BEfunc::getWorkspaceVersionOfRecord($fieldArray['t3ver_wsid'], $table, $row['uid'], $fields = '*');
 				}
 
-				tx_languagevisibility_cacheManager::getInstance()->flushAllCaches();
+				require_once (t3lib_extMgm::extPath("languagevisibility") . 'class.tx_languagevisibility_beservices.php');
+				$row['tx_languagevisibility_visibility'] = serialize(tx_languagevisibility_beservices::getDefaultVisibilityArray());
+				$where = "tx_languagevisibility_visibility = '' AND uid=" . $row['uid'];
 
-				break;
+				$GLOBALS['TYPO3_DB']->exec_UPDATEquery($table, $where, $row);
+			}
+
+			tx_languagevisibility_cacheManager::getInstance()->flushAllCaches();
 		}
+
 	}
 }
 

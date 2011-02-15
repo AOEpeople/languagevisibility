@@ -130,8 +130,16 @@ class tx_languagevisibility_elementFactory {
 					}
 				}
 				break;
-			default :
-				throw new UnexpectedValueException($table . ' not supported ', 1195039394);
+			default:
+
+				if (isset ($GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['languagevisibility']['getElementForTable'][$table])) {
+					$hookObj = t3lib_div::getUserObj($GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['languagevisibility']['getElementForTable'][$table]);
+					if (method_exists($hookObj, 'getElementForTable')) {
+						$element = $hookObj->getElementForTable($table, $uid, $row, $overlay_ids);
+					}
+				} else {
+					throw new UnexpectedValueException($table . ' not supported ', 1195039394);
+				}				
 				break;
 		}
 

@@ -83,7 +83,7 @@ class tx_languagevisibility_feservices {
 		$languageRep = t3lib_div::makeInstance('tx_languagevisibility_languagerepository');
 		$language = $languageRep->getLanguageById($lUid);
 
-		$visibility = t3lib_div::makeInstance('tx_languagevisibility_visibilityService');
+		$visibility = t3lib_div::makeInstance('tx_languagevisibility_visibilityService'); /** @var $visibility tx_languagevisibility_visibilityService */
 		return $visibility->getOverlayLanguageIdForLanguageAndElement($language, $element);
 	}
 

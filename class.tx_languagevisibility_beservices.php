@@ -174,32 +174,36 @@ class tx_languagevisibility_beservices {
 	 * @return boolean
 	 */
 	public static function isOverlayRecord($row, $table) {
+
+		$result = false;
+
 		switch ($table) {
-			case 'tt_news' :
-			case 'tt_content' :
-				global $TCA;
-				t3lib_div::loadTCA($table);
-				$tanslationIdField = $TCA[$table]['ctrl']['transOrigPointerField'];
-
-				if ($tanslationIdField != '') {
-					//if the field which points to the orginal of the translation is
-					//not 0 a translation exists and we have an overlay record
-
-
-					return $row[$tanslationIdField] != 0;
-				} else {
-					//if no translation field exists this is not an overlay
-					return false;
-				}
-				break;
-
 			case 'pages_language_overlay' :
-				return true;
+				$result = true;
 				break;
 			case 'pages' :
-				return false;
+				$result = false;
+				break;
+			default:
+
+				if(in_array($table, tx_languagevisibility_visibilityService::getSupportedTables())) {
+
+					global $TCA;
+					t3lib_div::loadTCA($table);
+					$tanslationIdField = $TCA[$table]['ctrl']['transOrigPointerField'];
+
+					if ($tanslationIdField != '') {
+						//if the field which points to the orginal of the translation is
+						//not 0 a translation exists and we have an overlay record
+
+						$result = $row[$tanslationIdField] != 0;
+					}
+				}
+
 				break;
 		}
+
+		return $result;
 	}
 
 	/**
@@ -209,7 +213,7 @@ class tx_languagevisibility_beservices {
 	 * @return boolean
 	 */
 	public static function isSupportedTable($table) {
-		$supported = array('tt_news', 'tt_content', 'pages' );
+		$supported = tx_languagevisibility_visibilityService::getSupportedTables();
 		if (in_array($table, $supported)) {
 			return true;
 		} else {

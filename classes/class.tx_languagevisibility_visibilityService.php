@@ -97,6 +97,22 @@ class tx_languagevisibility_visibilityService {
 	}
 
 	/**
+	 * @static
+	 * @return array with all supported tables
+	 */
+	public static function getSupportedTables() {
+
+		$tables = array('pages', 'tt_content', 'tt_news', 'pages_language_overlay');
+
+		if(isset($GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['languagevisibility']['getElementForTable'])
+			&& is_array($GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['languagevisibility']['getElementForTable'])) {
+			$tables = array_merge($tables, array_keys($GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['languagevisibility']['getElementForTable']));
+		}
+
+		return $tables;
+	}
+
+	/**
 	 * Returns true or false wether the element is visible in the certain language.
 	 * (sets for internal access only $this->_relevantOverlayLanguageId which holds the overlay languageid)
 	 *
