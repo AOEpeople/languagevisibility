@@ -163,22 +163,33 @@ $tempColumnsPages = Array (
 
 t3lib_div::loadTCA("pages");
 t3lib_extMgm::addTCAcolumns("pages",$tempColumnsPages,1);
-t3lib_extMgm::addToAllTCAtypes("pages","tx_languagevisibility_visibility;;;;1-1-1", '', 'after:l18n_cfg');
-t3lib_extMgm::addToAllTCAtypes("pages","--div--;LLL:EXT:languagevisibility/locallang_db.xml:tabname", '', 'before:l18n_cfg');
+if (version_compare(TYPO3_version,'4.5','<')) {
+	t3lib_extMgm::addToAllTCAtypes("pages","tx_languagevisibility_visibility;;;;1-1-1", '', 'after:l18n_cfg');
+	t3lib_extMgm::addToAllTCAtypes("pages","--div--;LLL:EXT:languagevisibility/locallang_db.xml:tabname", '', 'before:l18n_cfg');
+} else {
+	t3lib_extMgm::addToAllTCAtypes("pages","--div--;LLL:EXT:languagevisibility/locallang_db.xml:tabname,tx_languagevisibility_visibility;;;;1-1-1", '', 'after:php_tree_stop');
+}
 
 t3lib_div::loadTCA("pages_language_overlay");
 t3lib_extMgm::addTCAcolumns("pages_language_overlay",$tempColumnsPages,1);
-t3lib_extMgm::addToAllTCAtypes("pages_language_overlay","tx_languagevisibility_visibility;;;;1-1-1", '', 'after:l18n_cfg');
-t3lib_extMgm::addToAllTCAtypes("pages_language_overlay","--div--;LLL:EXT:languagevisibility/locallang_db.xml:tabname", '', 'before:l18n_cfg');
+if (version_compare(TYPO3_version,'4.5','<')) {
+	t3lib_extMgm::addToAllTCAtypes("pages_language_overlay","tx_languagevisibility_visibility;;;;1-1-1", '', 'after:l18n_cfg');
+	t3lib_extMgm::addToAllTCAtypes("pages_language_overlay","--div--;LLL:EXT:languagevisibility/locallang_db.xml:tabname", '', 'before:l18n_cfg');
+} else {
+	t3lib_extMgm::addToAllTCAtypes("pages_language_overlay","--div--;LLL:EXT:languagevisibility/locallang_db.xml:tabname,tx_languagevisibility_visibility;;;;1-1-1", '', '');
+}
 
 t3lib_div::loadTCA("tt_news");
 t3lib_extMgm::addTCAcolumns("tt_news",$tempColumnsElements,1);
 t3lib_extMgm::addToAllTCAtypes("tt_news","--div--;LLL:EXT:languagevisibility/locallang_db.xml:tabname,tx_languagevisibility_visibility;;;;1-1-1");
 
-
 t3lib_div::loadTCA("tt_content");
 t3lib_extMgm::addTCAcolumns("tt_content",$tempColumnsElements,1);
-t3lib_extMgm::addToAllTCAtypes('tt_content', "--div--;LLL:EXT:languagevisibility/locallang_db.xml:tabname,tx_languagevisibility_visibility;;;;1-1-1,sys_language_uid,l18n_parent", '', 'before:sys_language_uid');
+if (version_compare(TYPO3_version,'4.5','<')) {
+	t3lib_extMgm::addToAllTCAtypes('tt_content', "--div--;LLL:EXT:languagevisibility/locallang_db.xml:tabname,tx_languagevisibility_visibility;;;;1-1-1,sys_language_uid,l18n_parent", '', 'before:sys_language_uid');
+} else {
+	t3lib_extMgm::addToAllTCAtypes("tt_content","--div--;LLL:EXT:languagevisibility/locallang_db.xml:tabname,tx_languagevisibility_visibility;;;;1-1-1", '', 'after:section_frame');
+}
 
 //remove language related fields from pallete (instead show them in language tab)
 $GLOBALS['TCA']['tt_content']['palettes']['4']['showitem'] = str_replace('sys_language_uid,','',$GLOBALS['TCA']['tt_content']['palettes']['4']['showitem']);
