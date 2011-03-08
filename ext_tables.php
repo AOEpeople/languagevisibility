@@ -187,13 +187,13 @@ t3lib_div::loadTCA("tt_content");
 t3lib_extMgm::addTCAcolumns("tt_content",$tempColumnsElements,1);
 if (version_compare(TYPO3_version,'4.5','<')) {
 	t3lib_extMgm::addToAllTCAtypes('tt_content', "--div--;LLL:EXT:languagevisibility/locallang_db.xml:tabname,tx_languagevisibility_visibility;;;;1-1-1,sys_language_uid,l18n_parent", '', 'before:sys_language_uid');
+	$GLOBALS['TCA']['tt_content']['palettes']['4']['showitem'] = str_replace('sys_language_uid,','',$GLOBALS['TCA']['tt_content']['palettes']['4']['showitem']);
+	$GLOBALS['TCA']['tt_content']['palettes']['4']['showitem'] = str_replace('l18n_parent,','',$GLOBALS['TCA']['tt_content']['palettes']['4']['showitem']);
 } else {
-	t3lib_extMgm::addToAllTCAtypes("tt_content","--div--;LLL:EXT:languagevisibility/locallang_db.xml:tabname,tx_languagevisibility_visibility;;;;1-1-1", '', 'after:section_frame');
+	t3lib_extMgm::addToAllTCAtypes("tt_content","--div--;LLL:EXT:languagevisibility/locallang_db.xml:tabname,tx_languagevisibility_visibility;;;;1-1-1,sys_language_uid,l18n_parent", '', 'before:--div--;LLL:EXT:cms/locallang_ttc.xml:tabs.extended');
+	$GLOBALS['TCA']['tt_content']['palettes']['general']['showitem'] = str_replace('sys_language_uid;LLL:EXT:cms/locallang_ttc.xml:sys_language_uid_formlabel','',$GLOBALS['TCA']['tt_content']['palettes']['general']['showitem']);
 }
 
-//remove language related fields from pallete (instead show them in language tab)
-$GLOBALS['TCA']['tt_content']['palettes']['4']['showitem'] = str_replace('sys_language_uid,','',$GLOBALS['TCA']['tt_content']['palettes']['4']['showitem']);
-$GLOBALS['TCA']['tt_content']['palettes']['4']['showitem'] = str_replace('l18n_parent,','',$GLOBALS['TCA']['tt_content']['palettes']['4']['showitem']);
 $GLOBALS['TCA']['tt_content']['ctrl']['dividers2tabs']=TRUE;
 
 $tempColumns = Array(
