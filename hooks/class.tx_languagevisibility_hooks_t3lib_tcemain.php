@@ -112,10 +112,10 @@ class tx_languagevisibility_hooks_t3lib_tcemain {
 				}
 
 				require_once (t3lib_extMgm::extPath("languagevisibility") . 'class.tx_languagevisibility_beservices.php');
-				$row['tx_languagevisibility_visibility'] = serialize(tx_languagevisibility_beservices::getDefaultVisibilityArray());
+				$newdata = array('tx_languagevisibility_visibility' => serialize(tx_languagevisibility_beservices::getDefaultVisibilityArray()));
 				$where = "tx_languagevisibility_visibility = '' AND uid=" . $row['uid'];
 
-				$GLOBALS['TYPO3_DB']->exec_UPDATEquery($table, $where, $row);
+				$GLOBALS['TYPO3_DB']->exec_UPDATEquery($table, $where, $newdata);
 			}
 
 			tx_languagevisibility_cacheManager::getInstance()->flushAllCaches();
