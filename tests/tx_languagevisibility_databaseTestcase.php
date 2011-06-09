@@ -54,7 +54,11 @@ abstract class tx_languagevisibility_databaseTestcase extends tx_phpunit_databas
 		unset($GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['languagevisibility']);
 
 		// order of extension-loading is important !!!!
-		$this->importExtensions(array('cms', 'languagevisibility' ));
+        if (version_compare(TYPO3_version, '4.5.0', '<')) {
+		    $this->importExtensions(array('cms', 'languagevisibility' ));
+        } else {
+            $this->importExtensions(array('cms', 'extbase', 'fluid', 'version', 'workspaces', 'languagevisibility' ));
+        }
 
 		tx_languagevisibility_cacheManager::getInstance()->flushAllCaches();
 	}
