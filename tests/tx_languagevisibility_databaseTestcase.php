@@ -22,32 +22,24 @@
  * This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
+require_once (t3lib_extMgm::extPath("languagevisibility") . 'tests/classes/class.tx_languagevisibility_tests_helper_environmentSaver.php');
+
 abstract class tx_languagevisibility_databaseTestcase extends tx_phpunit_database_testcase {
 
 	/**
-	 * @var array holds the restored addRootlineFields array which will be stored in setUp and restored in tearDown.
-	 */
-	protected $restoredAddRootlineFields;
-
-	/**
-	 * @var array holds the restored pageOverlayFields array which will be stored in setUp and restored in tearDown
-	 */
-	protected $restoredPageOverlayFields;
-
-	protected $restoredSCOptions;
-
-	/**
-	 *
+	 * @return void
 	 */
 	function setUp() {
+			/*
+			 * save the current environment  this should allways be done first because
+			 * database tests may get skipped because no testdatabase exists
+			 */
+		$this->environmentSaver = new tx_languagevisibility_tests_helper_environmentHelper();
+		$this->environmentSaver->save();
+
 		$this->createDatabase();
 		$db = $this->useTestDatabase();
 		$this->importStdDB();
-
-		/* save current enviroment values */
-		$this->restoredAddRootlineFields = $GLOBALS["TYPO3_CONF_VARS"]["FE"]["addRootLineFields"];
-		$this->restoredPageOverlayFields = $GLOBALS["TYPO3_CONF_VARS"]["FE"]["pageOverlayFields"];
-		$this->restoredSCOptions = $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['languagevisibility'];
 
 		$GLOBALS["TYPO3_CONF_VARS"]["FE"]["addRootLineFields"] = "tx_languagevisibility_inheritanceflag_original,tx_languagevisibility_inheritanceflag_overlayed";
 		$GLOBALS["TYPO3_CONF_VARS"]["FE"]["pageOverlayFields"] = "uid,title,subtitle,nav_title,media,keywords,description,abstract,author,author_email,sys_language_uid,tx_languagevisibility_inheritanceflag_overlayed";
@@ -64,16 +56,17 @@ abstract class tx_languagevisibility_databaseTestcase extends tx_phpunit_databas
 	}
 
 	/**
-	 *
+	 * @return void
 	 */
 	function tearDown() {
-		$GLOBALS["TYPO3_CONF_VARS"]["FE"]["addRootLineFields"] = $this->restoredAddRootlineFields;
-		$GLOBALS["TYPO3_CONF_VARS"]["FE"]["pageOverlayFields"] = $this->restoredPageOverlayFields;
-		$GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['languagevisibility'] = $this->restoredSCOptions;
-
 		$this->cleanDatabase();
 		$this->dropDatabase();
 		$GLOBALS['TYPO3_DB']->sql_select_db(TYPO3_db);
+
+			/**
+			 * In the end we should restore the environement
+			 */
+		$this->environmentSaver->restore();
 	}
 }
 ?>

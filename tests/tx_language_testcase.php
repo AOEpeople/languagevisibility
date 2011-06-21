@@ -30,6 +30,7 @@
  *
  * @author	Daniel P�tzinger
  */
+require_once (t3lib_extMgm::extPath("languagevisibility") . 'tests/tx_languagevisibility_baseTestcase.php');
 
 require_once (t3lib_extMgm::extPath("languagevisibility") . 'classes/class.tx_languagevisibility_language.php');
 require_once (t3lib_extMgm::extPath("languagevisibility") . 'classes/class.tx_languagevisibility_element.php');
@@ -37,12 +38,24 @@ require_once (t3lib_extMgm::extPath("languagevisibility") . 'classes/class.tx_la
 // require_once (t3lib_extMgm::extPath('phpunit').'class.tx_phpunit_test.php');
 require_once (PATH_t3lib . 'class.t3lib_tcemain.php');
 
-class tx_language_testcase extends tx_phpunit_testcase {
+class tx_language_testcase extends tx_languagevisibility_baseTestcase {
 
-	function setUp() {
+	/**
+	 * @return void
+	 */
+	public function setUp() {
 		parent::setUp();
 		unset($GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['languagevisibility']);
 	}
+
+	/**
+	 * @return void
+	 */
+	public function tearDown() {
+		parent::tearDown();
+	}
+
+
 	/**
 	 *
 	 * @test

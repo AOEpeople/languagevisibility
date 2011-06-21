@@ -22,7 +22,27 @@
  * This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
-class tx_environment_testcase extends tx_phpunit_testcase {
+require_once (t3lib_extMgm::extPath("languagevisibility") . 'tests/tx_languagevisibility_baseTestcase.php');
+
+class tx_environment_testcase extends tx_languagevisibility_baseTestcase {
+
+	/**
+	 * @return void
+	 */
+	public function setUp() {
+		parent::setUp();
+
+		//put new initialization here
+	}
+
+	/**
+	 * @return void
+	 */
+	public function tearDown() {
+		//put new restoring here
+
+		parent::tearDown();
+	}
 
 	/**
 	 * Just to have some confidence about the system settings ;)

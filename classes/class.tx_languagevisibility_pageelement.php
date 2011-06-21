@@ -81,7 +81,6 @@ class tx_languagevisibility_pageelement extends tx_languagevisibility_element {
 	protected function getOverLayRecordForCertainLanguageImplementation($lUid) {
 		if ($lUid>0) {
 			$fieldArr = explode(',', $GLOBALS['TYPO3_CONF_VARS']['FE']['pageOverlayFields']);
-
 			$page_id = $this->row['t3ver_oid']?$this->row['t3ver_oid']:$this->getUid();	// Was the whole record
 			$fieldArr = array_intersect($fieldArr,array_keys($this->row));		// Make sure that only fields which exist in the incoming record are overlaid!
 
@@ -93,7 +92,9 @@ class tx_languagevisibility_pageelement extends tx_languagevisibility_element {
 					$enableFields = '';
 				}
 				$fieldArr[] = 'deleted';
-				$fieldArr[] = 'hidden';				
+				$fieldArr[] = 'hidden';
+				$fieldArr[] = 'tx_languagevisibility_visibility';
+				
 					// Selecting overlay record:
 				$res = $GLOBALS['TYPO3_DB']->exec_SELECTquery(
 					implode(',',$fieldArr),

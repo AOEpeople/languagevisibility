@@ -22,7 +22,9 @@
  * This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
-class tx_cacheManager_testcase extends tx_phpunit_testcase{
+require_once (t3lib_extMgm::extPath("languagevisibility") . 'tests/tx_languagevisibility_baseTestcase.php');
+
+class tx_cacheManager_testcase extends tx_languagevisibility_baseTestcase{
 
 	protected $oldExtConfSetting;
 
@@ -33,7 +35,7 @@ class tx_cacheManager_testcase extends tx_phpunit_testcase{
 	 * @return void
 	 */
 	public function setUp(){
-
+		parent::setUp();
 			//TODO get rid of the extConf push/pop stuff
 		$this->oldExtConfSetting = $GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf']['languagevisibility'];
 		$GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf']['languagevisibility'] = serialize(array('useCache'=>1));
@@ -47,6 +49,8 @@ class tx_cacheManager_testcase extends tx_phpunit_testcase{
 	 */
 	public function tearDown() {
 		$GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf']['languagevisibility'] = $this->oldExtConfSetting;
+
+		parent::tearDown();
 	}
 
 	/**

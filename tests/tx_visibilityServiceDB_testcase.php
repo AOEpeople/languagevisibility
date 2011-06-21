@@ -144,9 +144,9 @@ class tx_visibilityServiceDB_testcase extends tx_languagevisibility_databaseTest
 			$this->markTestSkipped('Not relevant if "version" is not installed');
 		}
 
-		/* @var $element tx_languagevisibility_element */
+		/** @var $element tx_languagevisibility_element */
 		$element = $this->_getContent('tt_content', 15 /* element with L1 overlay */);
-		/* @var $visibility tx_languagevisibility_visibilityService */
+		/** @var $visibility tx_languagevisibility_visibilityService */
 		$visibility = t3lib_div::makeInstance('tx_languagevisibility_visibilityService');
 
 		//Test language 4 to see that this is working if something exists
@@ -155,16 +155,20 @@ class tx_visibilityServiceDB_testcase extends tx_languagevisibility_databaseTest
 		$this->assertTrue($visibility->isVisible($language, $element), 'There\'s an overlay for this language - therefore it should be visible');
 		$this->assertTrue($element->hasTranslation(4));
 
+		//the overlay(17) has no configured visiblity and is hidden. The original (15) has the following visibility:
+		// a:5:{i:0;s:1:"-";i:1;s:1:"-";i:2;s:1:"-";i:4;s:1:"t";i:5;s:1:"t";}
+		// because the overlay is hidden it should not be visible
 		$language = $this->_getLang(5);
 		$this->assertEquals('t', $visibility->getVisibilitySetting($language, $element));
 		$this->assertFalse($visibility->isVisible($language, $element), 'This one shouldn\'t be visible because there\'s no valid overlay');
 		$this->assertFalse($element->hasTranslation(5));
 
 		$this->_fakeWorkspaceContext(5);
-		$language = $this->_getLang(5);
+		$language = $this->_getLang(6);
 		$this->assertEquals('t', $visibility->getVisibilitySetting($language, $element));
 		$this->assertTrue($visibility->isVisible($language, $element), 'This one should be visible because there\'s a valid overlay in the workspace (5)');
-		$this->assertTrue($element->hasTranslation(5));
+		$this->assertTrue($element->hasTranslation(6));
+		$this->_fakeWorkspaceContext(0);
 	}
 
 	function test_visibility_overlayPage() {

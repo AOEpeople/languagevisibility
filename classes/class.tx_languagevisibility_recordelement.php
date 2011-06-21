@@ -53,31 +53,32 @@ class tx_languagevisibility_recordelement extends tx_languagevisibility_element 
 		global $TCA;
 
 		if (is_object($GLOBALS['TSFE']->sys_page)) {
-			$deleteClause = $GLOBALS['TSFE']->sys_page->deleteClause($this->table);
+			$excludeClause = $GLOBALS['TSFE']->sys_page->deleteClause($this->table);
+			$excludeClause .=  $GLOBALS['TSFE']->sys_page->enableFields($this->table);
 		} else {
-			$deleteClause .= t3lib_BEfunc::deleteClause($this->table);
+			$excludeClause = t3lib_BEfunc::deleteClause($this->table);
+			$excludeClause .= t3lib_BEfunc::BEenableFields($this->table);
 		}
 
 		// Select overlay record:
 		$res = $GLOBALS['TYPO3_DB']->exec_SELECTquery(
-			'*', 
-			$this->table, 
-			'pid='.intval($this->getPid()). ' AND ' .
-				$TCA[$this->table]['ctrl']['languageField'] . '=' . intval($languageId) . ' AND ' . 
-				$TCA[$this->table]['ctrl']['transOrigPointerField'] . '=' . intval($this->getUid()) . 
-				$deleteClause, 
-			'', 
-			'', 
+			'*',
+			$this->table,
+			//from the current pid and only records from the live workspace or initial placeholder
+			'pid='.intval($this->getPid()). ' AND t3ver_wsid < 1 AND ' .
+				$TCA[$this->table]['ctrl']['languageField'] . '=' . intval($languageId) . ' AND ' .
+				$TCA[$this->table]['ctrl']['transOrigPointerField'] . '=' . intval($this->getUid()) .
+				$excludeClause,
+			'',
+			'',
 			'1'
 		);
-
+		
 		$olrow = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res);
 		$olrow = $this->getContextIndependentWorkspaceOverlay($this->table, $olrow);
 		$GLOBALS['TYPO3_DB']->sql_free_result($res);
 
-		$result = $olrow;
-
-		return $result;
+		return $olrow;
 	}
 
 	/**

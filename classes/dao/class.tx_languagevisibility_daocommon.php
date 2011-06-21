@@ -111,7 +111,7 @@ class tx_languagevisibility_daocommon {
 				//!TODO we're still running two queries - this can be reduced to one with a tricky search criteria
 				$rows = self::getRequestedRecords($table, $where);
 
-				if ($row) {
+				if ($rows) {
 					self::$recordCache[$table][$where] = $rows;
 				}
 			}
