@@ -28,7 +28,7 @@ if (!interface_exists('tslib_menu_filterMenuPagesHook') && version_compare(TYPO3
 }
 
 
-if (version_compare(TYPO3_version, '4.5.3', '<')) {
+if (!version_compare(TYPO3_version, '4.5.2', '>') && !version_compare(TYPO3_version, '4.4.6', '>')) {
 	/**
 	 *
 	 * @author	 Tolleiv
