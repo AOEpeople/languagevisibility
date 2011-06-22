@@ -99,6 +99,11 @@ class tx_visibilityService_testcase extends tx_phpunit_testcase {
 	}
 
 	public function test_visibility_fixture_news() {
+
+		if (!t3lib_extMgm::isLoaded('tt_news')) {
+			markTestSkipped('Not relevant if "tt_news" is not installed');
+		}
+
 		$language = $this->_fixture_getLanguageOneWithDefaultFallback();
 		$element = $this->_fixture_getNewsElementWithDefaultVisibility();
 
