@@ -94,7 +94,7 @@ class tx_elementFactory_testcase extends tx_languagevisibility_databaseTestcase 
 			$this->markTestSkipped('Not relevant if "version" is not installed');
 		}
 		if (is_object($GLOBALS['TSFE'])) {
-			$this->markTestSkipped('Please turn off the fake frontend - this test work work which "fake" frontends ;)');
+			$this->markTestSkipped('Please turn off the fake frontend (phpunit extension configuration) - this test won\'t work with "fake" frontends ;)');
 		}
 
 		$this->importDataSet(dirname(__FILE__) . '/fixtures/getLiveWorkspaceElementFromWorkspaceUid.xml');

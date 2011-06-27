@@ -215,9 +215,6 @@ class tx_visibilityServiceDB_testcase extends tx_languagevisibility_databaseTest
 
 		$element = $this->_getContent('tt_content', 4);
 
-		//set visibility to true to ensure it is set to false by the service call
-		$visibilityResult = true;
-
 		$service = new tx_languagevisibility_visibilityService();
 
 		$visibilityResult = $service->isVisible($language, $element);
@@ -237,7 +234,6 @@ class tx_visibilityServiceDB_testcase extends tx_languagevisibility_databaseTest
 	function test_visibility_pagesOverlayForceToNoAffectsVisibility() {
 		$language = $this->_getLang(1);
 		$element = $this->_getContent('pages', 4);
-		$visibilityResult = true;
 
 		$service = new tx_languagevisibility_visibilityService();
 		$visibilityResult = $service->isVisible($language, $element);
@@ -256,11 +252,14 @@ class tx_visibilityServiceDB_testcase extends tx_languagevisibility_databaseTest
 			$this->markTestSkipped('Not relevant if "version" is not installed');
 		}
 
+		if (is_object($GLOBALS['TSFE'])) {
+			$this->markTestSkipped('Please turn off the fake frontend (phpunit extension configuration) - this test won\'t work with "fake" frontends ;)');
+		}
+
 		$this->_fakeWorkspaceContext(4711);
 
 		$language = $this->_getLang(1);
 		$element = $this->_getContent('tt_content', 6);
-		$visibilityResult = true;
 		$service = new tx_languagevisibility_visibilityService();
 
 		$visibilityResult = $service->isVisible($language, $element);
@@ -277,9 +276,6 @@ class tx_visibilityServiceDB_testcase extends tx_languagevisibility_databaseTest
 		$language = $this->_getLang(1);
 		$element = $this->_getContent('tt_content', 10);
 
-		//set visibility to true to ensure it is set to false by the service call
-		$visibilityResult = true;
-
 		$service = new tx_languagevisibility_visibilityService();
 
 		$visibilityResult = $service->isVisible($language, $element);
@@ -290,9 +286,6 @@ class tx_visibilityServiceDB_testcase extends tx_languagevisibility_databaseTest
 	function test_visibility_ttcontentOverlayCorruptedNotAffectsVisibilits() {
 		$language = $this->_getLang(1);
 		$element = $this->_getContent('tt_content', 12);
-
-		//set visibility to true to ensure it is set to false by the service call
-		$visibilityResult = false;
 
 		$service = new tx_languagevisibility_visibilityService();
 
@@ -409,8 +402,6 @@ class tx_visibilityServiceDB_testcase extends tx_languagevisibility_databaseTest
 
 		$factory = new tx_languagevisibility_elementFactory($dao);
 
-		$visibilityResult = true;
-
 		/* @var $element tx_languagevisibility_pageelement */
 		$element = $factory->getElementForTable('pages', 6);
 		$visibilityResult = $service->isVisible($language, $element);
@@ -451,8 +442,6 @@ class tx_visibilityServiceDB_testcase extends tx_languagevisibility_databaseTest
 
 		$factory = new tx_languagevisibility_elementFactory($dao);
 
-		$visibilityResult = true;
-
 		$element = $factory->getElementForTable('pages', 6);
 		$visibilityResult = $service->isVisible($language, $element);
 
@@ -490,8 +479,6 @@ class tx_visibilityServiceDB_testcase extends tx_languagevisibility_databaseTest
 
 		$factory = new tx_languagevisibility_elementFactory($dao);
 
-		$visibilityResult = true;
-
 		$element = $factory->getElementForTable('pages', 6);
 		$visibilityResult = $service->isVisible($language, $element);
 
@@ -526,8 +513,6 @@ class tx_visibilityServiceDB_testcase extends tx_languagevisibility_databaseTest
 		$dao = new tx_languagevisibility_daocommon();
 
 		$factory = new tx_languagevisibility_elementFactory($dao);
-
-		$visibilityResult = true;
 
 		$element = $factory->getElementForTable('pages', 6);
 		$visibilityResult = $service->isVisible($language, $element);

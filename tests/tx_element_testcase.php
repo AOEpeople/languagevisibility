@@ -82,6 +82,11 @@ class tx_element_testcase extends tx_languagevisibility_databaseTestcase {
 	}
 
 	public function test_hasTranslation_normalfcelement() {
+
+		if (is_object($GLOBALS['TSFE'])) {
+			$this->markTestSkipped('Please turn off the fake frontend (phpunit extension configuration) - this test won\'t work with "fake" frontends ;)');
+		}
+		
 		//this time data in DB is tested!
 		$this->_create_fixture_fcecontentrecord();
 		$this->_create_fixture_fcedatastructures();
@@ -107,6 +112,10 @@ class tx_element_testcase extends tx_languagevisibility_databaseTestcase {
 	}
 
 	public function test_hasTranslation_overlayfcelement() {
+
+		if (is_object($GLOBALS['TSFE'])) {
+			$this->markTestSkipped('Please turn off the fake frontend (phpunit extension configuration) - this test won\'t work with "fake" frontends ;)');
+		}
 		//this time data in DB is tested!
 		$this->_create_fixture_fcecontentrecordoverlay();
 		$this->_create_fixture_fcedatastructures();
