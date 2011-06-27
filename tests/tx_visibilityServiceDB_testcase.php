@@ -164,10 +164,10 @@ class tx_visibilityServiceDB_testcase extends tx_languagevisibility_databaseTest
 		$this->assertFalse($element->hasTranslation(5));
 
 		$this->_fakeWorkspaceContext(5);
-		$language = $this->_getLang(6);
+		$language = $this->_getLang(5);
 		$this->assertEquals('t', $visibility->getVisibilitySetting($language, $element));
 		$this->assertTrue($visibility->isVisible($language, $element), 'This one should be visible because there\'s a valid overlay in the workspace (5)');
-		$this->assertTrue($element->hasTranslation(6));
+        $this->assertTrue($element->hasTranslation(5));
 		$this->_fakeWorkspaceContext(0);
 	}
 

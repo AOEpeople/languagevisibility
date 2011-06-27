@@ -278,25 +278,15 @@
 		<deleted>0</deleted>
 		<t3ver_wsid>5</t3ver_wsid>
 		<t3ver_state>-1</t3ver_state>
+		<t3ver_stage>1</t3ver_stage>
 		<l18n_parent>15</l18n_parent>
-		<t3_origuid>999</t3_origuid>
+		<t3_origuid>17</t3_origuid>
+		<t3ver_oid>17</t3ver_oid>
 		<l18n_diffsource>0</l18n_diffsource>
-		<sys_language_uid>6</sys_language_uid>
+		<sys_language_uid>5</sys_language_uid>
 		<tx_languagevisibility_visibility></tx_languagevisibility_visibility>
 	</tt_content>
 
-	<tt_content>
-		<uid>999</uid>
-		<pid>1</pid>
-		<header>overlay</header>
-		<hidden>0</hidden>
-		<deleted>0</deleted>
-		<t3ver_wsid>0</t3ver_wsid>
-		<l18n_parent>15</l18n_parent>
-		<l18n_diffsource>0</l18n_diffsource>
-		<sys_language_uid>6</sys_language_uid>
-		<tx_languagevisibility_visibility></tx_languagevisibility_visibility>
-	</tt_content>
 
 
 	<tt_content>

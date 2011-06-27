@@ -452,6 +452,43 @@ abstract class tx_languagevisibility_element {
 	}
 
 	/**
+	 * Check the records enableColumns
+	 *
+	 * @param  $row
+	 * @return bool
+	 */
+	protected function getEnableFieldResult($row) {
+		$ctrl = $GLOBALS['TCA'][$this->table]['ctrl'];
+		$enabled = TRUE;
+		if (is_array($ctrl['enablecolumns'])) {
+			if ($ctrl['enablecolumns']['disabled']) {
+				$enabled = $row[$ctrl['enablecolumns']['disabled']] == 0;
+				if (!$enabled) debug(array('row is disabled', $row, $ctrl['enablecolumns']));
+			}
+			if ($ctrl['enablecolumns']['starttime']) {
+				$enabled &= $row[$ctrl['enablecolumns']['starttime']] <= $GLOBALS['SIM_ACCESS_TIME'];
+				if (!$enabled) debug(array('row is disabled (starttime)', $row));
+			}
+			if ($ctrl['enablecolumns']['endtime']) {
+				$endtime = $row[$ctrl['enablecolumns']['endtime']];
+				$enabled &= $endtime == 0 || $endtime > $GLOBALS['SIM_ACCESS_TIME'];
+				if (!$enabled) debug(array('row is disabled (endtime)', $row));
+			}
+
+			if ($ctrl['enablecolumns']['fe_group'] && is_object($GLOBALS['TSFE'])) {
+				$fe_group = $row[$ctrl['enablecolumns']['fe_group']];
+				if ($fe_group) {
+					$currentUserGroups = t3lib_div::intExplode(',', $GLOBALS['TSFE']->gr_list);
+					$recordGroups = t3lib_div::intExplode(',', $fe_group);
+					$sharedGroups = array_intersect($recordGroups, $currentUserGroups);
+					$enabled &= count($sharedGroups) > 0;
+				}
+			}
+		}
+		return $enabled;
+	}
+
+	/**
 	 * This method should provide the implementation to get the overlay of an element for a
 	 * certain language. The result is cached be the method getOverLayRecordForCertainLanguage.
 	 *

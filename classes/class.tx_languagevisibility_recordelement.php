@@ -50,14 +50,13 @@ class tx_languagevisibility_recordelement extends tx_languagevisibility_element 
 	 * @see classes/tx_languagevisibility_element#getOverLayRecordForCertainLanguageImplementation($languageId)
 	 */
 	protected function getOverLayRecordForCertainLanguageImplementation($languageId) {
-		global $TCA;
+		$ctrl = $GLOBALS['TCA'][$this->table]['ctrl'];
 
+			// we can't use the exclude fields here because we might loose (hidden) parent-records
 		if (is_object($GLOBALS['TSFE']->sys_page)) {
 			$excludeClause = $GLOBALS['TSFE']->sys_page->deleteClause($this->table);
-			$excludeClause .=  $GLOBALS['TSFE']->sys_page->enableFields($this->table);
 		} else {
 			$excludeClause = t3lib_BEfunc::deleteClause($this->table);
-			$excludeClause .= t3lib_BEfunc::BEenableFields($this->table);
 		}
 
 		// Select overlay record:
@@ -66,8 +65,8 @@ class tx_languagevisibility_recordelement extends tx_languagevisibility_element 
 			$this->table,
 			//from the current pid and only records from the live workspace or initial placeholder
 			'pid='.intval($this->getPid()). ' AND t3ver_wsid < 1 AND ' .
-				$TCA[$this->table]['ctrl']['languageField'] . '=' . intval($languageId) . ' AND ' .
-				$TCA[$this->table]['ctrl']['transOrigPointerField'] . '=' . intval($this->getUid()) .
+				$ctrl['languageField'] . '=' . intval($languageId) . ' AND ' .
+				$ctrl['transOrigPointerField'] . '=' . intval($this->getUid()) .
 				$excludeClause,
 			'',
 			'',
@@ -77,6 +76,10 @@ class tx_languagevisibility_recordelement extends tx_languagevisibility_element 
 		$olrow = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res);
 		$olrow = $this->getContextIndependentWorkspaceOverlay($this->table, $olrow);
 		$GLOBALS['TYPO3_DB']->sql_free_result($res);
+
+		if (!$this->getEnableFieldResult($olrow)) {
+			$olrow = array();
+		}
 
 		return $olrow;
 	}

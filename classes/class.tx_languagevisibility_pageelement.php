@@ -110,7 +110,7 @@ class tx_languagevisibility_pageelement extends tx_languagevisibility_element {
 				$olrow = $this->getContextIndependentWorkspaceOverlay($table, $olrow);
 				$GLOBALS['TYPO3_DB']->sql_free_result($res);
 
-				if (!$olrow['hidden'] && !$olrow['deleted']) {
+				if ($this->getEnableFieldResult($olrow)) {
 					$overlayRecord = $olrow;
 				}
 			} else {
