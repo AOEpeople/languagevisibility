@@ -463,16 +463,13 @@ abstract class tx_languagevisibility_element {
 		if (is_array($ctrl['enablecolumns'])) {
 			if ($ctrl['enablecolumns']['disabled']) {
 				$enabled = $row[$ctrl['enablecolumns']['disabled']] == 0;
-				if (!$enabled) debug(array('row is disabled', $row, $ctrl['enablecolumns']));
 			}
 			if ($ctrl['enablecolumns']['starttime']) {
 				$enabled &= $row[$ctrl['enablecolumns']['starttime']] <= $GLOBALS['SIM_ACCESS_TIME'];
-				if (!$enabled) debug(array('row is disabled (starttime)', $row));
 			}
 			if ($ctrl['enablecolumns']['endtime']) {
 				$endtime = $row[$ctrl['enablecolumns']['endtime']];
 				$enabled &= $endtime == 0 || $endtime > $GLOBALS['SIM_ACCESS_TIME'];
-				if (!$enabled) debug(array('row is disabled (endtime)', $row));
 			}
 
 			if ($ctrl['enablecolumns']['fe_group'] && is_object($GLOBALS['TSFE'])) {
