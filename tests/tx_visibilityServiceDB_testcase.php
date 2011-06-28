@@ -143,6 +143,10 @@ class tx_visibilityServiceDB_testcase extends tx_languagevisibility_databaseTest
 		if (version_compare(TYPO3_version, '4.3', '>') && ! t3lib_extMgm::isLoaded('version')) {
 			$this->markTestSkipped('Not relevant if "version" is not installed');
 		}
+		
+		if (is_object($GLOBALS['TSFE'])) {
+			$this->markTestSkipped('Please turn off the fake frontend (phpunit extension configuration) - this test won\'t work with "fake" frontends ;)');
+		}		
 
 		/** @var $element tx_languagevisibility_element */
 		$element = $this->_getContent('tt_content', 15 /* element with L1 overlay */);
