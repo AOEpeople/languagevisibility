@@ -267,15 +267,32 @@ class tx_languagevisibility_language {
 
 		$cache_key = 'pid:' . $pidForDefault . 'uid:' . $this->getUid();
 		if ( !isset(self::$flagCache[$cache_key]) ) {
-			$flagPath = $this->getFlagImgPath($pidForDefault, $BACK_PATH);
-			if ($flagPath) {
-				self::$flagCache[$cache_key] = '<img src="' . $flagPath . '" title="' . $this->getTitle($pidForDefault) . '-' . $this->getIsoCode() . ' [' . $this->getUid() . ']">';
+			if (version_compare(TYPO3_version,'4.5','<')) {
+				$flagPath = $this->getFlagImgPath($pidForDefault, $BACK_PATH);
+				if ($flagPath) {
+					self::$flagCache[$cache_key] = '<img src="' . $flagPath . '" title="' . $this->getTitle($pidForDefault) . '-' . $this->getIsoCode() . ' [' . $this->getUid() . ']">';
+				} else {
+					self::$flagCache[$cache_key] = '';
+				}
 			} else {
-				self::$flagCache[$cache_key] = '';
+				self::$flagCache[$cache_key] = t3lib_iconWorks::getSpriteIcon($this->getFlagName($pidForDefault));
 			}
 		}
 
 		return self::$flagCache[$cache_key];
+	}
+
+	/**
+	 * @return string
+	 */
+	protected function getFlagName($pidForDefault = '') {
+		if ($this->getUid() == '0') {
+			$sharedTSconfig = t3lib_BEfunc::getModTSconfig($pidForDefault, 'mod.SHARED');
+			$flag = $sharedTSconfig['properties']['defaultLanguageFlag'];
+		} else {
+			$flag = $this->row['flag'];
+		}
+		return 'flags-' . $flag;
 	}
 
 	/**
