@@ -63,6 +63,7 @@ class tx_languagevisibility_languagerepository {
 	 * @return array
 	 */
 	protected function getCachedOrUncacheResults() {
+		$results = array();
 		$cacheManager = tx_languagevisibility_cacheManager::getInstance();
 		$isCacheEnabled = $cacheManager->isCacheEnabled();
 
