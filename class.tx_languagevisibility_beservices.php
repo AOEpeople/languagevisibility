@@ -255,6 +255,36 @@ class tx_languagevisibility_beservices {
 		}
 		return false;
 	}
+	
+	/**
+	 * Check if given element has traslation in given language
+	 * 
+	 * @param int $elementUid
+	 * @param string $table
+	 * @param int $languageUid
+	 * @return boolean
+	 */
+	public static function hasTranslation($elementUid, $table, $languageUid) {
+		$dao = t3lib_div::makeInstance('tx_languagevisibility_daocommon');
+		if (version_compare(TYPO3_version, '4.3.0', '<')) {
+			$elementfactoryName = t3lib_div::makeInstanceClassName('tx_languagevisibility_elementFactory');
+			$elementfactory = new $elementfactoryName($dao);
+		} else {
+			$elementfactory = t3lib_div::makeInstance('tx_languagevisibility_elementFactory', $dao);
+		}
+
+		$result = false;
+		try {
+			$element = $elementfactory->getElementForTable($table, $elementUid);
+			$result = $element->hasTranslation($languageUid);
+			
+		} catch ( UnexpectedValueException $e ) {
+			//the element can not be handeld by language visibility
+			$result = false;
+		}
+		
+		return $result;
+	}
 
 	/**
 	 * checks if the current BE_USER has access to the page record:
