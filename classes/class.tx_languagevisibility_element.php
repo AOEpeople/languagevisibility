@@ -338,21 +338,17 @@ abstract class tx_languagevisibility_element {
 	 * @return boolean
 	 **/
 	public function hasTranslation($languageid) {
+
+		$result = FALSE;
 		if (! is_numeric($languageid)) {
-			return false;
+			$result = FALSE;
+		} else if ($languageid == 0) {
+			$result = TRUE;
+		} else if ($this->_hasOverlayRecordForLanguage($languageid)) {
+			$result = TRUE;
 		}
 
-		//check if overlay exist:
-		if ($languageid == 0) {
-			return true;
-		}
-
-		$hasOverlay = $this->_hasOverlayRecordForLanguage($languageid);
-		if ($hasOverlay) {
-			return true;
-		} else {
-			return false;
-		}
+		return $result;
 	}
 
 	/**
@@ -376,12 +372,7 @@ abstract class tx_languagevisibility_element {
 	 */
 	protected function _hasOverlayRecordForLanguage($langid) {
 		$row = $this->getOverLayRecordForCertainLanguage($langid, true);
-
-		if ($row['uid'] != '') {
-			return true;
-		} else {
-			return false;
-		}
+		return $row['uid'] != '';
 	}
 
 	/**
@@ -442,7 +433,6 @@ abstract class tx_languagevisibility_element {
 
 		$cacheData = $cacheManager->get('overlayRecordCache');
 		$isCacheEnabled = $cacheManager->isCacheEnabled();
-
 		if (! $isCacheEnabled || ! isset($cacheData[$table][$uid][$languageId][$workspace])) {
 			$cacheData[$table][$uid][$languageId][$workspace] = $this->getOverLayRecordForCertainLanguageImplementation($languageId);
 			$cacheManager->set('overlayRecordCache', $cacheData);

@@ -125,7 +125,6 @@ class tx_languagevisibility_visibilityService {
 		$this->_relevantOverlayLanguageId = $language->getUid();
 
 		$visibility = $this->getVisibilitySetting($language, $element, $omitLocal);
-
 		if ($visibility == 'yes') {
 			if (!$element->hasTranslation($language->getUid())) {
 				$this->_relevantOverlayLanguageId = 0;
@@ -168,7 +167,6 @@ class tx_languagevisibility_visibilityService {
 				$result = false;
 			}
 		}
-
 		return $result;
 	}
 

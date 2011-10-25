@@ -59,14 +59,17 @@ class tx_languagevisibility_recordelement extends tx_languagevisibility_element 
 			$excludeClause = t3lib_BEfunc::deleteClause($this->table);
 		}
 
-		// Select overlay record:
+		$workspace = $GLOBALS['BE_USER']->workspace;
+
+		// Select overlay record (Live workspace, initial placeholders included):
 		$res = $GLOBALS['TYPO3_DB']->exec_SELECTquery(
 			'*',
 			$this->table,
 			//from the current pid and only records from the live workspace or initial placeholder
-			'pid='.intval($this->getPid()). ' AND t3ver_wsid < 1 AND ' .
-				$ctrl['languageField'] . '=' . intval($languageId) . ' AND ' .
-				$ctrl['transOrigPointerField'] . '=' . intval($this->getUid()) .
+			'pid='.intval($this->getPid()). ' AND ' .
+				't3ver_wsid IN (0,' . $workspace .') AND '.
+				$ctrl['languageField'] . '=' . intval($languageId) .
+				($languageId > 0 ? ' AND ' . $ctrl['transOrigPointerField'] . '=' . intval($this->getUid()) : '').
 				$excludeClause,
 			'',
 			'',

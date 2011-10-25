@@ -31,11 +31,12 @@ require_once (t3lib_extMgm::extPath("languagevisibility") . 'classes/class.tx_la
 
 require_once (PATH_t3lib . 'class.t3lib_flexformtools.php');
 
-class tx_languagevisibility_fceelement extends tx_languagevisibility_element {
+class tx_languagevisibility_fceelement extends tx_languagevisibility_recordelement {
 
 	private $langIsoCodeForFlexFormCallback = '';
 	private $langChildren;
 	private $langDisabled;
+	private $langDatabaseOverlay;
 	private $disabledIsVisible;
 
 	//flags which are set during processings
@@ -46,6 +47,7 @@ class tx_languagevisibility_fceelement extends tx_languagevisibility_element {
 
 		$this->langChildren = $DS['meta']['langChildren'] ? 1 : 0;
 		$this->langDisabled = $DS['meta']['langDisable'] ? 1 : 0;
+		$this->langDatabaseOverlay = $DS['meta']['langDatabaseOverlay'] ? 1 : 0;
 		$this->disabledIsVisible = $DS['meta']['disabledIsVisible'] ? 1 : 0;
 	}
 
@@ -75,7 +77,7 @@ class tx_languagevisibility_fceelement extends tx_languagevisibility_element {
 		$this->_callBackFoundOverlay = FALSE;
 
 		// Get data structure:
-		if ($this->langDisabled == 1) {
+		if ($this->langDisabled == 1 && !$this->langDatabaseOverlay) {
 			//the FCE has langDisabled: this means there is no overlay
 			if ($this->disabledIsVisible == 1) {
 				return true;
@@ -111,11 +113,10 @@ class tx_languagevisibility_fceelement extends tx_languagevisibility_element {
 		}
 	}
 
-	/**
-	 *TODO
-	 **/
 	function getOverLayRecordForCertainLanguageImplementation($languageId, $onlyUid = FALSE) {
-		return array();
+
+		$useDefaultLang = $this->langDisabled == 1 && !$this->langDatabaseOverlay;
+		return parent::getOverLayRecordForCertainLanguageImplementation($useDefaultLang ? 0 : $languageId, $onlyUid);
 	}
 
 	/**
