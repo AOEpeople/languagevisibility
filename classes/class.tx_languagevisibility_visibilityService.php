@@ -108,6 +108,10 @@ class tx_languagevisibility_visibilityService {
 			&& is_array($GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['languagevisibility']['getElementForTable'])) {
 			$tables = array_merge($tables, array_keys($GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['languagevisibility']['getElementForTable']));
 		}
+		if(isset($GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['languagevisibility']['recordElementSupportedTables'])
+                        && is_array($GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['languagevisibility']['recordElementSupportedTables'])) {
+                        $tables = array_merge($tables, array_keys($GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['languagevisibility']['recordElementSupportedTables']));
+                }
 
 		return $tables;
 	}

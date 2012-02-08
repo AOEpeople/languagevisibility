@@ -137,7 +137,10 @@ class tx_languagevisibility_elementFactory {
 					if (method_exists($hookObj, 'getElementForTable')) {
 						$element = $hookObj->getElementForTable($table, $uid, $row, $overlay_ids);
 					}
-				} else {
+				} elseif (isset($GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['languagevisibility']['recordElementSupportedTables'][$table])) {
+					$element = $this->getElementInstance('tx_languagevisibility_recordelement', $row);
+				}
+				else {
 					throw new UnexpectedValueException($table . ' not supported ', 1195039394);
 				}				
 				break;
@@ -292,5 +295,21 @@ class tx_languagevisibility_elementFactory {
 
 		return $cacheData[$srcPointer];
 	}
+	/**
+	* Gets instance depending on TYPO3 version
+	* @param $name name of the class
+	* @param array $row row that is used to initialaze element instance
+	* @return tx_languagevisibility_element
+	*/
+	private function getElementInstance($name,$row) {
+                 if (version_compare(TYPO3_version, '4.3.0', '<')) {
+                          require_once (t3lib_extMgm::extPath("languagevisibility") . 'classes/class.'.$name.'.php');
+                          $elementclass = t3lib_div::makeInstanceClassName($name);
+                          return new $elementclass($row);
+                  } else {
+                          return t3lib_div::makeInstance($name, $row);
+                 }
+        }
+
 }
 ?>
