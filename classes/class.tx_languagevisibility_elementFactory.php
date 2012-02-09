@@ -52,7 +52,7 @@ class tx_languagevisibility_elementFactory {
 	 **/
 	function getElementForTable($table, $uid, $overlay_ids = true) {
 
-		if (! is_numeric($uid)) {
+		if (!is_numeric($uid)) {
 			//no uid => maybe NEW element in BE
 			$row = array();
 		} else {
@@ -142,7 +142,7 @@ class tx_languagevisibility_elementFactory {
 				}
 				else {
 					throw new UnexpectedValueException($table . ' not supported ', 1195039394);
-				}				
+				}
 				break;
 		}
 
@@ -168,15 +168,15 @@ class tx_languagevisibility_elementFactory {
 			$rootline = $this->getOverlayedRootLine($element->getUid(), $language->getUid());
 
 			if (is_array($rootline)) {
-				foreach ( $rootline as $rootlineElement ) {
+				foreach ($rootline as $rootlineElement) {
 					if ($rootlineElement['tx_languagevisibility_inheritanceflag_original'] == 1 ||
-						$rootlineElement['tx_languagevisibility_inheritanceflag_overlayed'] == 1
+							$rootlineElement['tx_languagevisibility_inheritanceflag_overlayed'] == 1
 					) {
 						$elements[] = self::getElementForTable('pages', $rootlineElement['uid']);
 					}
 				}
 
-				if(sizeof($elements) == 0) {
+				if (sizeof($elements) == 0) {
 					$root = end($rootline);
 					$elements[] = self::getElementForTable('pages', $root['uid']);
 				}
@@ -206,7 +206,7 @@ class tx_languagevisibility_elementFactory {
 		$cacheData = $cacheManager->get('overlayedRootline');
 		$isCacheEnabled = $cacheManager->isCacheEnabled();
 
-		if (! $isCacheEnabled || ! isset($cacheData[$uid][$languageid])) {
+		if (!$isCacheEnabled || !isset($cacheData[$uid][$languageid])) {
 			$sys_page = t3lib_div::makeInstance('t3lib_pageSelect');
 			$sys_page->sys_language_uid = $languageid;
 
@@ -218,7 +218,7 @@ class tx_languagevisibility_elementFactory {
 			$loopCheck = 0;
 			$theRowArray = Array();
 
-			while ( $uid != 0 && $loopCheck < 20 ) { // Max 20 levels in the page tree.
+			while ($uid != 0 && $loopCheck < 20) { // Max 20 levels in the page tree.
 
 
 				$res = $GLOBALS['TYPO3_DB']->exec_SELECTquery($selFields, 'pages', 'uid=' . intval($uid) . ' AND pages.deleted=0 AND pages.doktype!=255');
@@ -246,14 +246,14 @@ class tx_languagevisibility_elementFactory {
 					return array(); // broken rootline.
 				}
 
-				$loopCheck ++;
+				$loopCheck++;
 			}
 
 			// Create output array (with reversed order of numeric keys):
 			$output = Array();
 			$c = count($theRowArray);
-			foreach ( $theRowArray as $key => $val ) {
-				$c --;
+			foreach ($theRowArray as $key => $val) {
+				$c--;
 				$output[$c] = $val;
 			}
 
@@ -276,7 +276,7 @@ class tx_languagevisibility_elementFactory {
 		$cacheData = $cacheManager->get('dataStructureCache');
 		$isCacheEnabled = $cacheManager->isCacheEnabled();
 
-		if (! $isCacheEnabled || ! isset($cacheData[$srcPointer])) {
+		if (!$isCacheEnabled || !isset($cacheData[$srcPointer])) {
 			$DS = array();
 			if (t3lib_div::testInt($srcPointer)) { // If integer, then its a record we will look up:
 				$sys_page = t3lib_div::makeInstance('t3lib_pageSelect');
@@ -295,21 +295,23 @@ class tx_languagevisibility_elementFactory {
 
 		return $cacheData[$srcPointer];
 	}
+
 	/**
-	* Gets instance depending on TYPO3 version
-	* @param $name name of the class
-	* @param array $row row that is used to initialaze element instance
-	* @return tx_languagevisibility_element
-	*/
-	private function getElementInstance($name,$row) {
-                 if (version_compare(TYPO3_version, '4.3.0', '<')) {
-                          require_once (t3lib_extMgm::extPath("languagevisibility") . 'classes/class.'.$name.'.php');
-                          $elementclass = t3lib_div::makeInstanceClassName($name);
-                          return new $elementclass($row);
-                  } else {
-                          return t3lib_div::makeInstance($name, $row);
-                 }
-        }
+	 * Gets instance depending on TYPO3 version
+	 * @param $name name of the class
+	 * @param array $row row that is used to initialaze element instance
+	 * @return tx_languagevisibility_element
+	 */
+	private function getElementInstance($name, $row) {
+		if (version_compare(TYPO3_version, '4.3.0', '<')) {
+			require_once (t3lib_extMgm::extPath("languagevisibility") . 'classes/class.' . $name . '.php');
+			$elementclass = t3lib_div::makeInstanceClassName($name);
+			return new $elementclass($row);
+		} else {
+			return t3lib_div::makeInstance($name, $row);
+		}
+	}
 
 }
+
 ?>

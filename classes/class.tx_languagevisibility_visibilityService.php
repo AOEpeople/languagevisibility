@@ -43,7 +43,7 @@ class tx_languagevisibility_visibilityService {
 	 * @return void
 	 */
 	public function __construct() {
-		if (! isset(self::$useInheritance)) {
+		if (!isset(self::$useInheritance)) {
 			$confArr = unserialize($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf']['languagevisibility']);
 			if (is_array($confArr) && $confArr['inheritanceEnabled']) {
 				self::setUseInheritance();
@@ -104,14 +104,16 @@ class tx_languagevisibility_visibilityService {
 
 		$tables = array('pages', 'tt_content', 'tt_news', 'pages_language_overlay');
 
-		if(isset($GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['languagevisibility']['getElementForTable'])
-			&& is_array($GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['languagevisibility']['getElementForTable'])) {
+		if (isset($GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['languagevisibility']['getElementForTable'])
+				&& is_array($GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['languagevisibility']['getElementForTable'])
+		) {
 			$tables = array_merge($tables, array_keys($GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['languagevisibility']['getElementForTable']));
 		}
-		if(isset($GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['languagevisibility']['recordElementSupportedTables'])
-                        && is_array($GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['languagevisibility']['recordElementSupportedTables'])) {
-                        $tables = array_merge($tables, array_keys($GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['languagevisibility']['recordElementSupportedTables']));
-                }
+		if (isset($GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['languagevisibility']['recordElementSupportedTables'])
+				&& is_array($GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['languagevisibility']['recordElementSupportedTables'])
+		) {
+			$tables = array_merge($tables, array_keys($GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['languagevisibility']['recordElementSupportedTables']));
+		}
 
 		return $tables;
 	}
@@ -125,7 +127,7 @@ class tx_languagevisibility_visibilityService {
 	 * @param boolean
 	 * @return boolean
 	 **/
-	public function isVisible(tx_languagevisibility_language $language, tx_languagevisibility_element $element, $omitLocal=false) {
+	public function isVisible(tx_languagevisibility_language $language, tx_languagevisibility_element $element, $omitLocal = false) {
 		$this->_relevantOverlayLanguageId = $language->getUid();
 
 		$visibility = $this->getVisibilitySetting($language, $element, $omitLocal);
@@ -152,10 +154,11 @@ class tx_languagevisibility_visibilityService {
 
 				//there is no direct translation for this element, therefore check languages in fallback
 				$fallBackOrder = $element->getFallbackOrder($language);
-				if (! is_array($fallBackOrder))
+				if (!is_array($fallBackOrder)) {
 					throw new Exception(print_r($element, true));
+				}
 
-				foreach ( $fallBackOrder as $languageid ) {
+				foreach ($fallBackOrder as $languageid) {
 					if ($element->hasTranslation($languageid)) {
 						$this->_relevantOverlayLanguageId = $languageid;
 						$result = true;
@@ -196,7 +199,7 @@ class tx_languagevisibility_visibilityService {
 		$elements = $elementfactory->getParentElementsFromElement($element, $language);
 
 		if (is_array($elements) && count($elements) > 0) {
-			foreach ( $elements as $element ) {
+			foreach ($elements as $element) {
 				/* @var $element tx_languagevisibility_pageelement */
 				$visibility = new tx_languagevisibility_visibility();
 				$visibility->setVisibilityString($element->getLocalVisibilitySetting($language->getUid()));
@@ -208,12 +211,12 @@ class tx_languagevisibility_visibilityService {
 			}
 		}
 
-		if (is_array ($GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['languagevisibility']['getInheritedVisibility'])) {
+		if (is_array($GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['languagevisibility']['getInheritedVisibility'])) {
 			foreach ($GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['languagevisibility']['getInheritedVisibility'] as $classRef) {
 				$hookObj = t3lib_div::getUserObj($classRef);
 				if (method_exists($hookObj, 'getInheritedVisibility')) {
 					$visibility = $hookObj->getInheritedVisibility($language, $elements, $element);
-					if (substr($visibility->getVisibilityString(),-1)=='+') {
+					if (substr($visibility->getVisibilityString(), -1) == '+') {
 						return $visibility;
 					}
 				}
@@ -237,7 +240,7 @@ class tx_languagevisibility_visibilityService {
 	 * @param boolean
 	 * @return string
 	 */
-	public function getVisibilitySetting(tx_languagevisibility_language $language, tx_languagevisibility_element $element, $omitLocal=false) {
+	public function getVisibilitySetting(tx_languagevisibility_language $language, tx_languagevisibility_element $element, $omitLocal = false) {
 		$cacheManager = tx_languagevisibility_cacheManager::getInstance();
 		$cacheData = $cacheManager->get('visibilitySettingCache');
 		$isCacheEnabled = $cacheManager->isCacheEnabled();
@@ -246,8 +249,8 @@ class tx_languagevisibility_visibilityService {
 		$elementUid = $element->getUid();
 		$languageUid = $language->getUid();
 
-		$cacheKey = $languageUid . '_' . $elementUid . '_' . $elementTable.'_'.$omitLocal;
-		if (! $isCacheEnabled || ! isset($cacheData[$cacheKey])) {
+		$cacheKey = $languageUid . '_' . $elementUid . '_' . $elementTable . '_' . $omitLocal;
+		if (!$isCacheEnabled || !isset($cacheData[$cacheKey])) {
 			$cacheData[$cacheKey] = $this->getVisibility($language, $element, $omitLocal)->getVisibilityString();
 			$cacheManager->set('visibilitySettingCache', $cacheData);
 		}
@@ -268,13 +271,12 @@ class tx_languagevisibility_visibilityService {
 
 	/**
 	 * Create a visiblity object for an element for a given language.
-
 	 * @param tx_languagevisibility_language $language
 	 * @param tx_languagevisibility_element $element
 	 * @param boolean $omitLocal
 	 * @return tx_languagevisibility_visibility
 	 */
-	protected function getVisibility(tx_languagevisibility_language $language, tx_languagevisibility_element $element, $omitLocal=false) {
+	protected function getVisibility(tx_languagevisibility_language $language, tx_languagevisibility_element $element, $omitLocal = false) {
 		$visibility = new tx_languagevisibility_visibility();
 		$local = $element->getLocalVisibilitySetting($language->getUid());
 
@@ -316,13 +318,13 @@ class tx_languagevisibility_visibilityService {
 							break;
 					}
 				} else {
-						//inheritance is disabled
+					//inheritance is disabled
 					$setting = $language->getDefaultVisibilityForPage($element);
 					$visibility->setVisibilityString($setting)->setVisibilityDescription('default visibility  for page (' . $setting . ')');
 				}
 			} elseif ($element->getFieldToUseForDefaultVisibility() == 'tt_news') {
-					$setting = $language->getDefaultVisibilityForTTNewsElement($element);
-					$visibility->setVisibilityString($setting)->setVisibilityDescription('default visibility  for news (' . $setting . ')');
+				$setting = $language->getDefaultVisibilityForTTNewsElement($element);
+				$visibility->setVisibilityString($setting)->setVisibilityDescription('default visibility  for news (' . $setting . ')');
 			} else {
 				$setting = $language->getDefaultVisibilityForElement($element);
 				$visibility->setVisibilityString($setting)->setVisibilityDescription('default visibility  for element (' . $setting . ')');
