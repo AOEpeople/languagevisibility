@@ -155,7 +155,11 @@ abstract class tx_languagevisibility_element {
 	 * @return unknown
 	 */
 	public function getWorkspaceUid() {
-		return $this->row['t3ver_wsid'];
+		$wsId = 0;
+		if (isset($GLOBALS['TCA'][$this->table]['ctrl']['versioningWS']) && $GLOBALS['TCA'][$this->table]['ctrl']['versioningWS'] > 0) {
+			$wsId = $this->row['t3ver_wsid'];
+		}
+		return $wsId;
 	}
 
 	/**
