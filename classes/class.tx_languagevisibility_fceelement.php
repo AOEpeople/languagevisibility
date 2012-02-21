@@ -56,6 +56,9 @@ class tx_languagevisibility_fceelement extends tx_languagevisibility_recordeleme
 	}
 
 	function getInformativeDescription() {
+		if ($this->isLanguageSetToAll()) {
+			return 'Language is set to all. Visible in every language';
+		}
 		if ($this->langDisabled == 1) {
 			if ($this->disabledIsVisible == 1) {
 				return 'FCE is in mode langDisabled, therefore cannot be translated. But it is configured to be handled as translated per Default.';

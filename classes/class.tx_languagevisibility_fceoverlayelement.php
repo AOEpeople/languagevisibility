@@ -32,6 +32,10 @@ require_once (t3lib_extMgm::extPath("languagevisibility") . 'classes/class.tx_la
 class tx_languagevisibility_fceoverlayelement extends tx_languagevisibility_celement {
 
 	function getInformativeDescription() {
+		if ($this->isLanguageSetToAll()) {
+                        return 'Language is set to all. Visible in every language';
+                }
+
 		return 'this is a flexible content element but translations are handled with overlay records.';
 	}
 

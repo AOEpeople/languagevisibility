@@ -168,10 +168,17 @@ abstract class tx_languagevisibility_element {
 	 * @return string
 	 */
 	public function getInformativeDescription() {
-		if (! $this->isLanguageSetToDefault()) {
-			return 'this content element is already a translated version therefore content overlays are not suppoted';
-		} else {
+		if ($this->isMonolithicTranslated()) {
+			 return 'this content element is not in default language. Its only visible in the selected language';
+		}
+		elseif ( $this->isLanguageSetToAll()) {
+			return 'Language is set to all - element is visibily in every language';
+		}
+		elseif ( $this->isLanguageSetToDefault()) {
 			return 'this is a normal content element (translations are managed with overlay records)';
+
+		} else {
+			return 'this content element is already a translated version therefore content overlays are not suppoted';
 		}
 	}
 
@@ -323,7 +330,7 @@ abstract class tx_languagevisibility_element {
 		 * and the languagevisibility_pages class only represent elements from the table pages not
 		 * from page_language_overlay
 		 */
-		return (! $this->isLanguageSetToDefault()) && $this->isOrigElement();
+		return ( !$this->isLanguageSetToDefault()) && (!$this->isLanguageSetToAll())  && $this->isOrigElement();
 	}
 
 	/**

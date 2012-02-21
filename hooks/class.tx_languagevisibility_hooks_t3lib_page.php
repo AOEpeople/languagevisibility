@@ -38,9 +38,10 @@ class tx_languagevisibility_hooks_t3lib_page implements t3lib_pageSelect_getPage
 	 * is relevant if we did the overlay ourselfs and the processing within getPageOverlay function is not relevant anymore
 	 * 3)	$lUid changed
 	 * is relevant if we just changed the target-languge but require getPageOverlay to proceed with the overlay-chrunching
+	 * 4)   $lUid changed to 0 (which may be the case for forced fallbacks to default). Please check Core Setting hideIfNotTranslated in this case to be sure the page can be shown in this case
 	 *
 	 * @param mixed $pageInput
-	 * @param integer $lUid
+	 * @param integer $lUid	Passed ad reference!
 	 * @param t3lib_pageSelect $parent
 	 * @return void
 	 */
@@ -65,6 +66,10 @@ class tx_languagevisibility_hooks_t3lib_page implements t3lib_pageSelect_getPage
 	}
 
 	/**
+	 * The flow in t3lib_page is:
+	 *  - call preProcess
+	 *  - if uid and pid > then overlay if langauge != 0
+	 *  - after this postProcess is called - which only corrects the overlay row for certain elements
 	 *
 	 * @param string $table
 	 * @param array $row
@@ -89,10 +94,9 @@ class tx_languagevisibility_hooks_t3lib_page implements t3lib_pageSelect_getPage
 			$row['uid'] = 0;
 			$row['pid'] = 0;
 			return;
-		/*} else if ($overlayLanguage === 0) {
-				//TODO - what happens here?
-			return;*/
-		} else {
+		} elseif (!$element->isMonolithicTranslated()) {
+			// for monolytic elements the tx_languagevisibility_feservices::getOverlayLanguageIdForElement return 0 to "tell" us that no overlay is required
+			// but since the TYPO3 Core interprets a language with id 0 to not return anything we need to leave the $sys_language_content untouched for MonolithicTranslated elements
 			$sys_language_content = $overlayLanguage;
 		}
 
