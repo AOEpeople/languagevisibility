@@ -50,6 +50,7 @@ abstract class tx_languagevisibility_element {
 	 * @var array
 	 */
 	private $overlayVisibilitySetting;
+         
 
 	/**
 	 *
@@ -99,7 +100,16 @@ abstract class tx_languagevisibility_element {
 	 * data of an overlay.
 	 */
 	protected function isRowOriginal($row) {
-		return $row['l18n_parent'] == 0;
+		if (!isset($row['l18n_parent']) && !isset($row['l10n_parent'])) {
+			   return true;
+	   }
+	   if (isset($row['l18n_parent']) && $row['l18n_parent'] == 0) {
+			   return true;
+	   }
+	   if (isset($row['l10n_parent']) && $row['l10n_parent'] == 0) {
+				return true;
+		}
+	   return false;
 	}
 
 	/**
@@ -146,7 +156,13 @@ abstract class tx_languagevisibility_element {
 	 * @return int
 	 */
 	public function getOrigElementUid() {
-		return $this->row['l18n_parent'];
+		if (isset($this->row['l18n_parent'])) {
+			   return $this->row['l18n_parent'];
+	   }
+	   if (isset($this->row['l10n_parent'])) {
+				return $this->row['l10n_parent'];
+		}
+	   return 0;
 	}
 
 	/**
@@ -294,7 +310,10 @@ abstract class tx_languagevisibility_element {
 	 * @return boolean
 	 */
 	protected function isOrigElement() {
-		return ($this->row['l18n_parent'] == '0');
+		if ($this->getOrigElementUid() > 0 ) {
+			   return false;
+	   }
+	   return true;
 	}
 
 	/**

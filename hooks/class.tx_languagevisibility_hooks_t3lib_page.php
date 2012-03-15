@@ -86,7 +86,12 @@ class tx_languagevisibility_hooks_t3lib_page implements t3lib_pageSelect_getPage
 		try {
 			$element = tx_languagevisibility_feservices::getElement($row['uid'], $table);
 			$overlayLanguage = tx_languagevisibility_feservices::getOverlayLanguageIdForElement($element, $sys_language_content);
-		} catch ( Exception $e ) {
+		} catch ( tx_languagevisibility_InvalidRowException $e ) {
+			$row['uid'] = 0;
+			$row['pid'] = 0;
+			return;
+	   }
+	   catch ( Exception $e ) {
 			return;
 		}
 
