@@ -160,7 +160,7 @@ class tx_languagevisibility_hooks_t3lib_page implements t3lib_pageSelect_getPage
 			if ($sys_language_content != $overlayLanguage) {
 				$row = $parent->getRecordOverlay($table, $row, $overlayLanguage, $OLmode);
 			}
-			$row['tx_templavoila_flex'] = t3lib_div::array2xml($this->_callbackVar_overlayXML);
+			$row['tx_templavoila_flex'] = t3lib_div::array2xml_cs($this->_callbackVar_overlayXML, 'T3FlexForms', array('useCDATA' => true));
 		}
 	}
 
