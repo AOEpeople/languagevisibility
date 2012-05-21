@@ -75,13 +75,14 @@ class tx_languagevisibility_recordelement extends tx_languagevisibility_element 
 			'pid='.intval($this->getPid()). ' AND ' .
 				$workspaceCondition .
 				$ctrl['languageField'] . '=' . intval($languageId) .
-				($languageId > 0 ? ' AND ' . $ctrl['transOrigPointerField'] . '=' . intval($this->getUid()) : '').
+					// With L=0 transOrigPointerField is not set, so uid should be used instead (see #31607)
+				($languageId > 0 ? ' AND ' . $ctrl['transOrigPointerField'] . '=' . intval($this->getUid()) : ' AND uid=' . intval($this->getUid())) .
 				$excludeClause,
 			'',
 			'',
 			'1'
 		);
-		
+
 		$olrow = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res);
 		$olrow = $this->getContextIndependentWorkspaceOverlay($this->table, $olrow);
 		$GLOBALS['TYPO3_DB']->sql_free_result($res);
