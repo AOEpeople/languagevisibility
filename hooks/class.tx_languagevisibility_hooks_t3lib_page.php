@@ -46,10 +46,14 @@ class tx_languagevisibility_hooks_t3lib_page implements t3lib_pageSelect_getPage
 	 * @return void
 	 */
 	public function getPageOverlay_preProcess(&$pageInput, &$lUid, t3lib_pageSelect $parent) {
-		if (! is_array($pageInput) || ! isset($pageInput['uid'])) {
+	
+		if (is_int($pageInput)) {
+			$page_id = $pageInput;
+		} elseif ( is_array($pageInput) && isset($pageInput['uid']) ) {
+			$page_id = $pageInput['uid'];
+		} else {
 			return;
 		}
-		$page_id = $pageInput['uid'];
 
 		//call service to know if element is visible and which overlay language to use
 		$overlayLanguage = tx_languagevisibility_feservices::getOverlayLanguageIdForElementRecord($page_id, 'pages', $lUid);
