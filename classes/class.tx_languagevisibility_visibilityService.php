@@ -102,7 +102,7 @@ class tx_languagevisibility_visibilityService {
 	 */
 	public static function getSupportedTables() {
 
-		$tables = array('pages', 'tt_content', 'tt_news', 'pages_language_overlay');
+		$tables = array('pages', 'tt_content', 'tt_news', 'tx_news_domain_model_news', 'pages_language_overlay');
 
 		if (isset($GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['languagevisibility']['getElementForTable'])
 				&& is_array($GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['languagevisibility']['getElementForTable'])
@@ -323,6 +323,9 @@ class tx_languagevisibility_visibilityService {
 					$visibility->setVisibilityString($setting)->setVisibilityDescription('default visibility  for page (' . $setting . ')');
 				}
 			} elseif ($element->getFieldToUseForDefaultVisibility() == 'tt_news') {
+				$setting = $language->getDefaultVisibilityForTTNewsElement($element);
+				$visibility->setVisibilityString($setting)->setVisibilityDescription('default visibility  for news (' . $setting . ')');
+			} elseif ($element->getFieldToUseForDefaultVisibility() == 'tx_news_domain_model_news') {
 				$setting = $language->getDefaultVisibilityForTTNewsElement($element);
 				$visibility->setVisibilityString($setting)->setVisibilityDescription('default visibility  for news (' . $setting . ')');
 			} else {

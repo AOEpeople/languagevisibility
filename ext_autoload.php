@@ -20,6 +20,7 @@ return array(
 	'tx_languagevisibility_recordelement' => $extensionClassesPath . 'class.tx_languagevisibility_recordelement.php',
 	'tx_languagevisibility_reports_configurationstatus' => $extensionClassesPath . 'class.tx_languagevisibility_reports_ConfigurationStatus.php',
 	'tx_languagevisibility_ttnewselement' => $extensionClassesPath . 'class.tx_languagevisibility_ttnewselement.php',
+	'tx_languagevisibility_newselement' => $extensionClassesPath . 'class.tx_languagevisibility_newselement.php',
 	'tx_languagevisibility_visibility' => $extensionClassesPath . 'class.tx_languagevisibility_visibility.php',
 	'tx_languagevisibility_visibilityservice' => $extensionClassesPath . 'class.tx_languagevisibility_visibilityService.php',
 	'tx_languagevisibility_daocommon' => $extensionClassesPath . 'dao/class.tx_languagevisibility_daocommon.php',

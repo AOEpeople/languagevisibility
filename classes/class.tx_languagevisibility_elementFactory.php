@@ -93,6 +93,9 @@ class tx_languagevisibility_elementFactory {
 					$element = t3lib_div::makeInstance('tx_languagevisibility_ttnewselement', $row);
 				}
 				break;
+			case 'tx_news_domain_model_news' :
+				$element = t3lib_div::makeInstance('tx_languagevisibility_newselement', $row);
+				break;
 			case 'tt_content' :
 				if ($row['CType'] == 'templavoila_pi1') {
 					//read DS:
