@@ -59,7 +59,7 @@ abstract class tx_languagevisibility_element {
 	 */
 	public function __construct($row) {
 
-		if (!$this->isRowOriginal($row) || (!is_array($row))) {
+		if ((!is_array($row)) || !$this->isRowOriginal($row)) {
 			throw new tx_languagevisibility_InvalidRowException();
 		}
 
