@@ -52,7 +52,7 @@ class tx_languagevisibility_elementFactory {
 	 **/
 	function getElementForTable($table, $uid, $overlay_ids = true) {
 
-		if (!is_numeric($uid)) {
+		if (!is_numeric($uid) || (intval($uid) === 0)) {
 			//no uid => maybe NEW element in BE
 			$row = array();
 		} else {
