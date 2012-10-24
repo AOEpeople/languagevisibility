@@ -32,6 +32,9 @@ require_once (PATH_t3lib . 'class.t3lib_page.php');
 
 class tx_languagevisibility_elementFactory {
 
+	/**
+	 * @var tx_languagevisibility_daocommon
+	 */
 	protected $dao;
 
 	/**
@@ -53,20 +56,11 @@ class tx_languagevisibility_elementFactory {
 	function getElementForTable($table, $uid, $overlay_ids = true) {
 
 		if (!is_numeric($uid) || (intval($uid) === 0)) {
-			//no uid => maybe NEW element in BE
+				// no uid => maybe NEW element in BE
 			$row = array();
 		} else {
-			/***
-			 ** WORKSPACE NOTE
-			 * the diffrent usecases has to be defined and checked..
-			 **/
 			if (is_object($GLOBALS['BE_USER']) && $GLOBALS['BE_USER']->workspace != 0 && $overlay_ids) {
-				$row = $this->dao->getRecord($uid, $table);
-				if (is_object($GLOBALS['TSFE'])) {
-					$GLOBALS['TSFE']->sys_page->versionOL($table, $row);
-				} else {
-					t3lib_BEfunc::workspaceOL($table, $row);
-				}
+				$row = $this->getWorkspaceOverlay($table, $uid);
 			} else {
 				$row = $this->dao->getRecord($uid, $table);
 			}
@@ -152,6 +146,32 @@ class tx_languagevisibility_elementFactory {
 		$element->setTable($table);
 
 		return $element;
+	}
+
+	/**
+	 * Get workspace overlay for a record.
+	 *
+	 * @param  string  $table   Table name
+	 * @param  integer $uid     Record UID
+	 * @return array
+	 */
+	protected function getWorkspaceOverlay($table, $uid) {
+		$row = $this->dao->getRecord($uid, $table);
+
+		if (is_array($row)) {
+			if (is_object($GLOBALS['TSFE'])) {
+				$GLOBALS['TSFE']->sys_page->versionOL($table, $row);
+			} else {
+				t3lib_BEfunc::workspaceOL($table, $row);
+			}
+		}
+			// the overlay row might be FALSE if the record is hidden
+			// or deleted in workspace. In this case we return an empty array.
+		if (!is_array($row)) {
+			$row = array();
+		}
+
+		return $row;
 	}
 
 	/**
