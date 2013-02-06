@@ -53,7 +53,12 @@ class ux_tx_templavoila_pi1 extends tx_templavoila_pi1 {
 
 			// Get data structure:
 		$srcPointer = $row['tx_templavoila_ds'];
-		if (t3lib_div::testInt($srcPointer))	{	// If integer, then its a record we will look up:
+		if (version_compare(TYPO3_version, '4.6.0', '>=')) {
+			$srcPointerIsInteger = t3lib_utility_Math::convertToPositiveInteger($srcPointer);
+		} else {
+			$srcPointerIsInteger = t3lib_div::intval_positive($srcPointer);
+		}
+		if ($srcPointerIsInteger)	{	// If integer, then its a record we will look up:
 			$DSrec = $GLOBALS['TSFE']->sys_page->checkRecord('tx_templavoila_datastructure', $srcPointer);
 			$DS = t3lib_div::xml2array($DSrec['dataprot']);
 		} else {	// Otherwise expect it to be a file:
