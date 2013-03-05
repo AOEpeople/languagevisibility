@@ -73,7 +73,8 @@ if (t3lib_extMgm::isLoaded('templavoila')) {
 	$version = $EM_CONF[$_EXTKEY]['version'];
 		// Restore the extension key
 	$_EXTKEY = $realExtKey;
-	if (t3lib_div::int_from_ver($version) < 1004003) {
+	$versionNumberCheck = (version_compare(TYPO3_version, '4.6.0', '>=') ? t3lib_div::int_from_ver($version) : t3lib_utility_VersionNumber::convertVersionNumberToInteger($version)) < 1004003;
+	if ($versionNumberCheck) {
 		if($confArr['applyPatchTV']==1 && !t3lib_extMgm::isLoaded('aoe_templavoila')) {
 			$TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['ext/templavoila/mod1/index.php'] = t3lib_extMgm::extPath($_EXTKEY) . 'patch/tv/class.ux_tx_templavoila_module1.php';
 			$TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['ext/templavoila/class.tx_templavoila_api.php'] = t3lib_extMgm::extPath($_EXTKEY) . 'patch/tv/class.ux_tx_templavoila_api.php';
