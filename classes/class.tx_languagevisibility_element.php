@@ -37,6 +37,11 @@ require_once (t3lib_extMgm::extPath("languagevisibility") . 'classes/exceptions/
 abstract class tx_languagevisibility_element {
 
 	/**
+	 * @var string
+	 */
+	protected $table;
+
+	/**
 	 * This array holds the local visibility settings (from the 'tx_languagevisibility_visibility' field)
 	 *
 	 * @var array

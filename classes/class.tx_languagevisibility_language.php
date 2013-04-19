@@ -35,6 +35,10 @@ require_once (t3lib_extMgm::extPath("languagevisibility") . 'classes/dao/class.t
  *
  */
 class tx_languagevisibility_language {
+
+	/**
+	 * @var array
+	 */
 	private $row;
 
 	protected static $flagCache;
@@ -65,6 +69,9 @@ class tx_languagevisibility_language {
 	 */
 	protected $lg_iso_2;
 
+	/**
+	 * @param  array $row
+	 */
 	public function setData($row) {
 		$this->row = $row;
 	}
@@ -190,7 +197,12 @@ class tx_languagevisibility_language {
 		return $this->triggerDefaultVisibilityHooks('getDefaultVisibilityForTTNewsElement', $this->row['tx_languagevisibility_defaultvisibilityttnewsel'], $contextElement);
 	}
 
-
+	/**
+	 * @param  string $key
+	 * @param  $visibilityDefault
+	 * @param  tx_languagevisibility_element $contextElement
+	 * @return mixed
+	 */
 	protected function triggerDefaultVisibilityHooks($key, $visibilityDefault, tx_languagevisibility_element $contextElement) {
 		$result = array(
 			'priority' => 10,
@@ -203,7 +215,7 @@ class tx_languagevisibility_language {
 				$hookObj = t3lib_div::getUserObj($classRef);
 				if (method_exists($hookObj, $key)) {
 					$result = $hookObj->$key($this, $visibility, $contextElement);
-					if ($result['priority'] > $fallback['priority']) {
+					if ($result['priority'] > $visibility['priority']) {
 						$visibility = $result;
 					}
 				}

@@ -49,14 +49,6 @@ CREATE TABLE tt_news (
 
 
 #
-# Table structure for table 'tx_news_domain_model_news'
-#
-CREATE TABLE tx_news_domain_model_news (
-	tx_languagevisibility_visibility text NOT NULL
-);
-
-
-#
 # Table structure for table 'be_groups'
 #
 CREATE TABLE be_groups (

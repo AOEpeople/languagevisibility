@@ -144,7 +144,7 @@ class tx_visibilityService_testcase extends tx_phpunit_testcase {
 		$_table = 'tt_content';
 		$_uid = 9999;
 		$visibility = array('0' => '-', '1' => '-', '2' => '-' );
-		$fixture = array('uid' => $_uid, 'tx_languagevisibility_visibility' => serialize($visibility) );
+		$fixture = array('uid' => $_uid, 'sys_language_uid' => '0', 'tx_languagevisibility_visibility' => serialize($visibility) );
 		$daostub = new tx_languagevisibility_daocommon_stub();
 		$daostub->stub_setRow($fixture, $_table);
 
@@ -230,7 +230,7 @@ class tx_visibilityService_testcase extends tx_phpunit_testcase {
 	function _fixture_getPageElementWithDefaultVisibility() {
 		//Create the element object fixture.
 		$_table = 'pages';
-		$_uid = 9999;
+		$_uid = 99999999999;
 		$visibility = array('0' => '-', '1' => '-', '2' => '-' );
 		$fixture = array('uid' => $_uid, 'tx_languagevisibility_visibility' => serialize($visibility), 'tx_languagevisibility_inheritanceflag_original' => 0, 'tx_languagevisibility_inheritanceflag_overlayed' => 0 );
 		$daostub = new tx_languagevisibility_daocommon_stub();
