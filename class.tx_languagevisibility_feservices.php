@@ -73,6 +73,7 @@ class tx_languagevisibility_feservices {
 			$elementfactoryName = t3lib_div::makeInstanceClassName('tx_languagevisibility_elementFactory');
 			$elementfactory = new $elementfactoryName($dao);
 		} else {
+			/* @var $elementfactory tx_languagevisibility_elementFactory */
 			$elementfactory = t3lib_div::makeInstance('tx_languagevisibility_elementFactory', $dao);
 		}
 		$element = $elementfactory->getElementForTable($table, $uid);

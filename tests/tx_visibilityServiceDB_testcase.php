@@ -31,13 +31,13 @@
  * @author	Tolleiv Nietsch
  */
 
-require_once (t3lib_extMgm::extPath("languagevisibility") . 'tests/tx_languagevisibility_databaseTestcase.php');
+require_once (t3lib_extMgm::extPath("languagevisibility") . 'tests/tx_languagevisibility_databaseTtContentTestcase.php');
 
 require_once (t3lib_extMgm::extPath("languagevisibility") . 'classes/class.tx_languagevisibility_language.php');
 
 require_once (PATH_t3lib . 'class.t3lib_tcemain.php');
 
-class tx_visibilityServiceDB_testcase extends tx_languagevisibility_databaseTestcase {
+class tx_visibilityServiceDB_testcase extends tx_languagevisibility_databaseTtContentTestcase {
 
 	/**
 	 * Check the visibility of a regular content element
@@ -581,39 +581,5 @@ class tx_visibilityServiceDB_testcase extends tx_languagevisibility_databaseTest
 		$visibilityDescription = $service->getVisibilityDescription($language, $element);
 
 		$this->assertEquals('force to no (inherited from uid 5)', $visibilityDescription, 'invalid visibility description of element with inheritance');
-	}
-
-	function _loadWorkspaces() {
-		$this->importDataSet(dirname(__FILE__) . '/fixtures/dbDefaultWorkspaces.xml');
-	}
-
-	function _fakeWorkspaceContext($uid) {
-		$GLOBALS['BE_USER']->workspace = $uid;
-	}
-
-	function _getLang($uid) {
-		if (! $this->_langImport) {
-			$this->_langImport = true;
-			$this->importDataSet(dirname(__FILE__) . '/fixtures/dbDefaultLangs.xml');
-		}
-		$languageRep = t3lib_div::makeInstance('tx_languagevisibility_languagerepository');
-		return $languageRep->getLanguageById($uid);
-	}
-
-	function _getContent($table, $uid) {
-		if (! $this->_ceImport) {
-			$this->_ceImport = true;
-			$this->importDataSet(dirname(__FILE__) . '/fixtures/dbContentWithVisibilityTestdata.xml');
-		}
-		$dao = new tx_languagevisibility_daocommon();
-
-		$factory = new tx_languagevisibility_elementFactory($dao);
-		return $factory->getElementForTable($table, $uid);
-	}
-
-	public function setUp() {
-		parent::setUp();
-		$this->_loadWorkspaces();
-
 	}
 }

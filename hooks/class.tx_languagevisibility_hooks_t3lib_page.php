@@ -132,6 +132,12 @@ class tx_languagevisibility_hooks_t3lib_page implements t3lib_pageSelect_getPage
 		if (! is_array($row) || ! isset($row['uid']) || $sys_language_content == 0) {
 			return;
 		}
+
+		if ($row['uid'] === 0 && $row['pid'] === 0) {
+			$row = FALSE;
+			return;
+		}
+
 		try {
 			$element = tx_languagevisibility_feservices::getElement($row['uid'], $table);
 			$overlayLanguage = tx_languagevisibility_feservices::getOverlayLanguageIdForElement($element, $sys_language_content);

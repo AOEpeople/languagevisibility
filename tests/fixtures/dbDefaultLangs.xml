@@ -98,4 +98,22 @@
 		<tx_languagevisibility_fallbackorderel>999</tx_languagevisibility_fallbackorderel>
 		<tx_languagevisibility_fallbackorderttnewsel>999</tx_languagevisibility_fallbackorderttnewsel>
 	</sys_language>
+
+	<!-- Klingon does not fall back to the default language -->
+	<sys_language>
+		<uid>7</uid>
+		<pid>0</pid>
+		<tstamp>1222075907</tstamp>
+		<hidden>0</hidden>
+		<title>Klingon</title>
+		<flag>kl.gif</flag>
+		<static_lang_isocode>4242</static_lang_isocode>
+		<tx_languagevisibility_complexfallbacksetting>0</tx_languagevisibility_complexfallbacksetting>
+		<tx_languagevisibility_defaultvisibility>t</tx_languagevisibility_defaultvisibility>
+		<tx_languagevisibility_defaultvisibilityel>t</tx_languagevisibility_defaultvisibilityel>
+		<tx_languagevisibility_defaultvisibilityttnewsel>t</tx_languagevisibility_defaultvisibilityttnewsel>
+		<tx_languagevisibility_fallbackorder>6</tx_languagevisibility_fallbackorder>
+		<tx_languagevisibility_fallbackorderel>6</tx_languagevisibility_fallbackorderel>
+		<tx_languagevisibility_fallbackorderttnewsel>6</tx_languagevisibility_fallbackorderttnewsel>
+	</sys_language>
 </dataset>
