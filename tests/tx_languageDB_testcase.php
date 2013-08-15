@@ -22,9 +22,6 @@
  * This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
-require_once (t3lib_extMgm::extPath("languagevisibility") . 'tests/tx_languagevisibility_databaseTestcase.php');
-require_once (t3lib_extMgm::extPath("languagevisibility") . 'classes/class.tx_languagevisibility_element.php');
-
 class tx_languageDB_testcase extends tx_languagevisibility_databaseTestcase {
 
 
@@ -37,7 +34,7 @@ class tx_languageDB_testcase extends tx_languagevisibility_databaseTestcase {
 	 */
 	public function getFallBackOrderMultipleTimes() {
 
-		$el = $this->getMockForAbstractClass('tx_languagevisibility_element', array(), '', false);
+		$el = $this->getMockForAbstractClass('tx_languagevisibility_element', array(), '', FALSE);
 
 		$languageRepository = new tx_languagevisibility_languagerepository();
 
@@ -52,14 +49,9 @@ class tx_languageDB_testcase extends tx_languagevisibility_databaseTestcase {
 		$this->assertTrue($language->isLanguageUidInFallbackOrder(0, $el));
 	}
 
-	/**
-
-	 */
-	function setUp() {
+	public function setUp(){
 		parent::setUp();
 		$this->importDataSet(dirname(__FILE__) . '/fixtures/dbDefaultLangs.xml');
 		unset($GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['languagevisibility']);
 	}
 }
-
-?>

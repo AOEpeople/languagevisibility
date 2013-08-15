@@ -21,21 +21,19 @@
  *
  * This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
+
 /**
  *
  * @author	Daniel Poetzinger <poetzinger@aoemedia.de>
  * @coauthor Tolleiv Nietsch <nietsch@aoemedia.de>
  * @coauthor Timo Schmidt <schmidt@aoemedia.de>
  */
-require_once (t3lib_extMgm::extPath("languagevisibility") . 'classes/class.tx_languagevisibility_celement.php');
-
 class tx_languagevisibility_fceoverlayelement extends tx_languagevisibility_celement {
 
 	function getInformativeDescription() {
 		if ($this->isLanguageSetToAll()) {
-                        return 'Language is set to all. Visible in every language';
-                }
-
+			return 'Language is set to all. Visible in every language';
+		}
 		return 'this is a flexible content element but translations are handled with overlay records.';
 	}
 
@@ -43,5 +41,3 @@ class tx_languagevisibility_fceoverlayelement extends tx_languagevisibility_cele
 		return 'FCE-Overlay';
 	}
 }
-
-?>

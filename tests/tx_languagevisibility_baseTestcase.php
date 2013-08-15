@@ -22,18 +22,16 @@
  * This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
-require_once (t3lib_extMgm::extPath("languagevisibility") . 'tests/classes/class.tx_languagevisibility_tests_helper_environmentSaver.php');
-
 /**
  * Basic testclass for all non database tests.
  * Used to backup and restore the environment.
- * 
+ *
  */
 abstract class tx_languagevisibility_baseTestcase extends tx_phpunit_testcase {
 	/**
 	 * @var tx_languagevisibility_tests_helper_environmentHelper
 	 */
-	protected $environmentSaver = null;
+	protected $environmentSaver = NULL;
 
 	/**
 	 * @return void

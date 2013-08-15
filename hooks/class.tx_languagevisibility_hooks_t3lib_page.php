@@ -46,7 +46,6 @@ class tx_languagevisibility_hooks_t3lib_page implements t3lib_pageSelect_getPage
 	 * @return void
 	 */
 	public function getPageOverlay_preProcess(&$pageInput, &$lUid, t3lib_pageSelect $parent) {
-	
 		if (is_int($pageInput)) {
 			$page_id = $pageInput;
 		} elseif ( is_array($pageInput) && isset($pageInput['uid']) ) {
@@ -55,15 +54,15 @@ class tx_languagevisibility_hooks_t3lib_page implements t3lib_pageSelect_getPage
 			return;
 		}
 
-		//call service to know if element is visible and which overlay language to use
+			//call service to know if element is visible and which overlay language to use
 		$overlayLanguage = tx_languagevisibility_feservices::getOverlayLanguageIdForElementRecord($page_id, 'pages', $lUid);
-		if ($overlayLanguage === false) {
+		if ($overlayLanguage === FALSE) {
 			$overlayLanguageForced = tx_languagevisibility_feservices::getOverlayLanguageIdForElementRecordForced($page_id, 'pages', $lUid);
-			// don't use this recursion without further checks!!!!
-			// this isn't used because there  seems to be no reason why we should overlay an invisible page...
-			// $pageInput = $parent->getPageOverlay ( &$pageInput, $overlayLanguageForced );
+				// don't use this recursion without further checks!!!!
+				// this isn't used because there  seems to be no reason why we should overlay an invisible page...
+				// $pageInput = $parent->getPageOverlay ( &$pageInput, $overlayLanguageForced );
 			$pageInput['_NOTVISIBLE'] = TRUE;
-			$lUid = null;
+			$lUid = BULL;
 		} else {
 			$lUid = $overlayLanguage;
 		}
@@ -94,26 +93,26 @@ class tx_languagevisibility_hooks_t3lib_page implements t3lib_pageSelect_getPage
 			$row['uid'] = 0;
 			$row['pid'] = 0;
 			return;
-	   }
-	   catch ( Exception $e ) {
+		}
+		catch ( Exception $e ) {
 			return;
 		}
 
-		if ($overlayLanguage === false) {
+		if ($overlayLanguage === FALSE) {
 			$row['uid'] = 0;
 			$row['pid'] = 0;
 			return;
 		} elseif (!$element->isMonolithicTranslated()) {
-			// for monolytic elements the tx_languagevisibility_feservices::getOverlayLanguageIdForElement return 0 to "tell" us that no overlay is required
-			// but since the TYPO3 Core interprets a language with id 0 to not return anything we need to leave the $sys_language_content untouched for MonolithicTranslated elements
+				// for monolytic elements the tx_languagevisibility_feservices::getOverlayLanguageIdForElement return 0 to "tell" us that no overlay is required
+				// but since the TYPO3 Core interprets a language with id 0 to not return anything we need to leave the $sys_language_content untouched for MonolithicTranslated elements
 			$sys_language_content = $overlayLanguage;
 		}
 
 			/**
-			 *	the original value will be replaced by the original getRecordOverlay process
-			 *	therefore we've to store this elsewhere to make sure that the flexdata is available 
-			 *	for the postProcess
-			 **/
+			 * the original value will be replaced by the original getRecordOverlay process
+			 * therefore we've to store this elsewhere to make sure that the flexdata is available
+			 * for the postProcess
+			 */
 		if ($element instanceof tx_languagevisibility_fceoverlayelement) {
 			$row['_ORIG_tx_templavoila_flex'] = $row['tx_templavoila_flex'];
 		}
@@ -170,13 +169,16 @@ class tx_languagevisibility_hooks_t3lib_page implements t3lib_pageSelect_getPage
 			if ($sys_language_content != $overlayLanguage) {
 				$row = $parent->getRecordOverlay($table, $row, $overlayLanguage, $OLmode);
 			}
-			$row['tx_templavoila_flex'] = t3lib_div::array2xml_cs($this->_callbackVar_overlayXML, 'T3FlexForms', array('useCDATA' => true));
+			$row['tx_templavoila_flex'] = t3lib_div::array2xml_cs($this->_callbackVar_overlayXML, 'T3FlexForms', array('useCDATA' => TRUE));
 		}
 	}
 
 	/**
-	 *
-	 *
+	 * @param $dsArr
+	 * @param $dataValue
+	 * @param $PA
+	 * @param $structurePath
+	 * @param $pObj
 	 */
 	public function _callback_checkXMLFieldsForFallback($dsArr, $dataValue, $PA, $structurePath, &$pObj) {
 		if ($dsArr['TCEforms']['l10n_mode'] == 'exclude') {
@@ -189,10 +191,15 @@ class tx_languagevisibility_hooks_t3lib_page implements t3lib_pageSelect_getPage
 		}
 	}
 
+	/**
+	 * @param $table
+	 * @param $row
+	 * @param $languageId
+	 * @return mixed
+	 */
 	protected function _getDatabaseTranslationOverlayRecord($table, $row, $languageId) {
-		global $TCA;
-		// Select overlay record:
-		$res = $GLOBALS['TYPO3_DB']->exec_SELECTquery('*', $table, 'pid=' . intval($row['pid']) . ' AND ' . $TCA[$table]['ctrl']['languageField'] . '=' . intval($languageId) . ' AND ' . $TCA[$table]['ctrl']['transOrigPointerField'] . '=' . intval($row['uid']) . $GLOBALS['TSFE']->sys_page->enableFields($table), '', '', '1');
+			// Select overlay record:
+		$res = $GLOBALS['TYPO3_DB']->exec_SELECTquery('*', $table, 'pid=' . intval($row['pid']) . ' AND ' . $GLOBALS['TCA'][$table]['ctrl']['languageField'] . '=' . intval($languageId) . ' AND ' . $GLOBALS['TCA'][$table]['ctrl']['transOrigPointerField'] . '=' . intval($row['uid']) . $GLOBALS['TSFE']->sys_page->enableFields($table), '', '', '1');
 		$olrow = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res);
 		$GLOBALS['TSFE']->sys_page->versionOL($table, $olrow);
 		$GLOBALS['TYPO3_DB']->sql_free_result($res);

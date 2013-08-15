@@ -22,9 +22,12 @@ return array(
 	'tx_languagevisibility_ttnewselement' => $extensionClassesPath . 'class.tx_languagevisibility_ttnewselement.php',
 	'tx_languagevisibility_visibility' => $extensionClassesPath . 'class.tx_languagevisibility_visibility.php',
 	'tx_languagevisibility_visibilityservice' => $extensionClassesPath . 'class.tx_languagevisibility_visibilityService.php',
+
 	'tx_languagevisibility_daocommon' => $extensionClassesPath . 'dao/class.tx_languagevisibility_daocommon.php',
 	'tx_languagevisibility_daocommon_stub' => $extensionClassesPath . 'dao/class.tx_languagevisibility_daocommon_stub.php',
+
 	'tx_languagevisibility_invalidrowexception' => $extensionClassesPath . 'exceptions/class.tx_languagevisibility_InvalidRowException.php',
+
 	'tx_languagevisibility_hooks_alt_doc' => $extensionPath . 'hooks/class.tx_languagevisibility_hooks_alt_doc.php',
 	'tx_languagevisibility_hooks_aoe_wspreview' => $extensionPath . 'hooks/class.tx_languagevisibility_hooks_aoe_wspreview.php',
 	'tx_languagevisibility_hooks_crawler' => $extensionPath . 'hooks/class.tx_languagevisibility_hooks_crawler.php',
@@ -32,11 +35,13 @@ return array(
 	'tx_languagevisibility_hooks_t3lib_tcemain' => $extensionPath . 'hooks/class.tx_languagevisibility_hooks_t3lib_tcemain.php',
 	'tx_languagevisibility_hooks_t3lib_userauthgroup' => $extensionPath . 'hooks/class.tx_languagevisibility_hooks_t3lib_userauthgroup.php',
 	'tx_languagevisibility_hooks_templavoila_pi1' => $extensionPath . 'hooks/class.tx_languagevisibility_hooks_templavoila_pi1.php',
+
 	'tx_languagevisibility_modfunc1' => $extensionPath . 'modfunc1/class.tx_languagevisibility_modfunc1.php',
+
 	'tx_languagevisibility_beuser' => $extensionPath . 'patch/lib/class.tx_languagevisibility_beUser.php',
-	'tx_languagevisibility_commandmap' => $extensionPath . 'patch/lib/class.tx_languagevisibility_commandMap.php',
+
 	'tx_languagevisibility_basetestcase' => $extensionPath . 'tests/tx_languagevisibility_baseTestcase.php',
 	'tx_languagevisibility_databasetestcase' => $extensionPath . 'tests/tx_languagevisibility_databaseTestcase.php',
+	'tx_languagevisibility_databaseTtContentTestcase' => $extensionPath . 'tests/tx_languagevisibility_databaseTtContentTestcase.php',
 	'tx_languagevisibility_tests_helper_environmenthelper' => $extensionPath . 'tests/classes/class.tx_languagevisibility_tests_helper_environmentSaver.php',
 );
-?>

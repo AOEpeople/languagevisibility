@@ -21,15 +21,13 @@
  *
  * This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
+
 /**
  *
  * @author	Daniel Poetzinger <poetzinger@aoemedia.de>
  * @coauthor Tolleiv Nietsch <nietsch@aoemedia.de>
  * @coauthor Timo Schmidt <schmidt@aoemedia.de>
  */
-require_once t3lib_extMgm::extPath('languagevisibility') . 'classes/class.tx_languagevisibility_visibility.php';
-require_once t3lib_extMgm::extPath('languagevisibility') . 'classes/class.tx_languagevisibility_cacheManager.php';
-
 class tx_languagevisibility_visibilityService {
 	/**
 	 * @var boolean holds the state if inheritance is enabled or not
@@ -66,22 +64,22 @@ class tx_languagevisibility_visibilityService {
 	 *
 	 * @param boolean $useInheritance
 	 */
-	public static function setUseInheritance($useInheritance = true) {
+	public static function setUseInheritance($useInheritance = TRUE) {
 		self::$useInheritance = $useInheritance;
 	}
 
 	/**
-	 * returns relevant languageid for overlay record or false if element is not visible for guven language
+	 * returns relevant languageid for overlay record or FALSE if element is not visible for guven language
 	 *
 	 * @param tx_languagevisibility_language $language
 	 * @param tx_languagevisibility_element $element
 	 * @return mixed
-	 **/
+	 */
 	function getOverlayLanguageIdForLanguageAndElement(tx_languagevisibility_language $language, tx_languagevisibility_element $element) {
 		if ($this->isVisible($language, $element)) {
 			return $this->_relevantOverlayLanguageId;
 		} else {
-			return false;
+			return FALSE;
 		}
 	}
 
@@ -92,7 +90,7 @@ class tx_languagevisibility_visibilityService {
 	 * @todo can this resolved diffrent? the relevantOverlayLanguageId is set in isVisible
 	 * @return int
 	 */
-	function getLastRelevantOverlayLanguageId() {
+	public function getLastRelevantOverlayLanguageId() {
 		return $this->_relevantOverlayLanguageId;
 	}
 
@@ -101,7 +99,6 @@ class tx_languagevisibility_visibilityService {
 	 * @return array with all supported tables
 	 */
 	public static function getSupportedTables() {
-
 		$tables = array('pages', 'tt_content', 'tt_news', 'pages_language_overlay');
 
 		if (isset($GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['languagevisibility']['getElementForTable'])
@@ -119,15 +116,16 @@ class tx_languagevisibility_visibilityService {
 	}
 
 	/**
-	 * Returns true or false wether the element is visible in the certain language.
+	 * Returns true or FALSE wether the element is visible in the certain language.
 	 * (sets for internal access only $this->_relevantOverlayLanguageId which holds the overlay languageid)
 	 *
 	 * @param tx_languagevisibility_language $language
-	 * @param tx_languagevisibility_element
-	 * @param boolean
+	 * @param \tx_languagevisibility_element $element
+	 * @param bool $omitLocal
+	 * @throws Exception
 	 * @return boolean
-	 **/
-	public function isVisible(tx_languagevisibility_language $language, tx_languagevisibility_element $element, $omitLocal = false) {
+	 */
+	public function isVisible(tx_languagevisibility_language $language, tx_languagevisibility_element $element, $omitLocal = FALSE) {
 		$this->_relevantOverlayLanguageId = $language->getUid();
 
 		$visibility = $this->getVisibilitySetting($language, $element, $omitLocal);
@@ -135,43 +133,43 @@ class tx_languagevisibility_visibilityService {
 			if (!$element->hasTranslation($language->getUid())) {
 				$this->_relevantOverlayLanguageId = 0;
 			}
-			$result = true;
+			$result = TRUE;
 		} elseif ($visibility == 'no+') {
-			$result = false;
+			$result = FALSE;
 		} elseif ($visibility == 'no') {
-			$result = false;
+			$result = FALSE;
 		} elseif ($visibility == 't') {
 			if ($element->hasTranslation($language->getUid())) {
-				$result = true;
+				$result = TRUE;
 			} else {
-				$result = false;
+				$result = FALSE;
 			}
 		} elseif ($visibility == 'f') {
 			if ($element->hasTranslation($language->getUid())) {
-				$result = true;
+				$result = TRUE;
 			} else {
-				$result = false;
+				$result = FALSE;
 
-				//there is no direct translation for this element, therefore check languages in fallback
+					// there is no direct translation for this element, therefore check languages in fallback
 				$fallBackOrder = $element->getFallbackOrder($language);
 				if (!is_array($fallBackOrder)) {
-					throw new Exception(print_r($element, true));
+					throw new Exception(print_r($element, TRUE));
 				}
 
 				foreach ($fallBackOrder as $languageid) {
 					if ($element->hasTranslation($languageid)) {
 						$this->_relevantOverlayLanguageId = $languageid;
-						$result = true;
+						$result = TRUE;
 						break;
 					}
 				}
 			}
 		} else {
-			//no setting or default:
+				// no setting or default:
 			if ($language->getUid() == '0') {
-				$result = true;
+				$result = TRUE;
 			} else {
-				$result = false;
+				$result = FALSE;
 			}
 		}
 		return $result;
@@ -189,13 +187,7 @@ class tx_languagevisibility_visibilityService {
 	protected function getInheritedVisibility(tx_languagevisibility_language $language, tx_languagevisibility_element $element) {
 
 		$dao = t3lib_div::makeInstance('tx_languagevisibility_daocommon');
-		if (version_compare(TYPO3_version, '4.3.0', '<')) {
-			$elementfactoryName = t3lib_div::makeInstanceClassName('tx_languagevisibility_elementFactory');
-			$elementfactory = new $elementfactoryName($dao);
-		} else {
-			$elementfactory = t3lib_div::makeInstance('tx_languagevisibility_elementFactory', $dao);
-		}
-
+		$elementfactory = t3lib_div::makeInstance('tx_languagevisibility_elementFactory', $dao);
 		$elements = $elementfactory->getParentElementsFromElement($element, $language);
 
 		if (is_array($elements) && count($elements) > 0) {
@@ -203,7 +195,7 @@ class tx_languagevisibility_visibilityService {
 				/* @var $element tx_languagevisibility_pageelement */
 				$visibility = new tx_languagevisibility_visibility();
 				$visibility->setVisibilityString($element->getLocalVisibilitySetting($language->getUid()));
-				//is the setting a inheritable setting:
+					// is the setting a inheritable setting:
 				if ($visibility->getVisibilityString() == 'no+' || $visibility->getVisibilityString() == 'yes+') {
 					$visibility->setVisibilityDescription('inherited from uid ' . $element->getUid());
 					return $visibility;
@@ -240,7 +232,7 @@ class tx_languagevisibility_visibilityService {
 	 * @param boolean
 	 * @return string
 	 */
-	public function getVisibilitySetting(tx_languagevisibility_language $language, tx_languagevisibility_element $element, $omitLocal = false) {
+	public function getVisibilitySetting(tx_languagevisibility_language $language, tx_languagevisibility_element $element, $omitLocal = FALSE) {
 		$cacheManager = tx_languagevisibility_cacheManager::getInstance();
 		$cacheData = $cacheManager->get('visibilitySettingCache');
 		$isCacheEnabled = $cacheManager->isCacheEnabled();
@@ -276,7 +268,7 @@ class tx_languagevisibility_visibilityService {
 	 * @param boolean $omitLocal
 	 * @return tx_languagevisibility_visibility
 	 */
-	protected function getVisibility(tx_languagevisibility_language $language, tx_languagevisibility_element $element, $omitLocal = false) {
+	protected function getVisibility(tx_languagevisibility_language $language, tx_languagevisibility_element $element, $omitLocal = FALSE) {
 		$visibility = new tx_languagevisibility_visibility();
 		$local = $element->getLocalVisibilitySetting($language->getUid());
 
@@ -301,12 +293,12 @@ class tx_languagevisibility_visibilityService {
 
 			if ($element->getFieldToUseForDefaultVisibility() == 'page') {
 				if ($this->getUseInheritance()) {
-					// gibt es in der rootline das visibiklitysetting no+ für die sprache dann return 'no'
+						// gibt es in der rootline das visibiklitysetting no+ für die sprache dann return 'no'
 					$inheritedVisibility = $this->getInheritedVisibility($language, $element);
 
 					switch ($inheritedVisibility->getVisibilityString()) {
 						case 'no+' :
-							//if no+ is found it means the current element should be threated as if it has no set
+								// if no+ is found it means the current element should be threated as if it has no set
 							$visibility->setVisibilityString('no')->setVisibilityDescription('force to no (' . $inheritedVisibility->getVisibilityDescription() . ')');
 							break;
 						case 'yes+' :
@@ -318,7 +310,7 @@ class tx_languagevisibility_visibilityService {
 							break;
 					}
 				} else {
-					//inheritance is disabled
+						// inheritance is disabled
 					$setting = $language->getDefaultVisibilityForPage($element);
 					$visibility->setVisibilityString($setting)->setVisibilityDescription('default visibility  for page (' . $setting . ')');
 				}
@@ -338,5 +330,3 @@ class tx_languagevisibility_visibilityService {
 		}
 	}
 }
-
-?>

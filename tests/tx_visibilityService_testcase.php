@@ -27,15 +27,8 @@
  *
  * WARNING: Never ever run a unit test like this on a live site!
  *
- *
- * @author	Daniel P�nger
+ * @author	Daniel Pötzinger
  */
-
-require_once (t3lib_extMgm::extPath("languagevisibility") . 'classes/class.tx_languagevisibility_language.php');
-
-// require_once (t3lib_extMgm::extPath('phpunit').'class.tx_phpunit_test.php');
-require_once (PATH_t3lib . 'class.t3lib_tcemain.php');
-
 class tx_visibilityService_testcase extends tx_phpunit_testcase {
 
 	public function test_visibility() {
@@ -64,7 +57,7 @@ class tx_visibilityService_testcase extends tx_phpunit_testcase {
 
 		// language 1 should be set local to "t"
 		$this->assertEquals('t', $visibility->getVisibilitySetting($language1, $element), "setting t expected");
-		$this->assertEquals(true, $visibility->isVisible($deflanguage, $element), "default lang should be visible");
+		$this->assertEquals(TRUE, $visibility->isVisible($deflanguage, $element), "default lang should be visible");
 	}
 
 	public function test_visibility_fixture_ce() {
@@ -78,7 +71,7 @@ class tx_visibilityService_testcase extends tx_phpunit_testcase {
 		// language 1 should be set local to "t"
 		$this->assertEquals('-', $element->getLocalVisibilitySetting(1), "setting d expected");
 		$this->assertEquals('f', $visibility->getVisibilitySetting($language, $element), "setting f expected (because default is used)");
-		$this->assertEquals(true, $visibility->isVisible($language, $element), "default lang should be visible");
+		$this->assertEquals(TRUE, $visibility->isVisible($language, $element), "default lang should be visible");
 		$this->assertEquals(0, $visibility->getOverlayLanguageIdForLanguageAndElement($language, $element), "default should be overlay");
 	}
 
@@ -94,7 +87,7 @@ class tx_visibilityService_testcase extends tx_phpunit_testcase {
 		$this->assertTrue($element instanceof tx_languagevisibility_pageelement, 'factory return instance of wrong type');
 		$this->assertEquals('-', $element->getLocalVisibilitySetting(1), "setting d expected");
 		$this->assertEquals('f', $visibility->getVisibilitySetting($language, $element), "setting f expected (because default is used)");
-		$this->assertEquals(true, $visibility->isVisible($language, $element), "default lang should be visible");
+		$this->assertEquals(TRUE, $visibility->isVisible($language, $element), "default lang should be visible");
 		$this->assertEquals(0, $visibility->getOverlayLanguageIdForLanguageAndElement($language, $element), "default record should be overlay");
 	}
 
@@ -112,7 +105,7 @@ class tx_visibilityService_testcase extends tx_phpunit_testcase {
 		$this->assertTrue($element instanceof tx_languagevisibility_ttnewselement, 'factory returned instance of wrong type');
 		$this->assertEquals('-', $element->getLocalVisibilitySetting(1), "setting d expected");
 		$this->assertEquals('f', $visibility->getVisibilitySetting($language, $element), "setting f expected (because default is used)");
-		$this->assertEquals(true, $visibility->isVisible($language, $element), "default lang should be visible");
+		$this->assertEquals(TRUE, $visibility->isVisible($language, $element), "default lang should be visible");
 
 	}
 
@@ -257,4 +250,3 @@ class tx_visibilityService_testcase extends tx_phpunit_testcase {
 		return $element;
 	}
 }
-?>

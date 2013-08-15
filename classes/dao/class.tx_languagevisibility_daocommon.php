@@ -21,14 +21,13 @@
  *
  * This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
+
 /**
  *
  * @author	Daniel Poetzinger <poetzinger@aoemedia.de>
  * @coauthor Tolleiv Nietsch <nietsch@aoemedia.de>
  * @coauthor Timo Schmidt <schmidt@aoemedia.de>
  */
-require_once t3lib_extMgm::extPath('languagevisibility') . 'classes/class.tx_languagevisibility_cacheManager.php';
-
 class tx_languagevisibility_daocommon {
 
 	protected static $recordCache;
@@ -50,7 +49,7 @@ class tx_languagevisibility_daocommon {
 
 		if ($isCacheEnabled) {
 			if (! isset(self::$recordCache[$table][$uid])) {
-				//!TODO we're still running two queries - this can be reduced to one with a tricky search criteria
+					// !TODO we're still running two queries - this can be reduced to one with a tricky search criteria
 				$row = self::getRequestedRecord($uid, $table);
 
 				if ($row) {
@@ -79,10 +78,10 @@ class tx_languagevisibility_daocommon {
 	 * @return array
 	 */
 	protected static function getRequestedRecord($uid, $table) {
-		// fix settings
+			// fix settings
 		$fields = '*';
 		$table = $table;
-		$groupBy = null;
+		$groupBy = NULL;
 		$orderBy = '';
 		$where = 'uid=' . intval($uid);
 
@@ -96,8 +95,9 @@ class tx_languagevisibility_daocommon {
 	/**
 	 * Returns a record by table and uid.
 	 *
-	 * @param $uid
 	 * @param $table
+	 * @param $where
+	 * @internal param $uid
 	 * @return array
 	 */
 	public static function getRecords($table, $where) {
@@ -108,7 +108,7 @@ class tx_languagevisibility_daocommon {
 
 		if ($isCacheEnabled) {
 			if (! isset(self::$recordCache[$table][$where])) {
-				//!TODO we're still running two queries - this can be reduced to one with a tricky search criteria
+					// !TODO we're still running two queries - this can be reduced to one with a tricky search criteria
 				$rows = self::getRequestedRecords($table, $where);
 
 				if ($rows) {
@@ -134,16 +134,16 @@ class tx_languagevisibility_daocommon {
 	 * @return array
 	 */
 	protected static function getRequestedRecords($table, $where) {
-		// fix settings
+			// fix settings
 		$fields = '*';
 		$table = $table;
-		$groupBy = null;
+		$groupBy = NULL;
 		$orderBy = '';
 		$where = $where;
 
 		$result = $GLOBALS['TYPO3_DB']->exec_SELECTquery($fields, $table, $where, $groupBy, $orderBy);
 		$rows = array();
-		while($row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($result)) {
+		while ($row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($result)) {
 			$rows[] = $row;
 		}
 		$GLOBALS['TYPO3_DB']->sql_free_result($result);
@@ -165,17 +165,13 @@ class tx_languagevisibility_daocommon {
 			$fields = '*';
 			$tablename = $table;
 			$orderBy = '';
-			$groupBy = null;
+			$groupBy = NULL;
 
 			$uidsInCache = implode(',', array_keys(self::$recordCache[$table]));
-			//get deleted hidden and workspace field from tca
 
-
-			global $TCA;
-			t3lib_div::loadTCA($table);
-
-			if (is_array($TCA[$table]['ctrl'])) {
-				$deleteField = $TCA[$table]['ctrl']['delete'];
+				// get deleted hidden and workspace field from tca
+			if (is_array($GLOBALS['TCA'][$table]['ctrl'])) {
+				$deleteField = $GLOBALS['TCA'][$table]['ctrl']['delete'];
 			}
 
 			$where = 'uid !=' . $row['uid'] . ' AND pid = ' . $row['pid'] . ' AND uid NOT IN (' . $uidsInCache . ')';
@@ -196,5 +192,3 @@ class tx_languagevisibility_daocommon {
 		}
 	}
 }
-
-?>

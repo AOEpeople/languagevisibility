@@ -1,11 +1,5 @@
 <?php
 
-require_once (t3lib_extMgm::extPath("languagevisibility") . 'tests/tx_languagevisibility_databaseTtContentTestcase.php');
-
-require_once (t3lib_extMgm::extPath("languagevisibility") . 'classes/class.tx_languagevisibility_language.php');
-
-require_once (PATH_t3lib . 'class.t3lib_tcemain.php');
-
 class tx_languagevisibility_hooks_t3lib_page_ttcontent_testcase extends tx_languagevisibility_databaseTtContentTestcase {
 
 	/**
@@ -34,11 +28,11 @@ class tx_languagevisibility_hooks_t3lib_page_ttcontent_testcase extends tx_langu
 	 * @param string $comment
 	 */
 	function visibility_overlay_ttcontent($uid, $language, $assertUid, $comment = '') {
-		if($uid === 26 && $language === 3) {
+		if ($uid === 26 && $language === 3) {
 			xdebug_break();
 		}
 		// check environment ...
-		if (version_compare(TYPO3_version, '4.3', '>') && ! t3lib_extMgm::isLoaded('version')) {
+		if (!t3lib_extMgm::isLoaded('version')) {
 			$this->markTestSkipped('Not relevant if "version" is not installed');
 		}
 
@@ -57,13 +51,13 @@ class tx_languagevisibility_hooks_t3lib_page_ttcontent_testcase extends tx_langu
 		$overlayedRow = $this->t3lib_page->getRecordOverlay('tt_content', $unOverlayedRow, $language);
 
 		// ... test
-		if($assertUid === NULL) {
+		if ($assertUid === NULL) {
 			$this->assertEquals(
 				FALSE,
 				$overlayedRow,
 				sprintf('record with id %d is removed in language %d', $uid, $language)
 			);
-		} elseif(array_key_exists('_LOCALIZED_UID', $overlayedRow)) {
+		} elseif (array_key_exists('_LOCALIZED_UID', $overlayedRow)) {
 			$this->assertSame(
 				$assertUid,
 				$overlayedRow['_LOCALIZED_UID'],
@@ -104,7 +98,7 @@ class tx_languagevisibility_hooks_t3lib_page_ttcontent_testcase extends tx_langu
 		);
 
 		// set comment as key for each entry in the array (this labels the data set when running the test)
-		return array_combine(array_map(function($row) {return $row[3];}, $testDataSet), $testDataSet);
+		return array_combine(array_map(function($row) { return $row[3]; }, $testDataSet), $testDataSet);
 	}
 
 	protected function getContentElementRow($uid) {
@@ -114,5 +108,4 @@ class tx_languagevisibility_hooks_t3lib_page_ttcontent_testcase extends tx_langu
 			'uid = ' . intval($uid) . ' AND deleted = 0 AND hidden = 0 AND l18n_parent = 0 AND sys_language_uid IN (-1,0)'
 		);
 	}
-
 }

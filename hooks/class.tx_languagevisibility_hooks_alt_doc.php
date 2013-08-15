@@ -21,20 +21,26 @@
  *
  * This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
+
 /**
  * Class/Function which manipulates the item-array for the  listing (see piFlexform).
  *
  * @author	Fabrizio Brance
  * @author	Timo Schmidt
  */
-
 class tx_languagevisibility_hooks_alt_doc {
 
+	/**
+	 * @param $params
+	 * @param $ref
+	 * @return bool
+	 */
 	public function makeEditForm_accessCheck($params, &$ref) {
-		if (! $params['hasAccess'])
-			return false;
+		if ( $params['hasAccess']) {
+			return FALSE;
+		}
 		$hasAccess = TRUE;
-		// if user wants to edit/create page record but has no access to default language!
+			// if user wants to edit/create page record but has no access to default language!
 		if ($params['table'] == 'pages' && ! $GLOBALS['BE_USER']->checkLanguageAccess(0)) {
 			$visibilityservice = t3lib_div::makeInstance('tx_languagevisibility_beservices');
 			if (! $visibilityservice->hasUserAccessToPageRecord($params['uid'], $params['cmd'])) {
@@ -44,5 +50,3 @@ class tx_languagevisibility_hooks_alt_doc {
 		return $hasAccess;
 	}
 }
-
-?>

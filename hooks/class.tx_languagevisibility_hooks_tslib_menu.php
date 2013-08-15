@@ -22,80 +22,41 @@
  * This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
-if (!interface_exists('tslib_menu_filterMenuPagesHook') && version_compare(TYPO3_version, '4.4', '>')) {
-	// @todo this should be loaded with the Core's autoloader but obviously that doesn't happen in 4.4.0
-	require_once PATH_tslib . 'interfaces/interface.tslib_menu_filterMenuPagesHook.php';
-}
+/**
+ *
+ * @author	 Tolleiv
+ * @package	 TYPO3
+ * @version $Id:$
+ */
+class tx_languagevisibility_hooks_tslib_menu implements tslib_menu_filterMenuPagesHook {
 
-
-if (!(version_compare(TYPO3_version, '4.5.2', '>') XOR (version_compare(TYPO3_version, '4.5', '<') && version_compare(TYPO3_version, '4.4.6', '>')))) {
 	/**
+	 * Checks if a page is OK to include in the final menu item array.
 	 *
-	 * @author	 Tolleiv
-	 * @package	 TYPO3
-	 * @version $Id:$
+	 * @param	array		Array of menu items
+	 * @param	array		Array of page uids which are to be excluded
+	 * @param	boolean		If set, then the page is a spacer.
+	 * @param	tslib_menu	The menu object
+	 * @return	boolean		Returns TRUE if the page can be safely included.
 	 */
-	class tx_languagevisibility_hooks_tslib_menu implements tslib_menu_filterMenuPagesHook
-	{
-
-		/**
-		 * Checks if a page is OK to include in the final menu item array.
-		 *
-		 * @param	array		Array of menu items
-		 * @param	array		Array of page uids which are to be excluded
-		 * @param	boolean		If set, then the page is a spacer.
-		 * @param	tslib_menu	The menu object
-		 * @return	boolean		Returns TRUE if the page can be safely included.
-		 */
-		public function tslib_menu_filterMenuPagesHook(array &$data, array $banUidArray, $spacer, tslib_tmenu $obj)
-		{
-			if ($data['_NOTVISIBLE']) {
-				return false;
-			} else {
-				return true;
-			}
+	public function tslib_menu_filterMenuPagesHook(array &$data, array $banUidArray, $spacer, tslib_menu $obj) {
+		if ($data['_NOTVISIBLE']) {
+			return FALSE;
+		} else {
+			return TRUE;
 		}
 	}
-} else {
+
 	/**
+	 * Checks if a page is OK to include in the final menu item array.
 	 *
-	 * @author	 Tolleiv
-	 * @package	 TYPO3
-	 * @version $Id:$
+	 * @param	array		Array of menu items
+	 * @param	array		Array of page uids which are to be excluded
+	 * @param	boolean		If set, then the page is a spacer.
+	 * @param	tslib_menu	The menu object
+	 * @return	boolean		Returns TRUE if the page can be safely included.
 	 */
-	class tx_languagevisibility_hooks_tslib_menu implements tslib_menu_filterMenuPagesHook
-	{
-
-		/**
-		 * Checks if a page is OK to include in the final menu item array.
-		 *
-		 * @param	array		Array of menu items
-		 * @param	array		Array of page uids which are to be excluded
-		 * @param	boolean		If set, then the page is a spacer.
-		 * @param	tslib_menu	The menu object
-		 * @return	boolean		Returns TRUE if the page can be safely included.
-		 */
-		public function tslib_menu_filterMenuPagesHook(array &$data, array $banUidArray, $spacer, tslib_menu $obj)
-		{
-			if ($data['_NOTVISIBLE']) {
-				return false;
-			} else {
-				return true;
-			}
-		}
-
-		/**
-		 * Checks if a page is OK to include in the final menu item array.
-		 *
-		 * @param	array		Array of menu items
-		 * @param	array		Array of page uids which are to be excluded
-		 * @param	boolean		If set, then the page is a spacer.
-		 * @param	tslib_menu	The menu object
-		 * @return	boolean		Returns TRUE if the page can be safely included.
-		 */
-		public function processFilter(array &$data, array $banUidArray, $spacer, tslib_menu $obj)
-		{
-			return $this->tslib_menu_filterMenuPagesHook($data, $banUidArray, $spacer, $obj);
-		}
+	public function processFilter(array &$data, array $banUidArray, $spacer, tslib_menu $obj) {
+		return $this->tslib_menu_filterMenuPagesHook($data, $banUidArray, $spacer, $obj);
 	}
 }

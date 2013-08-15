@@ -22,8 +22,6 @@
  * This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
-require_once (t3lib_extMgm::extPath("languagevisibility") . 'tests/tx_languagevisibility_databaseTestcase.php');
-
 /**
  * This testcase is used to test the functionallity of the beservice
  *
@@ -42,7 +40,6 @@ require_once (t3lib_extMgm::extPath("languagevisibility") . 'tests/tx_languagevi
  * @subpackage languagevisibility
  * @access public
  */
-
 class tx_visibilityBEService_testcase extends tx_languagevisibility_databaseTestcase {
 
 	/**
@@ -50,7 +47,6 @@ class tx_visibilityBEService_testcase extends tx_languagevisibility_databaseTest
 	 *
 	 * @param void
 	 * @return void
-	 * @author Timo Schmidt <timo.schmidt@aoemedia.de>
 	 * @test
 	 */
 	public function canDetermineSupportedTables() {
@@ -66,7 +62,6 @@ class tx_visibilityBEService_testcase extends tx_languagevisibility_databaseTest
 	 *
 	 * @param void
 	 * @return void
-	 * @author Timo Schmidt <timo.schmidt@aoemedia.de>
 	 * @test
 	 */
 	public function canDetectTranslationsInAnyLanguage() {
@@ -76,5 +71,3 @@ class tx_visibilityBEService_testcase extends tx_languagevisibility_databaseTest
 		$this->assertTrue($hasTranslation, 'Determined no translations for a translated element');
 	}
 }
-
-?>

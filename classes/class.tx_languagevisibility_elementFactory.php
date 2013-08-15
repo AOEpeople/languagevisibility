@@ -27,8 +27,6 @@
  * @coauthor Tolleiv Nietsch <nietsch@aoemedia.de>
  * @coauthor Timo Schmidt <schmidt@aoemedia.de>
  */
-require_once t3lib_extMgm::extPath('languagevisibility') . 'classes/class.tx_languagevisibility_cacheManager.php';
-require_once (PATH_t3lib . 'class.t3lib_page.php');
 
 class tx_languagevisibility_elementFactory {
 
@@ -47,13 +45,13 @@ class tx_languagevisibility_elementFactory {
 	/**
 	 * Returns ready initialised "element" object. Depending on the element the correct element class is used. (e.g. page/content/fce)
 	 *
-	 * @param $table	table
-	 * @param $uid	identifier
-	 * @param $overlay_ids boolean parameter to overlay uids if the user is in workspace context
-	 *
-	 * @throws Unknown_Element_Exception
-	 **/
-	function getElementForTable($table, $uid, $overlay_ids = true) {
+	 * @param string $table table
+	 * @param int $uid identifier
+	 * @param bool $overlay_ids boolean parameter to overlay uids if the user is in workspace context
+	 * @throws UnexpectedValueException
+	 * @return \tx_languagevisibility_element
+	 */
+	public function getElementForTable($table, $uid, $overlay_ids = TRUE) {
 
 		if (!is_numeric($uid) || (intval($uid) === 0)) {
 				// no uid => maybe NEW element in BE
@@ -66,62 +64,32 @@ class tx_languagevisibility_elementFactory {
 			}
 		}
 
-		//@todo isSupported table
-		/* @var $element tx_languagevisibility_element */
+		// @todo isSupported table
+		/** @var tx_languagevisibility_element $element*/
 		switch ($table) {
 			case 'pages' :
-				if (version_compare(TYPO3_version, '4.3.0', '<')) {
-					require_once (t3lib_extMgm::extPath("languagevisibility") . 'classes/class.tx_languagevisibility_pageelement.php');
-					$elementclass = t3lib_div::makeInstanceClassName('tx_languagevisibility_pageelement');
-					$element = new $elementclass($row);
-				} else {
-					$element = t3lib_div::makeInstance('tx_languagevisibility_pageelement', $row);
-				}
+				$element = t3lib_div::makeInstance('tx_languagevisibility_pageelement', $row);
 				break;
 			case 'tt_news' :
-				if (version_compare(TYPO3_version, '4.3.0', '<')) {
-					require_once (t3lib_extMgm::extPath("languagevisibility") . 'classes/class.tx_languagevisibility_ttnewselement.php');
-					$elementclass = t3lib_div::makeInstanceClassName('tx_languagevisibility_ttnewselement');
-					$element = new $elementclass($row);
-				} else {
-					$element = t3lib_div::makeInstance('tx_languagevisibility_ttnewselement', $row);
-				}
+				$element = t3lib_div::makeInstance('tx_languagevisibility_ttnewselement', $row);
 				break;
 			case 'tt_content' :
 				if ($row['CType'] == 'templavoila_pi1') {
-					//read DS:
+						// read DS:
 					$srcPointer = $row['tx_templavoila_ds'];
 					$DS = $this->_getTVDS($srcPointer);
 					if (is_array($DS)) {
 						if ($DS['meta']['langDisable'] == 1 && $DS['meta']['langDatabaseOverlay'] == 1) {
-							//handle as special FCE with normal tt_content overlay:
-							if (version_compare(TYPO3_version, '4.3.0', '<')) {
-								require_once (t3lib_extMgm::extPath("languagevisibility") . 'classes/class.tx_languagevisibility_fceoverlayelement.php');
-								$elementclass = t3lib_div::makeInstanceClassName('tx_languagevisibility_fceoverlayelement');
-								$element = new $elementclass($row);
-							} else {
-								$element = t3lib_div::makeInstance('tx_languagevisibility_fceoverlayelement', $row);
-							}
+								// handle as special FCE with normal tt_content overlay:
+							$element = t3lib_div::makeInstance('tx_languagevisibility_fceoverlayelement', $row);
 						} else {
-							if (version_compare(TYPO3_version, '4.3.0', '<')) {
-								require_once (t3lib_extMgm::extPath("languagevisibility") . 'classes/class.tx_languagevisibility_fceelement.php');
-								$elementclass = t3lib_div::makeInstanceClassName('tx_languagevisibility_fceelement');
-								$element = new $elementclass($row, $DS);
-							} else {
-								$element = t3lib_div::makeInstance('tx_languagevisibility_fceelement', $row, $DS);
-							}
+							$element = t3lib_div::makeInstance('tx_languagevisibility_fceelement', $row, $DS);
 						}
 					} else {
 						throw new UnexpectedValueException($table . ' uid:' . $row['uid'] . ' has no valid Datastructure ', 1195039394);
 					}
 				} else {
-					if (version_compare(TYPO3_version, '4.3.0', '<')) {
-						require_once (t3lib_extMgm::extPath("languagevisibility") . 'classes/class.tx_languagevisibility_celement.php');
-						$elementclass = t3lib_div::makeInstanceClassName('tx_languagevisibility_celement');
-						$element = new $elementclass($row);
-					} else {
-						$element = t3lib_div::makeInstance('tx_languagevisibility_celement', $row);
-					}
+					$element = t3lib_div::makeInstance('tx_languagevisibility_celement', $row);
 				}
 				break;
 			default:
@@ -133,8 +101,7 @@ class tx_languagevisibility_elementFactory {
 					}
 				} elseif (isset($GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['languagevisibility']['recordElementSupportedTables'][$table])) {
 					$element = $this->getElementInstance('tx_languagevisibility_recordelement', $row);
-				}
-				else {
+				} else {
 					throw new UnexpectedValueException($table . ' not supported ', 1195039394);
 				}
 				break;
@@ -178,6 +145,7 @@ class tx_languagevisibility_elementFactory {
 	 * configured or is the first element of the rootline
 	 *
 	 * @param tx_languagevisibility_element $element
+	 * @param $language
 	 * @return array $elements (collection of tx_languagevisibility_element)
 	 */
 	public function getParentElementsFromElement(tx_languagevisibility_element $element, $language) {
@@ -216,8 +184,10 @@ class tx_languagevisibility_elementFactory {
 	 *
 	 * @todo The rooline can be build in a smarter way, once the rootline for a page has been created
 	 * same parts of the rootline not have to be calculated twice.
-	 *
-	 * @param	integer		The page uid for which to seek back to the page tree root.
+	 * @param $uid
+	 * @param $languageid
+	 * @return array
+	 * @internal param \The $integer page uid for which to seek back to the page tree root.
 	 * @see tslib_fe::getPageAndRootline()
 	 */
 	protected function getOverlayedRootLine($uid, $languageid) {
@@ -232,14 +202,13 @@ class tx_languagevisibility_elementFactory {
 
 			$uid = intval($uid);
 
-			// Initialize:
-			$selFields = t3lib_div::uniqueList('pid,uid,t3ver_oid,t3ver_wsid,t3ver_state,t3ver_swapmode,title,alias,nav_title,media,layout,hidden,starttime,endtime,fe_group,extendToSubpages,doktype,TSconfig,storage_pid,is_siteroot,mount_pid,mount_pid_ol,fe_login_mode,' . $GLOBALS['TYPO3_CONF_VARS']['FE']['addRootLineFields']);
+				// Initialize:
+			$selFields = t3lib_div::uniqueList('pid,uid,t3ver_oid,t3ver_wsid,t3ver_state,title,alias,nav_title,media,layout,hidden,starttime,endtime,fe_group,extendToSubpages,doktype,TSconfig,storage_pid,is_siteroot,mount_pid,mount_pid_ol,fe_login_mode,' . $GLOBALS['TYPO3_CONF_VARS']['FE']['addRootLineFields']);
 
 			$loopCheck = 0;
 			$theRowArray = Array();
 
 			while ($uid != 0 && $loopCheck < 20) { // Max 20 levels in the page tree.
-
 
 				$res = $GLOBALS['TYPO3_DB']->exec_SELECTquery($selFields, 'pages', 'uid=' . intval($uid) . ' AND pages.deleted=0 AND pages.doktype!=255');
 				$row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res);
@@ -250,18 +219,14 @@ class tx_languagevisibility_elementFactory {
 					$sys_page->fixVersioningPid('pages', $row);
 
 					if (is_array($row)) {
-						// Mount Point page types are allowed ONLY a) if they are the outermost record in rootline and b) if the overlay flag is not set:
+							// Mount Point page types are allowed ONLY a) if they are the outermost record in rootline and b) if the overlay flag is not set:
 						$uid = $row['pid']; // Next uid
 					}
-					// Add row to rootline with language overlaid:
-					if (version_compare(TYPO3_version, '4.3', '>')) {
-						$langvisHook = $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['t3lib/class.t3lib_page.php']['getPageOverlay']['languagevisility'];
-						unset($GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['t3lib/class.t3lib_page.php']['getPageOverlay']['languagevisility']);
-						$theRowArray[] = $sys_page->getPageOverlay($row, $languageid);
-						$GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['t3lib/class.t3lib_page.php']['getPageOverlay']['languagevisility'] = $langvisHook;
-					} else {
-						$theRowArray[] = $sys_page->_original_getPageOverlay($row, $languageid);
-					}
+						// Add row to rootline with language overlaid:
+					$langvisHook = $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['t3lib/class.t3lib_page.php']['getPageOverlay']['languagevisility'];
+					unset($GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['t3lib/class.t3lib_page.php']['getPageOverlay']['languagevisility']);
+					$theRowArray[] = $sys_page->getPageOverlay($row, $languageid);
+					$GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['t3lib/class.t3lib_page.php']['getPageOverlay']['languagevisility'] = $langvisHook;
 				} else {
 					return array(); // broken rootline.
 				}
@@ -269,7 +234,7 @@ class tx_languagevisibility_elementFactory {
 				$loopCheck++;
 			}
 
-			// Create output array (with reversed order of numeric keys):
+				// Create output array (with reversed order of numeric keys):
 			$output = Array();
 			$c = count($theRowArray);
 			foreach ($theRowArray as $key => $val) {
@@ -298,11 +263,7 @@ class tx_languagevisibility_elementFactory {
 
 		if (!$isCacheEnabled || !isset($cacheData[$srcPointer])) {
 			$DS = array();
-			if (version_compare(TYPO3_version, '4.6.0', '>=')) {
-				$srcPointerIsInteger = t3lib_utility_Math::convertToPositiveInteger($srcPointer);
-			} else {
-				$srcPointerIsInteger = t3lib_div::intval_positive($srcPointer);
-			}
+			$srcPointerIsInteger = t3lib_utility_Math::convertToPositiveInteger($srcPointer);
 			if ($srcPointerIsInteger) { // If integer, then its a record we will look up:
 				$sys_page = t3lib_div::makeInstance('t3lib_pageSelect');
 				$DSrec = $sys_page->getRawRecord('tx_templavoila_datastructure', $srcPointer, 'dataprot');
@@ -328,15 +289,6 @@ class tx_languagevisibility_elementFactory {
 	 * @return tx_languagevisibility_element
 	 */
 	private function getElementInstance($name, $row) {
-		if (version_compare(TYPO3_version, '4.3.0', '<')) {
-			require_once (t3lib_extMgm::extPath("languagevisibility") . 'classes/class.' . $name . '.php');
-			$elementclass = t3lib_div::makeInstanceClassName($name);
-			return new $elementclass($row);
-		} else {
-			return t3lib_div::makeInstance($name, $row);
-		}
+		return t3lib_div::makeInstance($name, $row);
 	}
-
 }
-
-?>

@@ -22,8 +22,6 @@
  * This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
-require_once (t3lib_extMgm::extPath('languagevisibility') . 'class.tx_languagevisibility_feservices.php');
-
 class tx_languagevisibility_hooks_crawler {
 
 	/**
@@ -55,15 +53,16 @@ class tx_languagevisibility_hooks_crawler {
 	/**
 	 *
 	 * @param string $url	guess what
+	 * @return array
 	 */
 	protected static function extractIdAndLangFromUrl($url) {
 
-		// retrieving the id this way is save because that part is hardcoded in the crawler
+			// retrieving the id this way is save because that part is hardcoded in the crawler
 		$matches = array();
 		preg_match('/\?id=(\d+)&?/', $url, $matches);
 		$id = $matches[1];
 
-		// TODO: might need domain if no "L" is given
+			// TODO: might need domain if no "L" is given
 		$matches = array();
 		if (! preg_match('/L=(\d+)&?/', $url, $matches)) {
 			$lang = 0;
@@ -74,5 +73,3 @@ class tx_languagevisibility_hooks_crawler {
 		return array($id, $lang );
 	}
 }
-
-?>

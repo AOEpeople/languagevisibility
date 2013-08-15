@@ -35,9 +35,10 @@ class tx_languagevisibility_hooks_templavoila_pi1 {
 	 * @param array $row
 	 * @param string $table
 	 * @param string $lKey
-	 * @param boolean $langDisable
+	 * @param $langDisabled
 	 * @param boolean $langChildren
 	 * @param object $object
+	 * @internal param bool $langDisable
 	 * @return string
 	 */
 	public function renderElement_preProcessLanguageKey($row, $table, $lKey, $langDisabled, $langChildren, &$object) {
@@ -53,9 +54,10 @@ class tx_languagevisibility_hooks_templavoila_pi1 {
 	 * @param array $row
 	 * @param string $table
 	 * @param string $vKey
-	 * @param boolean $langDisable
+	 * @param $langDisabled
 	 * @param boolean $langChildren
 	 * @param object $object
+	 * @internal param bool $langDisable
 	 * @return string
 	 */
 	public function renderElement_preProcessValueKey($row, $table, $vKey, $langDisabled, $langChildren, &$object) {
@@ -64,7 +66,4 @@ class tx_languagevisibility_hooks_templavoila_pi1 {
 		}
 		return $vKey;
 	}
-
 }
-
-?>

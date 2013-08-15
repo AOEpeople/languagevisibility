@@ -32,7 +32,7 @@ class tx_languagevisibility_reports_ConfigurationStatus implements tx_reports_St
 	 */
 	public function getStatus() {
 		$statuses = array(
-			'LangMode'                 => $this->getLangModes(),
+			'LangMode' => $this->getLangModes(),
 		);
 
 		return $statuses;
@@ -53,32 +53,32 @@ class tx_languagevisibility_reports_ConfigurationStatus implements tx_reports_St
 
 		$rootTpls = t3lib_BEfunc::getRecordsByField('sys_template', 'root', '1', '', 'pid');
 
-		foreach($rootTpls as $tpl) {
+		foreach ($rootTpls as $tpl) {
 			/**
 			 * @var t3lib_tsparser_ext
 			 */
-			$tmpl = t3lib_div::makeInstance("t3lib_tsparser_ext");
+			$tmpl = t3lib_div::makeInstance('t3lib_tsparser_ext');
 			$tmpl->tt_track = 0;
 			$tmpl->init();
 
 				// Gets the rootLine
-			$sys_page = t3lib_div::makeInstance("t3lib_pageSelect");
+			$sys_page = t3lib_div::makeInstance('t3lib_pageSelect');
 			$rootLine = $sys_page->getRootLine($tpl['pid']);
 			$tmpl->runThroughTemplates($rootLine, $tpl['uid']);
 
 			$tplRow = $tmpl->ext_getFirstTemplate($tpl['pid'], $tpl['uid']);
 			$tmpl->generateConfig();
 
-			if(!isset($tmpl->setup['config.']['sys_language_mode']) || $tmpl->setup['config.']['sys_language_mode'] != 'ignore') {
+			if (!isset($tmpl->setup['config.']['sys_language_mode']) || $tmpl->setup['config.']['sys_language_mode'] != 'ignore') {
 				$checked['fail'][] = array($tpl['pid'], $tpl['uid'], $tmpl->setup['config.']['sys_language_mode']);
 			}
 		}
 
-		if(count($checked['fail'])) {
+		if (count($checked['fail'])) {
 			$severity = tx_reports_reports_status_Status::WARNING;
 			$value = $GLOBALS['LANG']->sL('LLL:EXT:languagevisibility/locallang_db.xml:reports.fail.value');
 			$message .= $GLOBALS['LANG']->sL('LLL:EXT:languagevisibility/locallang_db.xml:reports.fail.message') . '<br/>';
-			foreach($checked['fail'] as $fail) {
+			foreach ($checked['fail'] as $fail) {
 				$message .= vsprintf($GLOBALS['LANG']->sL('LLL:EXT:languagevisibility/locallang_db.xml:reports.fail.message.detail'), $fail) . '<br />';
 			}
 		}
@@ -92,9 +92,6 @@ class tx_languagevisibility_reports_ConfigurationStatus implements tx_reports_St
 	}
 }
 
-
 if (defined('TYPO3_MODE') && $TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['ext/languagevisibility/classes/class.tx_languagevisibility_reports_ConfigurationStatus.php'])	{
 	include_once($TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['ext/languagevisibility/classes/class.tx_languagevisibility_reports_ConfigurationStatus.php']);
 }
-
-?>

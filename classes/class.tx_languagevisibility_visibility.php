@@ -85,4 +85,3 @@ class tx_languagevisibility_visibility {
 		return $this;
 	}
 }
-?>

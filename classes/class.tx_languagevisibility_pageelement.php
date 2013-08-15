@@ -21,14 +21,13 @@
  *
  * This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
+
 /**
  *
  * @author	Daniel Poetzinger <poetzinger@aoemedia.de>
  * @coauthor Tolleiv Nietsch <nietsch@aoemedia.de>
  * @coauthor Timo Schmidt <schmidt@aoemedia.de>
  */
-require_once (t3lib_extMgm::extPath("languagevisibility") . 'classes/class.tx_languagevisibility_element.php');
-
 class tx_languagevisibility_pageelement extends tx_languagevisibility_element {
 
 	/**
@@ -39,7 +38,7 @@ class tx_languagevisibility_pageelement extends tx_languagevisibility_element {
 	 * @return boolean
 	 */
 	protected function isOrigElement() {
-		return true;
+		return TRUE;
 	}
 
 	/**
@@ -58,8 +57,8 @@ class tx_languagevisibility_pageelement extends tx_languagevisibility_element {
 	 *
 	 * @return boolean
 	 */
-	function isLanguageSetToDefault() {
-		return true;
+	public function isLanguageSetToDefault() {
+		return TRUE;
 	}
 
 	/**
@@ -67,7 +66,7 @@ class tx_languagevisibility_pageelement extends tx_languagevisibility_element {
 	 *
 	 * @return string
 	 */
-	function getInformativeDescription() {
+	public function getInformativeDescription() {
 		return 'this is a normal page element (translations are managed with seperate overlay records)';
 	}
 
@@ -75,16 +74,16 @@ class tx_languagevisibility_pageelement extends tx_languagevisibility_element {
 	 * Method to get an overlay of an element for a certain langugae
 	 *
 	 * @param int $lUid
-	 * @param boolean $onlyUid
+	 * @internal param bool $onlyUid
 	 * @return array return the database row
 	 */
 	protected function getOverLayRecordForCertainLanguageImplementation($lUid) {
-		if ($lUid>0) {
+		if ($lUid > 0) {
 			$fieldArr = explode(',', $GLOBALS['TYPO3_CONF_VARS']['FE']['pageOverlayFields']);
 			$page_id = $this->row['t3ver_oid']?$this->row['t3ver_oid']:$this->getUid();	// Was the whole record
 			$fieldArr = array_intersect($fieldArr,array_keys($this->row));		// Make sure that only fields which exist in the incoming record are overlaid!
 
-			if (count($fieldArr))	{
+			if (count($fieldArr)) {
 				$table = 'pages_language_overlay';
 				if (is_object($GLOBALS['TSFE']->sys_page)) {
 					$enableFields = $GLOBALS['TSFE']->sys_page->enableFields($table);
@@ -94,13 +93,13 @@ class tx_languagevisibility_pageelement extends tx_languagevisibility_element {
 				$fieldArr[] = 'deleted';
 				$fieldArr[] = 'hidden';
 				$fieldArr[] = 'tx_languagevisibility_visibility';
-				
+
 					// Selecting overlay record:
 				$res = $GLOBALS['TYPO3_DB']->exec_SELECTquery(
-					implode(',',$fieldArr),
+					implode(',', $fieldArr),
 					'pages_language_overlay',
-					'pid='.intval($page_id).'
-						AND sys_language_uid='.intval($lUid).
+					'pid=' . intval($page_id) . '
+						AND sys_language_uid=' . intval($lUid) .
 						$enableFields,
 					'',
 					'',
@@ -126,8 +125,8 @@ class tx_languagevisibility_pageelement extends tx_languagevisibility_element {
 	 * Returns which field in the language should be used to read the default visibility
 	 *
 	 * @return string (blank=default / page=page)
-	 **/
-	function getFieldToUseForDefaultVisibility() {
+	 */
+	public function getFieldToUseForDefaultVisibility() {
 		return 'page';
 	}
 
@@ -136,17 +135,16 @@ class tx_languagevisibility_pageelement extends tx_languagevisibility_element {
 	 *
 	 * @return boolean
 	 */
-	function hasOverLayRecordForAnyLanguageInAnyWorkspace() {
-
+	public function hasOverLayRecordForAnyLanguageInAnyWorkspace() {
 		//if we handle a workspace record, we need to get it's live version
-		if ($this->row['pid'] == - 1) {
+		if ($this->row['pid'] == -1) {
 			$useUid = $this->row['t3ver_oid'];
 		} else {
 			$useUid = $this->row['uid'];
 		}
 
-		// if a workspace record has an overlay, an overlay also exists in the livews with versionstate = 1
-		// therefore we have to look for any undeleted overlays of the live version
+			// if a workspace record has an overlay, an overlay also exists in the livews with versionstate = 1
+			// therefore we have to look for any undeleted overlays of the live version
 		$fields = 'count(uid) as anz';
 		$table = 'pages_language_overlay';
 		$where = 'deleted = 0 AND pid=' . $useUid;
@@ -164,7 +162,6 @@ class tx_languagevisibility_pageelement extends tx_languagevisibility_element {
 	 * @return boolean
 	 */
 	public function supportsInheritance() {
-		return true;
+		return TRUE;
 	}
 }
-?>

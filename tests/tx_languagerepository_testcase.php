@@ -28,16 +28,8 @@
  * WARNING: Never ever run a unit test like this on a live site!
  *
  *
- * @author	Daniel P�tzinger
+ * @author	Daniel Pötzinger
  */
-
-require_once (t3lib_extMgm::extPath("languagevisibility") . 'tests/tx_languagevisibility_databaseTestcase.php');
-
-require_once (t3lib_extMgm::extPath("languagevisibility") . 'classes/class.tx_languagevisibility_language.php');
-
-// require_once (t3lib_extMgm::extPath('phpunit').'class.tx_phpunit_test.php');
-require_once (PATH_t3lib . 'class.t3lib_tcemain.php');
-
 class tx_languagerepository_testcase extends tx_languagevisibility_databaseTestcase {
 
 	public function test_getLanguages() {
@@ -70,4 +62,3 @@ class tx_languagerepository_testcase extends tx_languagevisibility_databaseTestc
 		$this->importDataSet(dirname(__FILE__) . '/fixtures/dbDefaultLangs.xml');
 	}
 }
-?>

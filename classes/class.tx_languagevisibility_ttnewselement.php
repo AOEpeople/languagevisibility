@@ -21,14 +21,13 @@
  *
  * This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
+
 /**
  *
  * @author	Daniel Poetzinger <poetzinger@aoemedia.de>
  * @coauthor Tolleiv Nietsch <nietsch@aoemedia.de>
  * @coauthor Timo Schmidt <schmidt@aoemedia.de>
  */
-require_once (t3lib_extMgm::extPath("languagevisibility") . 'classes/class.tx_languagevisibility_recordelement.php');
-
 class tx_languagevisibility_ttnewselement extends tx_languagevisibility_recordelement {
 
 	/**
@@ -65,8 +64,7 @@ class tx_languagevisibility_ttnewselement extends tx_languagevisibility_recordel
 	 * (non-PHPdoc)
 	 * @see classes/tx_languagevisibility_recordelement#getFallbackOrder($language)
 	 */
-	function getFallbackOrder(tx_languagevisibility_language $language) {
+	public function getFallbackOrder(tx_languagevisibility_language $language) {
 		return $language->getFallbackOrderTTNewsElement($this);
 	}
 }
-?>

@@ -27,16 +27,8 @@
  *
  * WARNING: Never ever run a unit test like this on a live site!
  *
- *
  * @author	Tolleiv Nietsch
  */
-
-require_once (t3lib_extMgm::extPath("languagevisibility") . 'tests/tx_languagevisibility_databaseTtContentTestcase.php');
-
-require_once (t3lib_extMgm::extPath("languagevisibility") . 'classes/class.tx_languagevisibility_language.php');
-
-require_once (PATH_t3lib . 'class.t3lib_tcemain.php');
-
 class tx_visibilityServiceDB_testcase extends tx_languagevisibility_databaseTtContentTestcase {
 
 	/**
@@ -47,7 +39,7 @@ class tx_visibilityServiceDB_testcase extends tx_languagevisibility_databaseTtCo
 	 * @return void
 	 * @see tx_languagevisibility_visibilityService
 	 */
-	function visibility_ce() {
+	public function visibility_ce() {
 		$language = $this->_getLang(1);
 		$visibility = t3lib_div::makeInstance('tx_languagevisibility_visibilityService');
 
@@ -55,10 +47,10 @@ class tx_visibilityServiceDB_testcase extends tx_languagevisibility_databaseTtCo
 
 		foreach ( $fixturesWithoutOverlay as $table => $uid ) {
 			$element = $this->_getContent($table, $uid);
-			$this->assertEquals('-', $element->getLocalVisibilitySetting(1), "setting d expected");
-			$this->assertEquals('f', $visibility->getVisibilitySetting($language, $element), "setting f expected (because default is used)");
-			$this->assertEquals(true, $visibility->isVisible($language, $element), "default lang should be visible");
-			$this->assertEquals(0, $visibility->getOverlayLanguageIdForLanguageAndElement($language, $element), sprintf("default should be overlay table:%s uid:%d", $table, $uid));
+			$this->assertEquals('-', $element->getLocalVisibilitySetting(1), 'setting d expected');
+			$this->assertEquals('f', $visibility->getVisibilitySetting($language, $element), 'setting f expected (because default is used)');
+			$this->assertEquals(TRUE, $visibility->isVisible($language, $element), 'default lang should be visible');
+			$this->assertEquals(0, $visibility->getOverlayLanguageIdForLanguageAndElement($language, $element), sprintf('default should be overlay table:%s uid:%d', $table, $uid));
 		}
 	}
 
@@ -70,7 +62,7 @@ class tx_visibilityServiceDB_testcase extends tx_languagevisibility_databaseTtCo
 	 * @return void
 	 * @see tx_languagevisibility_visibilityService
 	 */
-	function visibility_ceForcedToYesWithoutOverlay() {
+	public function visibility_ceForcedToYesWithoutOverlay() {
 		$language = $this->_getLang(1);
 		$visibility = t3lib_div::makeInstance('tx_languagevisibility_visibilityService');
 
@@ -78,10 +70,10 @@ class tx_visibilityServiceDB_testcase extends tx_languagevisibility_databaseTtCo
 
 		foreach ( $fixturesWithoutOverlay as $table => $uid ) {
 			$element = $this->_getContent($table, $uid);
-			$this->assertEquals('yes', $element->getLocalVisibilitySetting(1), "setting d expected");
-			$this->assertEquals('yes', $visibility->getVisibilitySetting($language, $element), "setting f expected (because default is used)");
-			$this->assertEquals(true, $visibility->isVisible($language, $element), "element should be visible");
-			$this->assertEquals(0, $visibility->getOverlayLanguageIdForLanguageAndElement($language, $element), sprintf("default language should be choosen here table:%s uid:%d", $table, $uid));
+			$this->assertEquals('yes', $element->getLocalVisibilitySetting(1), 'setting d expected');
+			$this->assertEquals('yes', $visibility->getVisibilitySetting($language, $element), 'setting f expected (because default is used)');
+			$this->assertEquals(TRUE, $visibility->isVisible($language, $element), 'element should be visible');
+			$this->assertEquals(0, $visibility->getOverlayLanguageIdForLanguageAndElement($language, $element), sprintf('default language should be choosen here table:%s uid:%d', $table, $uid));
 		}
 	}
 
@@ -93,7 +85,7 @@ class tx_visibilityServiceDB_testcase extends tx_languagevisibility_databaseTtCo
 	 * @return void
 	 * @see tx_languagevisibility_visibilityService
 	 */
-	function visibility_ceForcedToYesWithOverlay() {
+	public function visibility_ceForcedToYesWithOverlay() {
 		$language = $this->_getLang(1);
 		$visibility = t3lib_div::makeInstance('tx_languagevisibility_visibilityService');
 
@@ -101,11 +93,11 @@ class tx_visibilityServiceDB_testcase extends tx_languagevisibility_databaseTtCo
 
 		foreach ( $fixturesWithoutOverlay as $table => $uid ) {
 			$element = $this->_getContent($table, $uid);
-			$this->assertEquals('yes', $element->getLocalVisibilitySetting(1), "setting d expected");
-			$this->assertEquals('yes', $visibility->getVisibilitySetting($language, $element), "setting f expected (because default is used)");
-			$this->assertEquals(true, $visibility->isVisible($language, $element), "element should be visible");
-			$this->assertEquals(true, $element->hasTranslation(1), "translation should be detected");
-			$this->assertEquals(1, $visibility->getOverlayLanguageIdForLanguageAndElement($language, $element), sprintf("language 1 should be choosen here table:%s uid:%d", $table, $uid));
+			$this->assertEquals('yes', $element->getLocalVisibilitySetting(1), 'setting d expected');
+			$this->assertEquals('yes', $visibility->getVisibilitySetting($language, $element), 'setting f expected (because default is used)');
+			$this->assertEquals(TRUE, $visibility->isVisible($language, $element), 'element should be visible');
+			$this->assertEquals(TRUE, $element->hasTranslation(1), 'translation should be detected');
+			$this->assertEquals(1, $visibility->getOverlayLanguageIdForLanguageAndElement($language, $element), sprintf('language 1 should be choosen here table:%s uid:%d', $table, $uid));
 		}
 	}
 
@@ -117,7 +109,7 @@ class tx_visibilityServiceDB_testcase extends tx_languagevisibility_databaseTtCo
 	 * @return void
 	 * @see tx_languagevisibility_visibilityService
 	 */
-	function visibility_overlayCe() {
+	public function visibility_overlayCe() {
 		$element = $this->_getContent('tt_content', 2 /* element with L1 overlay */);
 		$visibility = t3lib_div::makeInstance('tx_languagevisibility_visibilityService');
 
@@ -125,8 +117,8 @@ class tx_visibilityServiceDB_testcase extends tx_languagevisibility_databaseTtCo
 		foreach ( $expectedResults as $langUid => $expectedResult ) {
 			$language = $this->_getLang($langUid);
 
-			$this->assertEquals(true, $visibility->isVisible($language, $element), "element should be visible in lang " . $expectedResult);
-			$this->assertEquals($expectedResult, $visibility->getOverlayLanguageIdForLanguageAndElement($language, $element), sprintf("Element Overlay used wrong fallback - language %d - should be %d ", $langUid, $expectedResult));
+			$this->assertEquals(TRUE, $visibility->isVisible($language, $element), 'element should be visible in lang ' . $expectedResult);
+			$this->assertEquals($expectedResult, $visibility->getOverlayLanguageIdForLanguageAndElement($language, $element), sprintf('Element Overlay used wrong fallback - language %d - should be %d ', $langUid, $expectedResult));
 		}
 	}
 
@@ -138,15 +130,15 @@ class tx_visibilityServiceDB_testcase extends tx_languagevisibility_databaseTtCo
 	 * @return void
 	 * @see tx_languagevisibility_visibilityService
 	 */
-	function visibility_hiddenOverlayCe() {
+	public function visibility_hiddenOverlayCe() {
 
-		if (version_compare(TYPO3_version, '4.3', '>') && ! t3lib_extMgm::isLoaded('version')) {
+		if (!t3lib_extMgm::isLoaded('version')) {
 			$this->markTestSkipped('Not relevant if "version" is not installed');
 		}
-		
+
 		if (is_object($GLOBALS['TSFE'])) {
 			$this->markTestSkipped('Please turn off the fake frontend (phpunit extension configuration) - this test won\'t work with "fake" frontends ;)');
-		}		
+		}
 
 		/** @var $element tx_languagevisibility_element */
 		$element = $this->_getContent('tt_content', 15 /* element with L1 overlay */);
@@ -171,7 +163,7 @@ class tx_visibilityServiceDB_testcase extends tx_languagevisibility_databaseTtCo
 		$language = $this->_getLang(5);
 		$this->assertEquals('t', $visibility->getVisibilitySetting($language, $element));
 		$this->assertTrue($visibility->isVisible($language, $element), 'This one should be visible because there\'s a valid overlay in the workspace (5)');
-        $this->assertTrue($element->hasTranslation(5));
+		$this->assertTrue($element->hasTranslation(5));
 		$this->_fakeWorkspaceContext(0);
 	}
 
@@ -181,18 +173,18 @@ class tx_visibilityServiceDB_testcase extends tx_languagevisibility_databaseTtCo
 
 		$visibility = t3lib_div::makeInstance('tx_languagevisibility_visibilityService');
 
-		$this->assertEquals(true, $visibility->isVisible($language, $element), "page should be visible");
-		$this->assertEquals(1, $visibility->getOverlayLanguageIdForLanguageAndElement($language, $element), "Page-Overlay should be defined for lang 1 ...");
+		$this->assertEquals(TRUE, $visibility->isVisible($language, $element), 'page should be visible');
+		$this->assertEquals(1, $visibility->getOverlayLanguageIdForLanguageAndElement($language, $element), 'Page-Overlay should be defined for lang 1 ...');
 	}
 
-	function test_visibility_complexOverlay() {
+	public function test_visibility_complexOverlay() {
 		$language = $this->_getLang(3);
 		$visibility = t3lib_div::makeInstance('tx_languagevisibility_visibilityService');
 
 		$fixtures = array('tt_content' => array('uid' => 2, 'result' => 0 ), 'pages' => array('uid' => 2, 'result' => 1 ) );
 		foreach ( $fixtures as $table => $tableFixtures ) {
 			$element = $this->_getContent($table, $tableFixtures['uid']);
-			$this->assertEquals($tableFixtures['result'], $visibility->getOverlayLanguageIdForLanguageAndElement($language, $element), sprintf("Element Overlay used wrong fallback - language 2  table %s:%d- should be %d ", $table, $tableFixtures['uid'], $tableFixtures['result']));
+			$this->assertEquals($tableFixtures['result'], $visibility->getOverlayLanguageIdForLanguageAndElement($language, $element), sprintf('Element Overlay used wrong fallback - language 2  table %s:%d- should be %d ', $table, $tableFixtures['uid'], $tableFixtures['result']));
 		}
 	}
 
@@ -203,9 +195,8 @@ class tx_visibilityServiceDB_testcase extends tx_languagevisibility_databaseTtCo
 	 * @param void
 	 * @return void
 	 * @see tx_languagevisibility_visibilityService
-	 * @author Timo Schmidt
 	 */
-	function test_visibility_ttcontentOverlayForceToNoAffectsVisibility() {
+	public function test_visibility_ttcontentOverlayForceToNoAffectsVisibility() {
 		$language = $this->_getLang(1);
 
 		/**
@@ -235,7 +226,7 @@ class tx_visibilityServiceDB_testcase extends tx_languagevisibility_databaseTtCo
 	 * @see tx_languagevisibility_visibilityService
 	 * @return
 	 */
-	function test_visibility_pagesOverlayForceToNoAffectsVisibility() {
+	public function test_visibility_pagesOverlayForceToNoAffectsVisibility() {
 		$language = $this->_getLang(1);
 		$element = $this->_getContent('pages', 4);
 
@@ -250,9 +241,9 @@ class tx_visibilityServiceDB_testcase extends tx_languagevisibility_databaseTtCo
 	 * affects the original element in the workspace.
 	 *
 	 */
-	function test_visibility_ttcontentOverlayForceToNoAffectsVisibilityAlsoInWorkspaces() {
+	public function test_visibility_ttcontentOverlayForceToNoAffectsVisibilityAlsoInWorkspaces() {
 
-		if (version_compare(TYPO3_version, '4.3', '>') && ! t3lib_extMgm::isLoaded('version')) {
+		if (!t3lib_extMgm::isLoaded('version')) {
 			$this->markTestSkipped('Not relevant if "version" is not installed');
 		}
 
@@ -276,7 +267,7 @@ class tx_visibilityServiceDB_testcase extends tx_languagevisibility_databaseTtCo
 	 * when it is set to "force to no" a "force to yes" setting should not affect the orginal record.
 	 *
 	 */
-	function test_visibility_ttcontentOverlayForceToYesNotAffectsVisibility() {
+	public function test_visibility_ttcontentOverlayForceToYesNotAffectsVisibility() {
 		$language = $this->_getLang(1);
 		$element = $this->_getContent('tt_content', 10);
 
@@ -287,7 +278,7 @@ class tx_visibilityServiceDB_testcase extends tx_languagevisibility_databaseTtCo
 		$this->assertFalse($visibilityResult, 'visibility setting in overlay makes orginal element visible');
 	}
 
-	function test_visibility_ttcontentOverlayCorruptedNotAffectsVisibilits() {
+	public function test_visibility_ttcontentOverlayCorruptedNotAffectsVisibilits() {
 		$language = $this->_getLang(1);
 		$element = $this->_getContent('tt_content', 12);
 
@@ -299,10 +290,10 @@ class tx_visibilityServiceDB_testcase extends tx_languagevisibility_databaseTtCo
 
 	}
 
-	function test_visibility_ttcontentHasTranslationInAnyWorkspace() {
+	public function test_visibility_ttcontentHasTranslationInAnyWorkspace() {
 		$element = $this->_getContent('tt_content', 14);
 
-		$hasTranslation = true;
+		$hasTranslation = TRUE;
 		$hasTranslation = $element->hasAnyTranslationInAnyWorkspace();
 
 		$this->assertFalse($element->supportsInheritance());
@@ -317,7 +308,6 @@ class tx_visibilityServiceDB_testcase extends tx_languagevisibility_databaseTtCo
 	 * @test
 	 * @param void
 	 * @return void
-	 * @author Timo Schmidt
 	 */
 	public function canDetermineCorrectVisiblityForContentelementWithLanguageSetToAll() {
 		$this->importDataSet(dirname(__FILE__) . '/fixtures/canDetermineCorrectVisiblityForContentelementWithLanguageSetToAll.xml');
@@ -329,7 +319,7 @@ class tx_visibilityServiceDB_testcase extends tx_languagevisibility_databaseTtCo
 
 		$factory = new tx_languagevisibility_elementFactory($dao);
 
-		$visibilityResult = true;
+		$visibilityResult = TRUE;
 		/* @var $element tx_languagevisibility_pageelement  */
 		$element = $factory->getElementForTable('tt_content', 1111);
 		$visibilityResult = $service->isVisible($language, $element);
@@ -353,7 +343,6 @@ class tx_visibilityServiceDB_testcase extends tx_languagevisibility_databaseTtCo
 	 * @test
 	 * @param void
 	 * @return void
-	 * @author Timo Schmidt <timo.schmidt@aoemedia.de>
 	 */
 	public function inheritanceForceToNoAffectsSubpage() {
 		$this->importDataSet(dirname(__FILE__) . '/fixtures/inheritanceForceToNoAffectsSubpage.xml');
@@ -365,7 +354,7 @@ class tx_visibilityServiceDB_testcase extends tx_languagevisibility_databaseTtCo
 
 		$factory = new tx_languagevisibility_elementFactory($dao);
 
-		$visibilityResult = true;
+		$visibilityResult = TRUE;
 
 		/* @var $element tx_languagevisibility_pageelement */
 		$element = $factory->getElementForTable('pages', 6);
@@ -394,7 +383,6 @@ class tx_visibilityServiceDB_testcase extends tx_languagevisibility_databaseTtCo
 	 * @test
 	 * @param void
 	 * @return void
-	 * @author Timo Schmidt <timo.schmidt@aoemedia.de>
 	 */
 	public function inheritanceForceToNoInOverlayAffectsSubpage() {
 		$this->importDataSet(dirname(__FILE__) . '/fixtures/inheritanceForceToNoInOverlayAffectsSubpage.xml');
@@ -433,7 +421,6 @@ class tx_visibilityServiceDB_testcase extends tx_languagevisibility_databaseTtCo
 	 * @test
 	 * @param void
 	 * @return void
-	 * @author Timo Schmidt <timo.schmidt@aoemedia.de>
 	 */
 	public function inheritanceForceToNoDoesNotAffectSubpageWithoutAGivenInheritanceFlag() {
 		$this->importDataSet(dirname(__FILE__) . '/fixtures/inheritanceForceToNoDoesNotAffectSubpageWithoutAGivenInheritanceFlag.xml');
@@ -470,7 +457,6 @@ class tx_visibilityServiceDB_testcase extends tx_languagevisibility_databaseTtCo
 	 * @test
 	 * @param void
 	 * @return void
-	 * @author Timo Schmidt <timo.schmidt@aoemedia.de>
 	 */
 	public function inheritanceForceToNoInOtherLanguageDoesNotAffectRecordInCurrentLanguage() {
 		$this->importDataSet(dirname(__FILE__) . '/fixtures/inheritanceForceToNoInOtherLanguageDoesNotAffectRecordInCurrentLanguage.xml');
@@ -505,7 +491,6 @@ class tx_visibilityServiceDB_testcase extends tx_languagevisibility_databaseTtCo
 	 * @test
 	 * @param void
 	 * @return void
-	 * @author Timo Schmidt <timo.schmidt@aoemedia.de>
 	 */
 	public function yesInPageAnnulatesInheritedForceToNoOfRootlineRecord() {
 		$this->importDataSet(dirname(__FILE__) . '/fixtures/yesInPageAnnulatesInheritedForceToNoOfRootlineRecord.xml');
@@ -562,7 +547,6 @@ class tx_visibilityServiceDB_testcase extends tx_languagevisibility_databaseTtCo
 	 *
 	 * @param void
 	 * @return void
-	 * @author Timo Schmidt <schmidt@aoemedia.de>
 	 * @test
 	 */
 	public function canGetCorrectVisiblityDescriptionForElementWithInheritedVisibility() {

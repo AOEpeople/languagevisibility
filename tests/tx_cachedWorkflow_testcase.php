@@ -22,20 +22,26 @@
  * This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
-require_once(t3lib_extMgm::extPath("languagevisibility").'tests/tx_languagevisibility_databaseTestcase.php');
-
-class tx_cachedWorkflow_testcase extends tx_languagevisibility_databaseTestcase{
+class tx_cachedWorkflow_testcase extends tx_languagevisibility_databaseTestcase {
 	/**
 	 * Force the enable state of the cache and flush it.
 	 *
 	 * @param void
 	 * @return void
 	 */
-	public function setUp(){
+	public function setUp() {
 		parent::setUp();
 			//TODO get rid of the extConf push/pop stuff
 		$this->oldExtConfSetting = $GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf']['languagevisibility'];
-		$GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf']['languagevisibility'] = serialize(array('useCache'=>1));
+		$GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf']['languagevisibility'] = serialize(array('useCache' => 1));
+
+		$extOptList = array('static_info_tables', 'templavoila');
+		foreach ($extOptList as $ext) {
+			if (\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::isLoaded($ext)) {
+				$extList[] = $ext;
+			}
+		}
+		$this->importExtensions($extList);
 	}
 
 	/**
@@ -60,11 +66,10 @@ class tx_cachedWorkflow_testcase extends tx_languagevisibility_databaseTestcase{
 	 * Page a has the inherited force to no setting (no +) for the
 	 * language 3. Therefor the element should not be visible.
 	 *
-	 * @author Timo Schmidt <timo.schmidt@aoemedia.de>
 	 * @test
 	 */
-	public function canDetermineInheritedVisibility(){
-		$this->importDataSet(dirname(__FILE__).'/fixtures/canDetermineInheritedVisibility.xml');
+	public function canDetermineInheritedVisibility() {
+		$this->importDataSet(dirname(__FILE__) . '/fixtures/canDetermineInheritedVisibility.xml');
 
 		$fixtureLanguageRow = array('uid' => 1, 'tx_languagevisibility_defaultvisibility' => 't');
 		$fixtureLanguage 	= new tx_languagevisibility_language();
@@ -72,14 +77,14 @@ class tx_cachedWorkflow_testcase extends tx_languagevisibility_databaseTestcase{
 
 		$dao				= new tx_languagevisibility_daocommon();
 		$elementFactory 	= new tx_languagevisibility_elementFactory($dao);
-		$fixtureElement 	= $elementFactory->getElementForTable('pages',3);
+		$fixtureElement 	= $elementFactory->getElementForTable('pages', 3);
 
 		$visibilityService 	= new tx_languagevisibility_visibilityService();
 		$visibilityService->setUseInheritance();
-		$visibilityResult	= true;
-		$visibilityResult 	= $visibilityService->isVisible($fixtureLanguage,$fixtureElement);
+		$visibilityResult	= TRUE;
+		$visibilityResult 	= $visibilityService->isVisible($fixtureLanguage, $fixtureElement);
 
-		$this->assertFalse($visibilityResult,'The element should not be visibile because of the inherited force to no setting');
+		$this->assertFalse($visibilityResult, 'The element should not be visibile because of the inherited force to no setting');
 	}
 
 	/**
@@ -93,16 +98,15 @@ class tx_cachedWorkflow_testcase extends tx_languagevisibility_databaseTestcase{
 	 *
 	 * @param void
 	 * @return void
-	 * @author Timo Schmidt <timo.schmidt@aoemedia.de>
 	 * @test
 	 */
-	public function changeOfPidDoesNotInfluenceCachedResult(){
+	public function changeOfPidDoesNotInfluenceCachedResult() {
 
 		$cacheManager	= tx_languagevisibility_cacheManager::getInstance();
 		$isCacheEnabled	= $cacheManager->isCacheEnabled();
 		$this->assertTrue($isCacheEnabled, 'Cache needs to be enabled to perform this test');
 
-		$this->importDataSet(dirname(__FILE__).'/fixtures/canDetermineInheritedVisibility.xml');
+		$this->importDataSet(dirname(__FILE__) . '/fixtures/canDetermineInheritedVisibility.xml');
 
 		$fixtureLanguageRow = array('uid' => 1, 'tx_languagevisibility_defaultvisibility' => 't');
 		$fixtureLanguage 	= new tx_languagevisibility_language();
@@ -110,23 +114,22 @@ class tx_cachedWorkflow_testcase extends tx_languagevisibility_databaseTestcase{
 
 		$dao				= new tx_languagevisibility_daocommon();
 		$elementFactory 	= new tx_languagevisibility_elementFactory($dao);
-		$fixtureElement 	= $elementFactory->getElementForTable('pages',3);
+		$fixtureElement 	= $elementFactory->getElementForTable('pages', 3);
 
 		$visibilityService 	= new tx_languagevisibility_visibilityService();
-		$visibilityResult	= true;
-		$visibilityResult 	= $visibilityService->isVisible($fixtureLanguage,$fixtureElement);
-		$this->assertFalse($visibilityResult,'The element should not be visibile because of the inherited force to no setting');
+		$visibilityResult	= TRUE;
+		$visibilityResult 	= $visibilityService->isVisible($fixtureLanguage, $fixtureElement);
+		$this->assertFalse($visibilityResult, 'The element should not be visibile because of the inherited force to no setting');
 
 		$db = $GLOBALS['TYPO3_DB'];
-		/* @var  $db t3lib_db */
-		$db->exec_UPDATEquery('pages','pid=2',array('pid' => 0));
-		$visibilityResult 	= $visibilityService->isVisible($fixtureLanguage,$fixtureElement);
-		$this->assertFalse($visibilityResult,'The element should not still not be visible because the visibility result is cached');
+		/** @var t3lib_db $db */
+		$db->exec_UPDATEquery('pages', 'pid=2', array('pid' => 0));
+		$visibilityResult 	= $visibilityService->isVisible($fixtureLanguage, $fixtureElement);
+		$this->assertFalse($visibilityResult, 'The element should not still not be visible because the visibility result is cached');
 
 		tx_languagevisibility_cacheManager::getInstance()->flushAllCaches();
 
-		$visibilityResult 	= $visibilityService->isVisible($fixtureLanguage,$fixtureElement);
-		$this->assertTrue($visibilityResult,'Now the element should be visible because the cache was flushed');
+		$visibilityResult 	= $visibilityService->isVisible($fixtureLanguage, $fixtureElement);
+		$this->assertTrue($visibilityResult, 'Now the element should be visible because the cache was flushed');
 	}
 }
-?>

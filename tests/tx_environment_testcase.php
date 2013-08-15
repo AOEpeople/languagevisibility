@@ -22,27 +22,7 @@
  * This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
-require_once (t3lib_extMgm::extPath("languagevisibility") . 'tests/tx_languagevisibility_baseTestcase.php');
-
 class tx_environment_testcase extends tx_languagevisibility_baseTestcase {
-
-	/**
-	 * @return void
-	 */
-	public function setUp() {
-		parent::setUp();
-
-		//put new initialization here
-	}
-
-	/**
-	 * @return void
-	 */
-	public function tearDown() {
-		//put new restoring here
-
-		parent::tearDown();
-	}
 
 	/**
 	 * Just to have some confidence about the system settings ;)
@@ -52,7 +32,7 @@ class tx_environment_testcase extends tx_languagevisibility_baseTestcase {
 	 */
 	public function pageOverlayFieldExists() {
 		$list = t3lib_div::trimExplode(",", $GLOBALS['TYPO3_CONF_VARS']['FE']['pageOverlayFields']);
-		$this->assertEquals(true, in_array('tx_languagevisibility_inheritanceflag_overlayed', $list), 'tx_languagevisibility_inheritanceflag_overlayed missing in $GLOBALS[\'TYPO3_CONF_VARS\'][\'FE\'][\'pageOverlayFields\']');
+		$this->assertEquals(TRUE, in_array('tx_languagevisibility_inheritanceflag_overlayed', $list), 'tx_languagevisibility_inheritanceflag_overlayed missing in $GLOBALS[\'TYPO3_CONF_VARS\'][\'FE\'][\'pageOverlayFields\']');
 
 	}
 
@@ -64,8 +44,7 @@ class tx_environment_testcase extends tx_languagevisibility_baseTestcase {
 	 */
 	public function rootlineFieldExists() {
 		$list = t3lib_div::trimExplode(",", $GLOBALS['TYPO3_CONF_VARS']['FE']['addRootLineFields']);
-		$this->assertEquals(true, in_array('tx_languagevisibility_inheritanceflag_original', $list), 'tx_languagevisibility_inheritanceflag_original missing in ,$GLOBALS[\'TYPO3_CONF_VARS\'][\'FE\'][\'addRootLineFields\']');
-		$this->assertEquals(true, in_array('tx_languagevisibility_inheritanceflag_overlayed', $list), 'tx_languagevisibility_inheritanceflag_overlayed missing in ,$GLOBALS[\'TYPO3_CONF_VARS\'][\'FE\'][\'addRootLineFields\']');
+		$this->assertEquals(TRUE, in_array('tx_languagevisibility_inheritanceflag_original', $list), 'tx_languagevisibility_inheritanceflag_original missing in ,$GLOBALS[\'TYPO3_CONF_VARS\'][\'FE\'][\'addRootLineFields\']');
+		$this->assertEquals(TRUE, in_array('tx_languagevisibility_inheritanceflag_overlayed', $list), 'tx_languagevisibility_inheritanceflag_overlayed missing in ,$GLOBALS[\'TYPO3_CONF_VARS\'][\'FE\'][\'addRootLineFields\']');
 	}
 }
-?>

@@ -21,14 +21,13 @@
  *
  * This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
+
 /**
  *
  * @author	Daniel Poetzinger <poetzinger@aoemedia.de>
  * @coauthor Tolleiv Nietsch <nietsch@aoemedia.de>
  * @coauthor Timo Schmidt <schmidt@aoemedia.de>
  */
-require_once (t3lib_extMgm::extPath("languagevisibility") . 'classes/class.tx_languagevisibility_language.php');
-
 class tx_languagevisibility_cacheManager {
 
 	/**
@@ -39,7 +38,7 @@ class tx_languagevisibility_cacheManager {
 	/**
 	 * @var boolean
 	 */
-	protected static $enableCache = true;
+	protected static $enableCache = TRUE;
 
 	/**
 	 * @var tx_languagevisibility_cacheManager
@@ -93,11 +92,10 @@ class tx_languagevisibility_cacheManager {
 	/**
 	 * Use this method to force the cache usage.
 	 *
-	 * @param $boolean
 	 * @return void
 	 */
 	public static function enableCache() {
-		self::$enableCache = true;
+		self::$enableCache = TRUE;
 	}
 
 	/**
@@ -106,7 +104,7 @@ class tx_languagevisibility_cacheManager {
 	 * @return void
 	 */
 	public static function disableCache() {
-		self::$enableCache = false;
+		self::$enableCache = FALSE;
 	}
 
 	/**
@@ -166,4 +164,3 @@ class tx_languagevisibility_cacheManager {
 		trigger_error('Clone is not allowed for ' . get_class($this) . ' (Singleton)', E_USER_ERROR);
 	}
 }
-?>

@@ -1,8 +1,8 @@
-<phpunit colors="true" backupGlobals="false"
-	backupStaticAttributes="false" syntaxCheck="false" stopOnFailure="false"
+<phpunit colors="true" backupGlobals="FALSE"
+	backupStaticAttributes="FALSE" syntaxCheck="FALSE" stopOnFailure="FALSE"
 	convertErrorsToExceptions="true" convertNoticesToExceptions="true"
-	convertWarningsToExceptions="true">
-	
+	convertWarningsToExceptions="TRUE">
+
 	<testsuites>
 		<testsuite name="languagevisibility">
 			<directory suffix="testcase.php">.</directory>

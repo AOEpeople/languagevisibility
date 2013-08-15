@@ -29,21 +29,18 @@
 class tx_languagevisibility_hooks_tslib_fe {
 
 	/**
-	 *
+	 * @param $params
 	 * @param tslib_fe $ref
 	 * @return void
 	 */
 	public function settingLanguage_preProcess($params, &$ref) {
-
-		// Get values from TypoScript:
+			// Get values from TypoScript:
 		$lUid = intval($ref->config['config']['sys_language_uid']);
 
-		//works only with "ignore" setting
-		//need to check access for current page and show error:
+			// works only with "ignore" setting
+			// need to check access for current page and show error:
 		if (! tx_languagevisibility_feservices::checkVisiblityForElement($ref->page['uid'], 'pages', $lUid)) {
 			$GLOBALS['TSFE']->pageNotFoundAndExit('Page is not visible in requested language [' . $lUid . '/' . $ref->page['uid'] . ']');
 		}
 	}
 }
-
-?>

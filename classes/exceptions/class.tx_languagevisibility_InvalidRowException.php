@@ -21,6 +21,7 @@
  *
  * This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
+
 /**
  *
  * @author	Daniel Poetzinger <poetzinger@aoemedia.de>
@@ -30,4 +31,3 @@
 class tx_languagevisibility_InvalidRowException extends Exception {
 
 }
-?>

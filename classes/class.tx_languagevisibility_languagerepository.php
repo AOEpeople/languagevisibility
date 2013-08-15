@@ -21,14 +21,13 @@
  *
  * This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
+
 /**
  *
  * @author	Daniel Poetzinger <poetzinger@aoemedia.de>
  * @coauthor Tolleiv Nietsch <nietsch@aoemedia.de>
  * @coauthor Timo Schmidt <schmidt@aoemedia.de>
  */
-require_once (t3lib_extMgm::extPath("languagevisibility") . 'classes/class.tx_languagevisibility_cacheManager.php');
-
 class tx_languagevisibility_languagerepository {
 
 	protected static $instance;
@@ -87,7 +86,7 @@ class tx_languagevisibility_languagerepository {
 	 * @see tx_languagevisibility_language
 	 * @return array
 	 */
-	function getLanguages() {
+	public function getLanguages() {
 		$return = array();
 		$results = $this->getCachedOrUncacheResults();
 
@@ -106,7 +105,7 @@ class tx_languagevisibility_languagerepository {
 	 *
 	 * @return array
 	 */
-	function getLanguagesForBEUser() {
+	public function getLanguagesForBEUser() {
 		$return = array();
 		$results = $this->getCachedOrUncacheResults();
 
@@ -184,4 +183,3 @@ class tx_languagevisibility_languagerepository {
 		return self::$instance;
 	}
 }
-?>

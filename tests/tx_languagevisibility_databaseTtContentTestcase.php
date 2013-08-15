@@ -22,11 +22,7 @@
  * This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
-require_once (t3lib_extMgm::extPath("languagevisibility") . 'tests/tx_languagevisibility_databaseTestcase.php');
-
 abstract class tx_languagevisibility_databaseTtContentTestcase extends tx_languagevisibility_databaseTestcase {
-
-
 
 	protected function _loadWorkspaces() {
 		$this->importDataSet(dirname(__FILE__) . '/fixtures/dbDefaultWorkspaces.xml');
@@ -52,14 +48,14 @@ abstract class tx_languagevisibility_databaseTtContentTestcase extends tx_langua
 
 	protected function makeSureLanguagesImported() {
 		if (! $this->_langImport) {
-			$this->_langImport = true;
+			$this->_langImport = TRUE;
 			$this->importDataSet(dirname(__FILE__) . '/fixtures/dbDefaultLangs.xml');
 		}
 	}
 
 	protected function makeSureContentElementsImported() {
 		if (! $this->_ceImport) {
-			$this->_ceImport = true;
+			$this->_ceImport = TRUE;
 			$this->importDataSet(dirname(__FILE__) . '/fixtures/dbContentWithVisibilityTestdata.xml');
 		}
 	}
@@ -70,4 +66,3 @@ abstract class tx_languagevisibility_databaseTtContentTestcase extends tx_langua
 
 	}
 }
-?>

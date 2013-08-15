@@ -35,10 +35,11 @@ class tx_languagevisibility_hooks_t3lib_userauthgroup {
 	 *
 	 * @param array $params
 	 * @param object $ref
+	 * @return bool
 	 */
 	public function checkFullLanguagesAccess($params, $ref) {
 		if (isset($params['recordLocalizationAccess']) && $params['recordLocalizationAccess']) {
-			// so far the user had access to all existing overlay-languages
+				// so far the user had access to all existing overlay-languages
 			return tx_languagevisibility_beservices::hasUserAccessToEditRecord($params['table'], $params['row']['uid']);
 		} else {
 			return $params['recordLocalizationAccess'];

@@ -21,14 +21,13 @@
  *
  * This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
+
 /**
  *
  * @author	Daniel Poetzinger <poetzinger@aoemedia.de>
  * @coauthor Tolleiv Nietsch <nietsch@aoemedia.de>
  * @coauthor Timo Schmidt <schmidt@aoemedia.de>
  */
-require_once (t3lib_extMgm::extPath("languagevisibility") . 'classes/class.tx_languagevisibility_recordelement.php');
-
 class tx_languagevisibility_celement extends tx_languagevisibility_recordelement {
 
 	/**
@@ -38,7 +37,6 @@ class tx_languagevisibility_celement extends tx_languagevisibility_recordelement
 	 * @see classes/tx_languagevisibility_element#initialisations()
 	 */
 	protected function initialisations() {
-
 	}
 
 	/**
@@ -50,4 +48,3 @@ class tx_languagevisibility_celement extends tx_languagevisibility_recordelement
 		return $this->row['header'];
 	}
 }
-?>

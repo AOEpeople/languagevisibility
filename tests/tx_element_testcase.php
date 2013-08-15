@@ -28,17 +28,8 @@
  * WARNING: Never ever run a unit test like this on a live site!
  *
  *
- * @author	Daniel P�tzinger
+ * @author	Daniel Pötzinger
  */
-
-require_once (t3lib_extMgm::extPath("languagevisibility") . 'classes/class.tx_languagevisibility_elementFactory.php');
-require_once (t3lib_extMgm::extPath("languagevisibility") . 'classes/dao/class.tx_languagevisibility_daocommon_stub.php');
-
-// require_once (t3lib_extMgm::extPath('phpunit').'class.tx_phpunit_test.php');
-require_once (PATH_t3lib . 'class.t3lib_tcemain.php');
-
-require_once (t3lib_extMgm::extPath("languagevisibility") . 'tests/tx_languagevisibility_databaseTestcase.php');
-
 class tx_element_testcase extends tx_languagevisibility_databaseTestcase {
 
 	public function test_hasTranslation_pageelement() {
@@ -54,10 +45,10 @@ class tx_element_testcase extends tx_languagevisibility_databaseTestcase {
 		//get element from factory:
 		$element = $factory->getElementForTable($_table, $_uid);
 
-		$this->assertTrue($element->hasTranslation('98'), "element 9990 should have translation for language 98");
-		$this->assertTrue($element->hasTranslation('0'), "default translation should be there always");
-		$this->assertEquals('page', $element->getFieldToUseForDefaultVisibility(), "page element should return page as field to use for default visibility");
-		$this->assertFalse($element->hasTranslation('99'), "element 9990 should not be translated for 99!");
+		$this->assertTrue($element->hasTranslation('98'), 'element 9990 should have translation for language 98');
+		$this->assertTrue($element->hasTranslation('0'), 'default translation should be there always');
+		$this->assertEquals('page', $element->getFieldToUseForDefaultVisibility(), 'page element should return page as field to use for default visibility');
+		$this->assertFalse($element->hasTranslation('99'), 'element 9990 should not be translated for 99!');
 	}
 
 	public function test_hasTranslation_celement() {
@@ -74,11 +65,11 @@ class tx_element_testcase extends tx_languagevisibility_databaseTestcase {
 		$element = $factory->getElementForTable($_table, $_uid);
 
 		//test element 210
-		$this->assertTrue($element->hasTranslation('98'), "record should have translation");
-		$this->assertTrue($element->hasTranslation('0'), "default transla should be there always");
+		$this->assertTrue($element->hasTranslation('98'), 'record should have translation');
+		$this->assertTrue($element->hasTranslation('0'), 'default transla should be there always');
 
 		$element = $factory->getElementForTable($_table, '4922');
-		$this->assertFalse($element->hasTranslation('99'), "element 4922 should not be translated!");
+		$this->assertFalse($element->hasTranslation('99'), 'element 4922 should not be translated!');
 	}
 
 	public function test_hasTranslation_normalfcelement() {
@@ -86,7 +77,7 @@ class tx_element_testcase extends tx_languagevisibility_databaseTestcase {
 		if (is_object($GLOBALS['TSFE'])) {
 			$this->markTestSkipped('Please turn off the fake frontend (phpunit extension configuration) - this test won\'t work with "fake" frontends ;)');
 		}
-		
+
 		//this time data in DB is tested!
 		$this->_create_fixture_fcecontentrecord();
 		$this->_create_fixture_fcedatastructures();
@@ -101,13 +92,10 @@ class tx_element_testcase extends tx_languagevisibility_databaseTestcase {
 		//get element from factory:
 		$element = $factory->getElementForTable($_table, $_uid);
 
-		$this->assertEquals(true, ($element instanceof tx_languagevisibility_fceelement), "not object of type tx_languagevisibility_fcelement returned!");
-
-		$this->assertEquals(true, $element->hasTranslation('98'), "record should have translation");
-
-		$this->assertEquals(true, $element->hasTranslation('0'), "default transla should be there always");
-
-		$this->assertEquals(false, $element->hasTranslation('99'), "element should not be translated!");
+		$this->assertEquals(TRUE, ($element instanceof tx_languagevisibility_fceelement), 'not object of type tx_languagevisibility_fcelement returned!');
+		$this->assertEquals(TRUE, $element->hasTranslation('98'), 'record should have translation');
+		$this->assertEquals(TRUE, $element->hasTranslation('0'), 'default transla should be there always');
+		$this->assertEquals(FALSE, $element->hasTranslation('99'), 'element should not be translated!');
 
 	}
 
@@ -116,7 +104,8 @@ class tx_element_testcase extends tx_languagevisibility_databaseTestcase {
 		if (is_object($GLOBALS['TSFE'])) {
 			$this->markTestSkipped('Please turn off the fake frontend (phpunit extension configuration) - this test won\'t work with "fake" frontends ;)');
 		}
-		//this time data in DB is tested!
+
+		// this time data in DB is tested!
 		$this->_create_fixture_fcecontentrecordoverlay();
 		$this->_create_fixture_fcedatastructures();
 		$this->_create_fixture_languagerecords();
@@ -129,11 +118,11 @@ class tx_element_testcase extends tx_languagevisibility_databaseTestcase {
 		//get element from factory:
 		$element = $factory->getElementForTable($_table, $_uid);
 
-		$this->assertTrue($element instanceof tx_languagevisibility_fceoverlayelement, "not object of type tx_languagevisibility_fceoverlayelement returned!");
-		$this->assertTrue($element->hasTranslation('98'), "record should have translation");
-		$this->assertTrue($element->hasTranslation('0'), "default transla should be there always");
+		$this->assertTrue($element instanceof tx_languagevisibility_fceoverlayelement, 'not object of type tx_languagevisibility_fceoverlayelement returned!');
+		$this->assertTrue($element->hasTranslation('98'), 'record should have translation');
+		$this->assertTrue($element->hasTranslation('0'), 'default transla should be there always');
 
-		$this->assertFalse($element->hasTranslation('99'), "element should not be translated!");
+		$this->assertFalse($element->hasTranslation('99'), 'element should not be translated!');
 	}
 
 	public function test_getLocalVisibilitySetting_celement() {
@@ -152,8 +141,8 @@ class tx_element_testcase extends tx_languagevisibility_databaseTestcase {
 		$element = $factory->getElementForTable($_table, $_uid);
 
 		//test
-		$this->assertEquals($element->getLocalVisibilitySetting('1'), 't', "t expected");
-		$this->assertEquals($element->getLocalVisibilitySetting('0'), 'yes', "yes expected");
+		$this->assertEquals($element->getLocalVisibilitySetting('1'), 't', 't expected');
+		$this->assertEquals($element->getLocalVisibilitySetting('0'), 'yes', 'yes expected');
 	}
 
 	/*****************************************************************************************************
@@ -245,16 +234,6 @@ class tx_element_testcase extends tx_languagevisibility_databaseTestcase {
 
 	function setUp() {
 		parent::setUp();
-		// order of extension-loading is important !!!!
-		$import = array('cms', 'static_info_tables', 'templavoila', 'languagevisibility' );
-		$optional = array('version', 'mwimagemap', 'aoe_xml2array' );
-		foreach ( $optional as $ext ) {
-			if (t3lib_extMgm::isLoaded($ext)) {
-				$import[] = $ext;
-			}
-		}
-		$this->importExtensions($import);
+		$this->importExtensions(array('static_info_tables', 'templavoila'));
 	}
-
 }
-?>

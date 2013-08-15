@@ -21,6 +21,7 @@
  *
  * This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
+
 /**
  * used to test the objects which needs simple database access:
  * just replace the real daocommon with this stub.
@@ -30,7 +31,6 @@
  * @coauthor Tolleiv Nietsch <nietsch@aoemedia.de>
  * @coauthor Timo Schmidt <schmidt@aoemedia.de>
  */
-
 class tx_languagevisibility_daocommon_stub {
 	var $row;
 
@@ -39,10 +39,6 @@ class tx_languagevisibility_daocommon_stub {
 	}
 
 	function getRecord($uid, $table) {
-
 		return $this->row[$table][$uid];
-
 	}
-
 }
-?>

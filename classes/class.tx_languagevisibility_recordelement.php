@@ -21,14 +21,13 @@
  *
  * This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
+
 /**
  *
  * @author	Daniel Poetzinger <poetzinger@aoemedia.de>
  * @coauthor Tolleiv Nietsch <nietsch@aoemedia.de>
  * @coauthor Timo Schmidt <schmidt@aoemedia.de>
  */
-require_once (t3lib_extMgm::extPath("languagevisibility") . 'classes/class.tx_languagevisibility_element.php');
-
 class tx_languagevisibility_recordelement extends tx_languagevisibility_element {
 
 	/**
@@ -60,19 +59,19 @@ class tx_languagevisibility_recordelement extends tx_languagevisibility_element 
 		}
 
 
-		if (isset($ctrl['versioningWS'])  && $ctrl['versioningWS'] > 0) {
+		if (isset($ctrl['versioningWS']) && $ctrl['versioningWS'] > 0) {
 			$workspaces = '0,' . $GLOBALS['BE_USER']->workspace;
 			$workspaceCondition = 't3ver_wsid IN (' . rtrim($workspaces, ',') . ') AND ';
 		} else {
 			$workspaceCondition = '';
- 		}
+		}
 
 			// Select overlay record (Live workspace, initial placeholders included):
 		$res = $GLOBALS['TYPO3_DB']->exec_SELECTquery(
 			'*',
 			$this->table,
-			//from the current pid and only records from the live workspace or initial placeholder
-			'pid='.intval($this->getPid()). ' AND ' .
+				// from the current pid and only records from the live workspace or initial placeholder
+			'pid=' . intval($this->getPid()) . ' AND ' .
 				$workspaceCondition .
 				$ctrl['languageField'] . '=' . intval($languageId) .
 					// With L=0 transOrigPointerField is not set, so uid should be used instead (see #31607)
@@ -99,20 +98,19 @@ class tx_languagevisibility_recordelement extends tx_languagevisibility_element 
 	 *
 	 * @return boolean
 	 */
-	function hasOverLayRecordForAnyLanguageInAnyWorkspace() {
-		global $TCA;
+	public function hasOverLayRecordForAnyLanguageInAnyWorkspace() {
 		$table = $this->table;
 
 		if ($this->isOrigElement()) {
 			$fields = 'count(*) as ANZ';
 
-			$where = 'deleted = 0 AND ' . $TCA[$table]['ctrl']['transOrigPointerField'] . '=' . $this->getUid();
+			$where = 'deleted = 0 AND ' . $GLOBALS['TCA'][$table]['ctrl']['transOrigPointerField'] . '=' . $this->getUid();
 			$res = $GLOBALS['TYPO3_DB']->exec_SELECTgetRows($fields, $table, $where);
 
 			return ($res[0]['ANZ'] > 0);
 		} else {
-			//if this is a translation is clear that an overlay must exist
-			return true;
+				// if this is a translation is clear that an overlay must exist
+			return TRUE;
 		}
 	}
 
@@ -122,8 +120,7 @@ class tx_languagevisibility_recordelement extends tx_languagevisibility_element 
 	 * (non-PHPdoc)
 	 * @see classes/tx_languagevisibility_element#getFallbackOrder($language)
 	 */
-	function getFallbackOrder(tx_languagevisibility_language $language) {
+	public function getFallbackOrder(tx_languagevisibility_language $language) {
 		return $language->getFallbackOrderElement($this);
 	}
 }
-?>

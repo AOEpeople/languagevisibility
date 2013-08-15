@@ -21,6 +21,7 @@
  *
  * This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
+
 /**
  * Abstract basis class for all elements (elements are any translateable records in the system)
  *
@@ -28,12 +29,6 @@
  * @coauthor Tolleiv Nietsch <nietsch@aoemedia.de>
  * @coauthor Timo Schmidt <schmidt@aoemedia.de>
  */
-require_once (t3lib_extMgm::extPath("languagevisibility") . 'classes/class.tx_languagevisibility_languagerepository.php');
-
-require_once (t3lib_extMgm::extPath('languagevisibility') . 'classes/class.tx_languagevisibility_cacheManager.php');
-
-require_once (t3lib_extMgm::extPath("languagevisibility") . 'classes/exceptions/class.tx_languagevisibility_InvalidRowException.php');
-
 abstract class tx_languagevisibility_element {
 
 	/**
@@ -55,11 +50,10 @@ abstract class tx_languagevisibility_element {
 	 * @var array
 	 */
 	private $overlayVisibilitySetting;
-         
 
 	/**
-	 *
 	 * @param $row
+	 * @throws tx_languagevisibility_InvalidRowException
 	 * @return void
 	 */
 	public function __construct($row) {
@@ -106,27 +100,23 @@ abstract class tx_languagevisibility_element {
 	 */
 	protected function isRowOriginal($row) {
 		if (!isset($row['l18n_parent']) && !isset($row['l10n_parent'])) {
-			   return true;
+			   return TRUE;
 	   }
 	   if (isset($row['l18n_parent']) && $row['l18n_parent'] == 0) {
-			   return true;
+			   return TRUE;
 	   }
 	   if (isset($row['l10n_parent']) && $row['l10n_parent'] == 0) {
-				return true;
+				return TRUE;
 		}
-	   return false;
+	   return FALSE;
 	}
 
 	/**
 	 * possibility to add inits in subclasses
 	 **/
 	protected function initialisations() {
-
 	}
 
-	#############
-	# GET METHODS
-	#############
 	/**
 	 * Returns the Uid of the Element
 	 *
@@ -208,8 +198,9 @@ abstract class tx_languagevisibility_element {
 	 * the default language record and the overlay record and returns the visibility. The visibility in the overlayrecord
 	 * can overwrite the visibility of its own language.
 	 *
+	 * @param $languageid
 	 * @return string
-	 **/
+	 */
 	public function getLocalVisibilitySetting($languageid) {
 		$overlayVisibility = $this->getVisibilitySettingStoredInOverlayRecord($languageid);
 		$localVisibility = $this->getVisibilitySettingStoredInDefaultRecord($languageid);
@@ -229,12 +220,11 @@ abstract class tx_languagevisibility_element {
 	/**
 	 * Returns the global visibility setting for the element (saved in the overlay)
 	 *
+	 * @param $languageid
 	 * @return string
 	 */
 	public function getVisibilitySettingStoredInOverlayRecord($languageid) {
-		//if global visibility has not been determined, determine and cache it
-
-
+			//if global visibility has not been determined, determine and cache it
 		if (is_array($this->overlayVisibilitySetting)) {
 			if (! isset($this->overlayVisibilitySetting[$languageid])) {
 				$overlay = $this->getOverLayRecordForCertainLanguage($languageid);
@@ -280,26 +270,13 @@ abstract class tx_languagevisibility_element {
 	}
 
 	/**
-	 * Returns all VisibilitySetting for this element.
-	 *
-	 * @todo we need to decide if local and global settings need to be merged
-	 * @return array
-	 */
-	#function getAllVisibilitySettings() {
-	#	return $this->allVisibilitySetting;
-	#}
-
-
-	/**
 	 * receive relevant fallbackOrder
 	 */
 	function getFallbackOrder(tx_languagevisibility_language $language) {
 		return $language->getFallbackOrder($this);
 	}
 
-	################
-	# STATE METHODS
-	################
+
 	/**
 	 * Check if the element is set to the default language
 	 *
@@ -316,9 +293,9 @@ abstract class tx_languagevisibility_element {
 	 */
 	protected function isOrigElement() {
 		if ($this->getOrigElementUid() > 0 ) {
-			   return false;
+			   return FALSE;
 	   }
-	   return true;
+	   return TRUE;
 	}
 
 	/**
@@ -328,9 +305,9 @@ abstract class tx_languagevisibility_element {
 	 */
 	function isLanguageSetToAll() {
 		if ($this->row['sys_language_uid'] == '-1') {
-			return true;
+			return TRUE;
 		} else {
-			return false;
+			return FALSE;
 		}
 	}
 
@@ -359,8 +336,9 @@ abstract class tx_languagevisibility_element {
 
 	/**
 	 * Compare element-language and foreign language.
+	 * @ todo make this method work for pages
 	 *
-	 * @todo make this method work for pages
+	 * @param tx_languagevisibility_language $language
 	 * @return boolean
 	 */
 	public function languageEquals(tx_languagevisibility_language $language) {
@@ -370,8 +348,9 @@ abstract class tx_languagevisibility_element {
 	/**
 	 * Checks if this element has a translation, therefor several DB accesses are required
 	 *
+	 * @param $languageid
 	 * @return boolean
-	 **/
+	 */
 	public function hasTranslation($languageid) {
 
 		$result = FALSE;
@@ -393,9 +372,9 @@ abstract class tx_languagevisibility_element {
 	 */
 	public function hasAnyTranslationInAnyWorkspace() {
 		if ($this->hasOverLayRecordForAnyLanguageInAnyWorkspace()) {
-			return true;
+			return TRUE;
 		} else {
-			return false;
+			return FALSE;
 		}
 	}
 
@@ -406,7 +385,7 @@ abstract class tx_languagevisibility_element {
 	 * @param int $langid
 	 */
 	protected function _hasOverlayRecordForLanguage($langid) {
-		$row = $this->getOverLayRecordForCertainLanguage($langid, true);
+		$row = $this->getOverLayRecordForCertainLanguage($langid, TRUE);
 		return $row['uid'] != '';
 	}
 
@@ -436,7 +415,7 @@ abstract class tx_languagevisibility_element {
 	 * @return boolean
 	 */
 	public function supportsInheritance() {
-		return false;
+		return FALSE;
 	}
 
 	################
@@ -458,7 +437,7 @@ abstract class tx_languagevisibility_element {
 	 * @param $onlyUid
 	 * @return array
 	 */
-	public function getOverLayRecordForCertainLanguage($languageId, $onlyUid = false) {
+	public function getOverLayRecordForCertainLanguage($languageId, $onlyUid = FALSE) {
 		//get caching hints
 		$table = $this->getTable();
 		$uid = $this->getUid();
@@ -515,8 +494,8 @@ abstract class tx_languagevisibility_element {
 	 * certain language. The result is cached be the method getOverLayRecordForCertainLanguage.
 	 *
 	 * @param int $languageId
-	 * @param int $onlyUid
+	 * @return
+	 * @internal param int $onlyUid
 	 */
 	abstract protected function getOverLayRecordForCertainLanguageImplementation($languageId);
 }
-?>

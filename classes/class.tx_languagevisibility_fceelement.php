@@ -21,16 +21,13 @@
  *
  * This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
+
 /**
  *
  * @author	Daniel Poetzinger <poetzinger@aoemedia.de>
  * @coauthor Tolleiv Nietsch <nietsch@aoemedia.de>
  * @coauthor Timo Schmidt <schmidt@aoemedia.de>
  */
-require_once (t3lib_extMgm::extPath("languagevisibility") . 'classes/class.tx_languagevisibility_element.php');
-
-require_once (PATH_t3lib . 'class.t3lib_flexformtools.php');
-
 class tx_languagevisibility_fceelement extends tx_languagevisibility_recordelement {
 
 	private $langIsoCodeForFlexFormCallback = '';
@@ -39,7 +36,7 @@ class tx_languagevisibility_fceelement extends tx_languagevisibility_recordeleme
 	private $langDatabaseOverlay;
 	private $disabledIsVisible;
 
-	//flags which are set during processings
+		// flags which are set during processings
 	private $_callBackFoundOverlay = FALSE;
 
 	public function __construct($row, $DS) {
@@ -79,13 +76,13 @@ class tx_languagevisibility_fceelement extends tx_languagevisibility_recordeleme
 		$this->langIsoCodeForFlexFormCallback = strtoupper($language->getIsoCode());
 		$this->_callBackFoundOverlay = FALSE;
 
-		// Get data structure:
+			// Get data structure:
 		if ($this->langDisabled == 1 && !$this->langDatabaseOverlay) {
-			//the FCE has langDisabled: this means there is no overlay
+				// the FCE has langDisabled: this means there is no overlay
 			if ($this->disabledIsVisible == 1) {
-				return true;
+				return TRUE;
 			} else {
-				return false;
+				return FALSE;
 			}
 		}
 
@@ -94,9 +91,7 @@ class tx_languagevisibility_fceelement extends tx_languagevisibility_recordeleme
 		}
 
 		if ($this->langChildren == 1) {
-			//the FCE has real overlay record
-
-
+				// the FCE has real overlay record
 			$flexObj = t3lib_div::makeInstance('t3lib_flexformtools');
 			if ($this->row['tx_templavoila_flex']) {
 				$return = $flexObj->traverseFlexFormXMLData('tt_content', 'tx_templavoila_flex', $this->row, $this, '_hasOverlayRecordForLanguage_Inheritance_flexFormCallBack');
@@ -105,19 +100,18 @@ class tx_languagevisibility_fceelement extends tx_languagevisibility_recordeleme
 				}
 				return $this->_callBackFoundOverlay;
 			} else {
-				//in case no xml yet (new created?)
-				return false;
+					// in case no xml yet (new created?)
+				return FALSE;
 			}
 		} else {
-			//the FCE has no real overlay record
+				//	the FCE has no real overlay record
 			$flexObj = t3lib_div::makeInstance('t3lib_flexformtools');
 			$flexObj->traverseFlexFormXMLData('tt_content', 'tx_templavoila_flex', $this->row, $this, '_hasOverlayRecordForLanguage_Seperate_flexFormCallBack');
 			return $this->_callBackFoundOverlay;
 		}
 	}
 
-	function getOverLayRecordForCertainLanguageImplementation($languageId, $onlyUid = FALSE) {
-
+	public function getOverLayRecordForCertainLanguageImplementation($languageId, $onlyUid = FALSE) {
 		$useDefaultLang = $this->langDisabled == 1 && !$this->langDatabaseOverlay;
 		return parent::getOverLayRecordForCertainLanguageImplementation($useDefaultLang ? 0 : $languageId, $onlyUid);
 	}
@@ -133,14 +127,13 @@ class tx_languagevisibility_fceelement extends tx_languagevisibility_recordeleme
 	 * @return	void
 	 */
 	public function _hasOverlayRecordForLanguage_Inheritance_flexFormCallBack($dsArr, $dataValue, $PA, $structurePath, &$pObj) {
-
 		if ($this->langIsoCodeForFlexFormCallback == '') {
-			return false;
+			return FALSE;
 		}
 
-		// Only take lead from default values (since this is "Inheritance" localization we parse for)
-		if (substr($structurePath, - 5) == '/vDEF') {
-			$baseStructPath = substr($structurePath, 0, - 3);
+			// Only take lead from default values (since this is "Inheritance" localization we parse for)
+		if (substr($structurePath, -5) == '/vDEF') {
+			$baseStructPath = substr($structurePath, 0, -3);
 			$structurePath = $baseStructPath . $this->langIsoCodeForFlexFormCallback;
 			$translValue = $pObj->getArrayValueByPath($structurePath, $pObj->traverseFlexFormXMLData_Data);
 			if ($this->_isFlexFieldFilled($dsArr['TCEforms']['config'], $translValue)) {
@@ -151,9 +144,9 @@ class tx_languagevisibility_fceelement extends tx_languagevisibility_recordeleme
 
 	protected function _isFlexFieldFilled($cfg, $translValue) {
 		if (($cfg['type'] == 'check' && $translValue != 0) || ($cfg['type'] != 'check' && $translValue != '')) {
-			return true;
+			return TRUE;
 		} else {
-			return false;
+			return FALSE;
 		}
 
 	}
@@ -168,11 +161,11 @@ class tx_languagevisibility_fceelement extends tx_languagevisibility_recordeleme
 	 * @param	object		Reference to parent object
 	 * @return	void
 	 */
-	function _hasOverlayRecordForLanguage_Seperate_flexFormCallBack($dsArr, $dataValue, $PA, $structurePath, &$pObj) {
+	public function _hasOverlayRecordForLanguage_Seperate_flexFormCallBack($dsArr, $dataValue, $PA, $structurePath, &$pObj) {
 		if ($this->langIsoCodeForFlexFormCallback == '') {
-			return false;
+			return FALSE;
 		}
-		//path like: data/sDEF/lDEF/field_links/el/1/field_link/el/field_link_text/vDEF
+			//path like: data/sDEF/lDEF/field_links/el/1/field_link/el/field_link_text/vDEF
 		if (strpos($structurePath, '/lDEF/')) {
 			$structurePath = str_replace('/lDEF/', '/l' . $this->langIsoCodeForFlexFormCallback . '/', $structurePath);
 			$translValue = $pObj->getArrayValueByPath($structurePath, $pObj->traverseFlexFormXMLData_Data);
@@ -183,10 +176,6 @@ class tx_languagevisibility_fceelement extends tx_languagevisibility_recordeleme
 		}
 	}
 
-	function hasOverLayRecordForAnyLanguageInAnyWorkspace() {
-
+	public function hasOverLayRecordForAnyLanguageInAnyWorkspace() {
 	}
-
 }
-
-?>

@@ -27,17 +27,8 @@
  *
  * WARNING: Never ever run a unit test like this on a live site!
  *
- *
- * @author	Daniel P�tzinger
+ * @author	Daniel Pötzinger
  */
-require_once (t3lib_extMgm::extPath("languagevisibility") . 'tests/tx_languagevisibility_baseTestcase.php');
-
-require_once (t3lib_extMgm::extPath("languagevisibility") . 'classes/class.tx_languagevisibility_language.php');
-require_once (t3lib_extMgm::extPath("languagevisibility") . 'classes/class.tx_languagevisibility_element.php');
-
-// require_once (t3lib_extMgm::extPath('phpunit').'class.tx_phpunit_test.php');
-require_once (PATH_t3lib . 'class.t3lib_tcemain.php');
-
 class tx_language_testcase extends tx_languagevisibility_baseTestcase {
 
 	/**
@@ -47,14 +38,6 @@ class tx_language_testcase extends tx_languagevisibility_baseTestcase {
 		parent::setUp();
 		unset($GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['languagevisibility']);
 	}
-
-	/**
-	 * @return void
-	 */
-	public function tearDown() {
-		parent::tearDown();
-	}
-
 
 	/**
 	 *
@@ -69,7 +52,7 @@ class tx_language_testcase extends tx_languagevisibility_baseTestcase {
 		$language->setData($fixture);
 
 		// Assert that the size of the Array fixture is 0.
-		$this->assertEquals(1, $language->getUid(), "wrong uid 1");
+		$this->assertEquals(1, $language->getUid(), 'wrong uid 1');
 	}
 
 	/**
@@ -79,7 +62,7 @@ class tx_language_testcase extends tx_languagevisibility_baseTestcase {
 	 */
 	public function getFallbackOrder() {
 
-		$el = $this->getMockForAbstractClass('tx_languagevisibility_element', array(), 'tx_languagevisibility_element_x', false);
+		$el = $this->getMockForAbstractClass('tx_languagevisibility_element', array(), 'tx_languagevisibility_element_x', FALSE);
 
 		// Create the Array fixture.
 		$fixture = array('uid' => 1, 'tx_languagevisibility_complexfallbacksetting' => '0', 'tx_languagevisibility_fallbackorder' => '0,1,2', 'tx_languagevisibility_fallbackorderel' => '0,1', 'tx_languagevisibility_fallbackorderttnewsel' => '0,2' );
@@ -137,6 +120,4 @@ class tx_language_testcase extends tx_languagevisibility_baseTestcase {
 		// Assert that the size of the Array fixture is 0.
 		$this->assertEquals('HE', $language->getIsoCode(), "wrong getIsoCode");
 	}
-
 }
-?>

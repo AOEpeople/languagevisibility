@@ -30,18 +30,16 @@
 class tx_languagevisibility_hooks_t3lib_tcemain {
 
 	/**
-	 *
-	 * @param string	 $table
-	 * @param integer	 $id
-	 * @param array		 $data
-	 * @param integer	 $res (but only 0 and 1 is relevant so it's boolean technically)
-	 * @param object	 $this
+	 * @param string $table
+	 * @param integer $id
+	 * @param array $data
+	 * @param integer $res (but only 0 and 1 is relevant so it's boolean technically)
+	 * @param $tcemain
+	 * @internal param object $this
 	 * @return integer
 	 */
 	public function checkRecordUpdateAccess($table, $id, $data, $res, $tcemain) {
-		/**
-		 * @var tx_languagevisibility_beservices $visibilityservice
-		 */
+		/** @var tx_languagevisibility_beservices $visibilityservice */
 		$visibilityservice = t3lib_div::makeInstance('tx_languagevisibility_beservices');
 		if ($table == 'pages' && ! $visibilityservice->hasUserAccessToPageRecord($id, 'edit')) {
 			$result = 0;
@@ -64,10 +62,11 @@ class tx_languagevisibility_hooks_t3lib_tcemain {
 	public function processDatamap_preProcessFieldArray(&$incomingFieldArray, $table, $id, &$reference) {
 		$data = $incomingFieldArray;
 
-		if (! is_array($data))
-			return; /* some strange DB situation */
+		if (! is_array($data)) {
+			return; /** some strange DB situation */
+		}
 
-		if(in_array($table, tx_languagevisibility_visibilityService::getSupportedTables())) {
+		if (in_array($table, tx_languagevisibility_visibilityService::getSupportedTables())) {
 			/**
 			 * NOTE: This code does not affect new records because the field 'tx_languagevisibility_visibility' is not set
 			 */
@@ -82,7 +81,7 @@ class tx_languagevisibility_hooks_t3lib_tcemain {
 
 				$incomingFieldArray['tx_languagevisibility_visibility'] = serialize($incomingFieldArray['tx_languagevisibility_visibility']);
 
-				//flush all caches
+					// flush all caches
 				tx_languagevisibility_cacheManager::getInstance()->flushAllCaches();
 			}
 		}
@@ -111,7 +110,6 @@ class tx_languagevisibility_hooks_t3lib_tcemain {
 					$row = t3lib_BEfunc::getWorkspaceVersionOfRecord($fieldArray['t3ver_wsid'], $table, $row['uid'], $fields = '*');
 				}
 
-				require_once (t3lib_extMgm::extPath("languagevisibility") . 'class.tx_languagevisibility_beservices.php');
 				$newdata = array('tx_languagevisibility_visibility' => serialize(tx_languagevisibility_beservices::getDefaultVisibilityArray()));
 				$where = "tx_languagevisibility_visibility = '' AND uid=" . $row['uid'];
 
@@ -123,5 +121,3 @@ class tx_languagevisibility_hooks_t3lib_tcemain {
 
 	}
 }
-
-?>

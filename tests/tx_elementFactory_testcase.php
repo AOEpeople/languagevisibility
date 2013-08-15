@@ -27,18 +27,8 @@
  *
  * WARNING: Never ever run a unit test like this on a live site!
  *
- *
  * @author	Daniel Pötzinger
  */
-require_once (t3lib_extMgm::extPath("languagevisibility") . 'tests/tx_languagevisibility_databaseTestcase.php');
-
-require_once (t3lib_extMgm::extPath("languagevisibility") . 'classes/class.tx_languagevisibility_elementFactory.php');
-require_once (t3lib_extMgm::extPath("languagevisibility") . 'classes/dao/class.tx_languagevisibility_daocommon.php');
-require_once (t3lib_extMgm::extPath("languagevisibility") . 'classes/dao/class.tx_languagevisibility_daocommon_stub.php');
-
-// require_once (t3lib_extMgm::extPath('phpunit').'class.tx_phpunit_test.php');
-require_once (PATH_t3lib . 'class.t3lib_tcemain.php');
-
 class tx_elementFactory_testcase extends tx_languagevisibility_databaseTestcase {
 
 	/**
@@ -90,7 +80,7 @@ class tx_elementFactory_testcase extends tx_languagevisibility_databaseTestcase 
 	 */
 	public function canCreateDraftWorkspaceElementFromLiveWorkspaceUidInWorkspaceContext() {
 
-		if (version_compare(TYPO3_version, '4.3', '>') && ! t3lib_extMgm::isLoaded('version')) {
+		if (!t3lib_extMgm::isLoaded('version')) {
 			$this->markTestSkipped('Not relevant if "version" is not installed');
 		}
 		if (is_object($GLOBALS['TSFE'])) {
@@ -179,13 +169,13 @@ class tx_elementFactory_testcase extends tx_languagevisibility_databaseTestcase 
 
 		$factory = new tx_languagevisibility_elementFactory($daostub);
 
-		$exceptionCatched = false;
+		$exceptionCatched = FALSE;
 
 		//try instanciation an catch expected exception
 		try {
 			$element = $factory->getElementForTable($_table, $_uid);
 		} catch ( Exception $e ) {
-			$exceptionCatched = true;
+			$exceptionCatched = TRUE;
 		}
 
 		$this->assertTrue($exceptionCatched, 'Error: Factory can create instance of overlay element');
@@ -213,4 +203,3 @@ class tx_elementFactory_testcase extends tx_languagevisibility_databaseTestcase 
 		$this->assertNull($element, 'Element should be null');
 	}
 }
-?>

@@ -21,17 +21,15 @@
  *
  * This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
+
 /**
- *
  * @author	Daniel Pötzinger
  */
 class tx_languagevisibility_beUser {
 	private $be_user;
 
 	public function __construct() {
-		global $BE_USER;
-
-		$this->be_user = $BE_USER;
+		$this->be_user = $GLOBALS['BE_USER'];
 	}
 
 	/**
@@ -40,17 +38,15 @@ class tx_languagevisibility_beUser {
 	 *
 	 * @return unknown
 	 */
-	function allowCutCopyMoveDelete() {
-		$res = false;
+	public function allowCutCopyMoveDelete() {
+		$res = FALSE;
 		if (is_array($this->be_user->userGroups)) {
 			foreach ( $this->be_user->userGroups as $group ) {
 				if ($group['tx_languagevisibility_allow_movecutdelete_foroverlays']) {
-
-					$res = true;
+					$res = TRUE;
 				}
 			}
 		}
-
 		return $res;
 	}
 
@@ -64,8 +60,6 @@ class tx_languagevisibility_beUser {
 	 * @return int userId of the backend user
 	 */
 	public function getUid() {
-		return $this->be_user->user[uid];
+		return $this->be_user->user['uid'];
 	}
-
 }
-?>

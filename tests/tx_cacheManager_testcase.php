@@ -22,9 +22,7 @@
  * This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
-require_once (t3lib_extMgm::extPath("languagevisibility") . 'tests/tx_languagevisibility_baseTestcase.php');
-
-class tx_cacheManager_testcase extends tx_languagevisibility_baseTestcase{
+class tx_cacheManager_testcase extends tx_languagevisibility_baseTestcase {
 
 	protected $oldExtConfSetting;
 
@@ -34,11 +32,11 @@ class tx_cacheManager_testcase extends tx_languagevisibility_baseTestcase{
 	 * @param void
 	 * @return void
 	 */
-	public function setUp(){
+	public function setUp() {
 		parent::setUp();
 			//TODO get rid of the extConf push/pop stuff
 		$this->oldExtConfSetting = $GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf']['languagevisibility'];
-		$GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf']['languagevisibility'] = serialize(array('useCache'=>1));
+		$GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf']['languagevisibility'] = serialize(array('useCache' => 1));
 
 		tx_languagevisibility_cacheManager::enableCache();
 		tx_languagevisibility_cacheManager::getInstance()->flushAllCaches();
@@ -60,13 +58,12 @@ class tx_cacheManager_testcase extends tx_languagevisibility_baseTestcase{
 	 * @test
 	 * @return void
 	 */
-	public function cacheManagerIsSingleton(){
+	public function cacheManagerIsSingleton() {
 		$one 	= tx_languagevisibility_cacheManager::getInstance();
-
 		$two	= tx_languagevisibility_cacheManager::getInstance();
 
-		$one->set('test','12345');
-		$this->assertEquals($two->get('test'),'12345');
+		$one->set('test', '12345');
+		$this->assertEquals($two->get('test'), '12345');
 	}
 
 	/**
@@ -75,15 +72,15 @@ class tx_cacheManager_testcase extends tx_languagevisibility_baseTestcase{
 	 * @test
 	 * @return void
 	 */
-	public function canFlushCache(){
+	public function canFlushCache() {
 		$cache 	= tx_languagevisibility_cacheManager::getInstance();
 		$cache->flushAllCaches();
 
-		$cache->set('test',array('one' => 'blabla'));
+		$cache->set('test', array('one' => 'blabla'));
 
 		$resultA = $cache->get('test');
 		$this->assertTrue(is_array($resultA));
-		$this->assertEquals($resultA['one'],'blabla');
+		$this->assertEquals($resultA['one'], 'blabla');
 
 		$cache->flushAllCaches();
 		$resultB = $cache->get('test');
@@ -97,7 +94,7 @@ class tx_cacheManager_testcase extends tx_languagevisibility_baseTestcase{
 	 * @test
 	 * @return void
 	 */
-	public function canCacheBeDisabled(){
+	public function canCacheBeDisabled() {
 		$cache = tx_languagevisibility_cacheManager::getInstance();
 
 		$cache->enableCache();
@@ -113,21 +110,20 @@ class tx_cacheManager_testcase extends tx_languagevisibility_baseTestcase{
 	 * @test
 	 * @return void
 	 */
-	public function disabledCacheReturnsNoData(){
+	public function disabledCacheReturnsNoData() {
 		$cache = tx_languagevisibility_cacheManager::getInstance();
 		$cache->enableCache();
 
 		$cache->flushAllCaches();
 
-		$cache->set('aaaa',12);
-		$this->assertEquals(12,$cache->get('aaaa'));
+		$cache->set('aaaa', 12);
+		$this->assertEquals(12, $cache->get('aaaa'));
 
 		$cache->disableCache();
 
-		$this->assertEquals(array(),$cache->get('aaaa'));
+		$this->assertEquals(array(), $cache->get('aaaa'));
 
 		$cache->enableCache();
-		$this->assertEquals(12,$cache->get('aaaa'));
+		$this->assertEquals(12, $cache->get('aaaa'));
 	}
 }
-?>
