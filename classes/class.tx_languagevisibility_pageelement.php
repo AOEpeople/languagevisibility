@@ -89,7 +89,7 @@ class tx_languagevisibility_pageelement extends tx_languagevisibility_element {
 				if (is_object($GLOBALS['TSFE']->sys_page)) {
 					$enableFields = $GLOBALS['TSFE']->sys_page->enableFields($table);
 				} else {
-					$enableFields = '';
+					$enableFields = t3lib_BEfunc::deleteClause($table);
 				}
 				$fieldArr[] = 'deleted';
 				$fieldArr[] = 'hidden';
