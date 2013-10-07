@@ -17,8 +17,8 @@ $EM_CONF[$_EXTKEY] = array(
 	'author' => 'Daniel Pötzinger, Tolleiv Nietsch, Timo Schmidt - AOE media GmbH',
 	'author_email' => 'dev@aoemedia.de',
 	'shy' => '',
-	'dependencies' => 'cms',
-	'conflicts' => 'danp_languagefallback_patch',
+	'dependencies' => '',
+	'conflicts' => '',
 	'priority' => '',
 	'module' => '',
 	'state' => 'stable',
@@ -29,20 +29,17 @@ $EM_CONF[$_EXTKEY] = array(
 	'clearCacheOnLoad' => 1,
 	'lockType' => '',
 	'author_company' => 'AOE media GmbH',
-	'version' => '0.8.8',
+	'version' => '0.9.dev',
 	'constraints' => array(
 		'depends' => array(
-			'cms' => '',
+			'php' => '5.3.0-0.0.0',
+			'typo3' => '4.5.0-0.0.0',
 		),
 		'conflicts' => array(
 			'danp_languagefallback_patch' => '',
 		),
 		'suggests' => array(
-			'ext_languagevisibility'
 		),
-	),
-	'_md5_values_when_last_written' => '',
-	'suggests' => array(
 	),
 );
 
