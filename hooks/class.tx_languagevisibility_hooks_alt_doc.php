@@ -31,20 +31,21 @@
 class tx_languagevisibility_hooks_alt_doc {
 
 	/**
-	 * @param $params
-	 * @param $ref
+	 * @param array $params
+	 * @param SC_alt_doc $ref
 	 * @return bool
 	 */
-	public function makeEditForm_accessCheck($params, &$ref) {
-		if ( $params['hasAccess']) {
-			return FALSE;
+	public function makeEditForm_accessCheck(array $params, SC_alt_doc &$ref) {
+		if ($params['hasAccess']) {
+			return TRUE;
 		}
-		$hasAccess = TRUE;
-			// if user wants to edit/create page record but has no access to default language!
-		if ($params['table'] == 'pages' && ! $GLOBALS['BE_USER']->checkLanguageAccess(0)) {
-			$visibilityservice = t3lib_div::makeInstance('tx_languagevisibility_beservices');
-			if (! $visibilityservice->hasUserAccessToPageRecord($params['uid'], $params['cmd'])) {
-				$hasAccess = FALSE;
+
+			// user wants to edit/create page record but has no access to default language
+		$hasAccess = FALSE;
+		if ($params['table'] === 'pages' && !$GLOBALS['BE_USER']->checkLanguageAccess(0)) {
+			$visibilityService = t3lib_div::makeInstance('tx_languagevisibility_beservices'); /** @var tx_languagevisibility_beservices $visibilityService */
+			if ($visibilityService->hasUserAccessToPageRecord((int) $params['uid'], $params['cmd'])) {
+				$hasAccess = TRUE;
 			}
 		}
 		return $hasAccess;
