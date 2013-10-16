@@ -1,0 +1,77 @@
+# .travis.yml
+
+# Customize email notification settings
+notifications:
+  email:
+    recipients:
+      - stefan.rotsch@aoemedia.de
+    on_success: always
+    on_failure: always
+
+# Build matrix configuration
+language: php
+php:
+  - 5.3
+  - 5.4
+
+env:
+  - DB=mysql TYPO3=master INTEGRATION=master
+#  - DB=mysql TYPO3=TYPO3_6-1 INTEGRATION=master
+#  - DB=mysql TYPO3=TYPO3_6-0 INTEGRATION=master
+
+before_script:
+# Set extension specific variables
+  - export EXT_KEY=languagevisibility
+  - export DEPENDENCIES=( version workspaces )
+
+# Disable SSL certificate validation (required for git.typo3.org)
+  - export GIT_SSL_NO_VERIFY=true
+
+# Check prerequisites
+  - if [[ ! "${DB}" == "mysql" ]]; then exit 1; fi
+
+# Move repository content to temporary directory
+  - mkdir -p tmp/${EXT_KEY}
+  - find . -maxdepth 1 \! -name tmp \! -name . -exec mv {} tmp/${EXT_KEY}/ \;
+
+# Set up basic TYPO3 environment
+  - git clone --branch ${INTEGRATION} --depth 1 https://github.com/FluidTYPO3/TYPO3-Travis-Integration.git typo3_travis_integration
+  - git clone --branch ${TYPO3} --depth 1 https://github.com/TYPO3/TYPO3.CMS.git typo3_src
+  - git clone --branch ${TYPO3} --depth 1 https://git.typo3.org/TYPO3v4/Distributions/Introduction.git introduction
+  - source typo3_travis_integration/install-helper.sh
+  - ln -s typo3_src/typo3 .
+  - ln -s typo3_travis_integration/typo3conf .
+  - mkdir fileadmin
+  - mkdir uploads
+  - mkdir typo3temp
+
+# Move repository content to TYPO3 extension directory
+  - if [[ ! -d typo3conf/ext ]]; then mkdir typo3conf/ext; fi
+  - mv tmp/${EXT_KEY} typo3conf/ext/${EXT_KEY}
+
+# Set up basic database structure
+  - mysql -e "DROP DATABASE IF EXISTS typo3_test;" -uroot
+  - mysql -e "create database typo3_test;" -uroot
+  - if [[ -f introduction/typo3conf/ext/introduction/Resources/Private/Subpackages/Introduction/Database/introduction.sql ]]; then mysql -uroot typo3_test < introduction/typo3conf/ext/introduction/Resources/Private/Subpackages/Introduction/Database/introduction.sql; fi
+  - if [[ -f typo3_travis_integration/dbimport/cache_tables.sql ]]; then mysql -uroot typo3_test < typo3_travis_integration/dbimport/cache_tables.sql; fi
+  - if [[ -f typo3_travis_integration/dbimport/cli_users.sql ]]; then mysql -uroot typo3_test < typo3_travis_integration/dbimport/cli_users.sql; fi
+  - git clone --branch master --depth 1 https://github.com/etobi/ext-coreapi.git typo3conf/ext/coreapi
+  - php $PWD/typo3/cli_dispatch.phpsh extbase extension:install --extensionKey=coreapi
+  - php $PWD/typo3/cli_dispatch.phpsh coreapi database:databasecompare 1,2,3,4,5,6,7,8
+
+# Install PHPUnit extension
+  - git clone --branch master --depth 1 https://git.typo3.org/TYPO3v4/Extensions/phpunit.git typo3conf/ext/phpunit
+  - php $PWD/typo3/cli_dispatch.phpsh extbase extension:install --extensionKey=phpunit
+
+# Install additional dependencies
+  - for DEPENDENCY in ${DEPENDENCIES[@]}; do php $PWD/typo3/cli_dispatch.phpsh extbase extension:install --extensionKey=${DEPENDENCY}; done
+
+# Install the extension to be tested
+  - php $PWD/typo3/cli_dispatch.phpsh extbase extension:install --extensionKey=${EXT_KEY}
+
+# Copy PHPUnit configuration to working directory (symlinking doesn't seem to work)
+  - if [[ -f phpunit.xml ]]; then rm -f phpunit.xml; fi
+  - if [[ -f typo3conf/ext/${EXT_KEY}/tests/phpunit.xml ]]; then cp typo3conf/ext/${EXT_KEY}/tests/phpunit.xml .; fi
+
+script:
+  - php $PWD/typo3/cli_dispatch.phpsh phpunit -c phpunit.xml
