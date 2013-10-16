@@ -39,6 +39,7 @@ before_script:
   - git clone --branch ${TYPO3} --depth 1 https://github.com/TYPO3/TYPO3.CMS.git typo3_src
   - git clone --branch ${TYPO3} --depth 1 https://git.typo3.org/TYPO3v4/Distributions/Introduction.git introduction
   - source typo3_travis_integration/install-helper.sh
+  - if [[ -d typo3_src/t3lib ]]; then ln -s typo3_src/t3lib .; fi
   - ln -s typo3_src/typo3 .
   - ln -s typo3_travis_integration/typo3conf .
   - mkdir fileadmin
