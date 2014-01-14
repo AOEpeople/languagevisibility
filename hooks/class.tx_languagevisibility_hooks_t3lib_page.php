@@ -62,7 +62,7 @@ class tx_languagevisibility_hooks_t3lib_page implements t3lib_pageSelect_getPage
 				// this isn't used because there  seems to be no reason why we should overlay an invisible page...
 				// $pageInput = $parent->getPageOverlay ( &$pageInput, $overlayLanguageForced );
 			$pageInput['_NOTVISIBLE'] = TRUE;
-			$lUid = BULL;
+			$lUid = NULL;
 		} else {
 			$lUid = $overlayLanguage;
 		}
