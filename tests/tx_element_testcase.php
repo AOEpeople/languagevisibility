@@ -52,24 +52,21 @@ class tx_element_testcase extends tx_languagevisibility_databaseTestcase {
 	}
 
 	public function test_hasTranslation_celement() {
-		//this time data in DB is tested!
+		$_table = 'tt_content';
+
+			// this time data in DB is tested!
 		$this->_create_fixture_ttcontentrecords();
 		$this->_create_fixture_languagerecords();
-		$_uid = 9990;
-		$_table = 'tt_content';
 
 		$dao = new tx_languagevisibility_daocommon();
 		$factory = new tx_languagevisibility_elementFactory($dao);
 
-		//get element from factory:
-		$element = $factory->getElementForTable($_table, $_uid);
+			// get element from factory:
+		$element = $factory->getElementForTable($_table, 9990);
 
-		//test element 210
 		$this->assertTrue($element->hasTranslation('98'), 'record should have translation');
-		$this->assertTrue($element->hasTranslation('0'), 'default transla should be there always');
-
-		$element = $factory->getElementForTable($_table, '4922');
-		$this->assertFalse($element->hasTranslation('99'), 'element 4922 should not be translated!');
+		$this->assertTrue($element->hasTranslation('0'), 'default translation should always be there');
+		$this->assertFalse($element->hasTranslation('99'), 'element 9992 should not be translated!');
 	}
 
 	public function test_hasTranslation_normalfcelement() {
@@ -160,7 +157,6 @@ class tx_element_testcase extends tx_languagevisibility_databaseTestcase {
 		$fields_values = array('uid' => 9991, 'pid' => 1, 'l18n_parent' => 9990, 'sys_language_uid' => 98, 'header' => 'test', 't3ver_oid' => '0', 't3ver_state' => '0', 'CType' => 'text', 'bodytext' => 'test_translated' );
 		$GLOBALS['TYPO3_DB']->exec_DELETEquery('tt_content', 'uid=9991');
 		$GLOBALS['TYPO3_DB']->exec_INSERTquery('tt_content', $fields_values);
-
 	}
 
 	function _create_fixture_fcecontentrecord() {

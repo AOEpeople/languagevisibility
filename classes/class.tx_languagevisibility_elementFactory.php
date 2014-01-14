@@ -53,6 +53,10 @@ class tx_languagevisibility_elementFactory {
 	 */
 	public function getElementForTable($table, $uid, $overlay_ids = TRUE) {
 
+		if (!tx_languagevisibility_feservices::isSupportedTable($table)) {
+			throw new UnexpectedValueException($table . ' not supported ', 1195039394);
+		}
+
 		if (!is_numeric($uid) || (intval($uid) === 0)) {
 				// no uid => maybe NEW element in BE
 			$row = array();
@@ -64,8 +68,7 @@ class tx_languagevisibility_elementFactory {
 			}
 		}
 
-		// @todo isSupported table
-		/** @var tx_languagevisibility_element $element*/
+		/** @var tx_languagevisibility_element $element */
 		switch ($table) {
 			case 'pages' :
 				$element = t3lib_div::makeInstance('tx_languagevisibility_pageelement', $row);

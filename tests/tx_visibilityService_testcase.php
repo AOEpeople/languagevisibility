@@ -31,6 +31,20 @@
  */
 class tx_visibilityService_testcase extends tx_phpunit_testcase {
 
+	/**
+	 * @test
+	 */
+	public function canGetSupportedTables() {
+		$expectedSupportedTables = array('pages', 'pages_language_overlay', 'tt_content', 'tt_news');
+		$supportedTables = tx_languagevisibility_visibilityService::getSupportedTables();
+
+		$this->assertTrue(is_array($supportedTables));
+
+		foreach ($expectedSupportedTables as $expectedSupportedTable) {
+			$this->assertContains($expectedSupportedTable, $supportedTables);
+		}
+	}
+
 	public function test_visibility() {
 
 		// Create the language object fixture.

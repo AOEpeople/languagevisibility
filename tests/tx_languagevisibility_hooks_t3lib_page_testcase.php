@@ -1,4 +1,28 @@
 <?php
+/***************************************************************
+ * Copyright notice
+ *
+ * (c) 2014 AOE media (dev@aoe.com)
+ * All rights reserved
+ *
+ * This script is part of the TYPO3 project. The TYPO3 project is
+ * free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * The GNU General Public License can be found at
+ * http://www.gnu.org/copyleft/gpl.html.
+ *
+ * This script is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * This copyright notice MUST APPEAR in all copies of the script!
+ ***************************************************************/
+
+require_once __DIR__ . '/tx_languagevisibility_databaseTtContentTestcase.php';
 
 class tx_languagevisibility_hooks_t3lib_page_ttcontent_testcase extends tx_languagevisibility_databaseTtContentTestcase {
 
@@ -28,9 +52,6 @@ class tx_languagevisibility_hooks_t3lib_page_ttcontent_testcase extends tx_langu
 	 * @param string $comment
 	 */
 	function visibility_overlay_ttcontent($uid, $language, $assertUid, $comment = '') {
-		if ($uid === 26 && $language === 3) {
-			xdebug_break();
-		}
 		// check environment ...
 		if (!t3lib_extMgm::isLoaded('version')) {
 			$this->markTestSkipped('Not relevant if "version" is not installed');

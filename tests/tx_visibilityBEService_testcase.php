@@ -43,19 +43,6 @@
 class tx_visibilityBEService_testcase extends tx_languagevisibility_databaseTestcase {
 
 	/**
-	 * Simple test to check that supported tables can be determined correctly
-	 *
-	 * @param void
-	 * @return void
-	 * @test
-	 */
-	public function canDetermineSupportedTables() {
-		$this->assertTrue(tx_languagevisibility_beservices::isSupportedTable('tt_news'));
-		$this->assertTrue(tx_languagevisibility_beservices::isSupportedTable('pages'));
-		$this->assertTrue(tx_languagevisibility_beservices::isSupportedTable('tt_content'));
-	}
-
-	/**
 	 * Simple test with a tt_content element and a translation.
 	 * The beService should return true, because an translation for
 	 * the element exists.

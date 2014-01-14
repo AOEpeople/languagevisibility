@@ -28,7 +28,7 @@
  *
  * Methods can be used uninstanciated
  */
-class tx_languagevisibility_feservices {
+class tx_languagevisibility_feservices extends tx_languagevisibility_abstractservices {
 
 	/**
 	 * @param $uid

@@ -82,7 +82,10 @@ class tx_languagevisibility_hooks_t3lib_page implements t3lib_pageSelect_getPage
 	 * @return void
 	 */
 	public function getRecordOverlay_preProcess($table, &$row, &$sys_language_content, $OLmode, t3lib_pageSelect $parent) {
-		if (! is_array($row) || ! isset($row['uid'])) {
+
+		if (!tx_languagevisibility_feservices::isSupportedTable($table)
+			|| (!is_array($row))
+			|| (!isset($row['uid']))) {
 			return;
 		}
 
@@ -128,7 +131,11 @@ class tx_languagevisibility_hooks_t3lib_page implements t3lib_pageSelect_getPage
 	 * @return void
 	 */
 	public function getRecordOverlay_postProcess($table, &$row, &$sys_language_content, $OLmode, t3lib_pageSelect $parent) {
-		if (! is_array($row) || ! isset($row['uid']) || $sys_language_content == 0) {
+
+		if (!tx_languagevisibility_feservices::isSupportedTable($table)
+			|| (!is_array($row))
+			|| (!isset($row['uid']))
+			|| ($sys_language_content == 0)) {
 			return;
 		}
 

@@ -22,7 +22,7 @@
  * This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
-class tx_languagevisibility_beservices {
+class tx_languagevisibility_beservices extends tx_languagevisibility_abstractservices {
 
 	protected static $cache_canBeUserCopyDelete = array();
 
@@ -180,21 +180,6 @@ class tx_languagevisibility_beservices {
 		}
 
 		return $result;
-	}
-
-	/**
-	 * Method to check if records of a given table support the languagevisibility feature
-	 *
-	 * @param string $table
-	 * @return boolean
-	 */
-	public static function isSupportedTable($table) {
-		$supported = tx_languagevisibility_visibilityService::getSupportedTables();
-		if (in_array($table, $supported)) {
-			return TRUE;
-		} else {
-			return FALSE;
-		}
 	}
 
 	/**
