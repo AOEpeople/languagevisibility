@@ -132,15 +132,15 @@ class tx_languagevisibility_hooks_t3lib_page implements t3lib_pageSelect_getPage
 	 */
 	public function getRecordOverlay_postProcess($table, &$row, &$sys_language_content, $OLmode, t3lib_pageSelect $parent) {
 
+		if (is_array($row) && $row['uid'] === 0 && $row['pid'] === 0) {
+			$row = FALSE;
+			return;
+		}
+
 		if (!tx_languagevisibility_feservices::isSupportedTable($table)
 			|| (!is_array($row))
 			|| (!isset($row['uid']))
 			|| ($sys_language_content == 0)) {
-			return;
-		}
-
-		if ($row['uid'] === 0 && $row['pid'] === 0) {
-			$row = FALSE;
 			return;
 		}
 

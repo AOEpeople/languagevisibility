@@ -76,7 +76,7 @@ class tx_languagevisibility_hooks_t3lib_page_ttcontent_testcase extends tx_langu
 			$this->assertEquals(
 				FALSE,
 				$overlayedRow,
-				sprintf('record with id %d is removed in language %d', $uid, $language)
+				sprintf('record with id %d is removed or not visible in language %d', $uid, $language)
 			);
 		} elseif (array_key_exists('_LOCALIZED_UID', $overlayedRow)) {
 			$this->assertSame(
@@ -101,6 +101,7 @@ class tx_languagevisibility_hooks_t3lib_page_ttcontent_testcase extends tx_langu
 			array(19, 1, '19',  '"forcedToYes" without translation'),
 			array(20, 1, '21',  '"forcedToYes" with translation'),
 			array(20, 2, '21',  '"forcedToYes" with translation in fallback'),
+			array(22, 0, NULL,  '"forcedToNo" without translation (default language)'),
 			array(22, 3, NULL,  '"forcedToNo" without translation'),
 			array(22, 1, NULL,  '"forcedToNo" with translation'),
 			array(22, 2, NULL,  '"forcedToNo" with translation in fallback'),
