@@ -48,6 +48,8 @@ class tx_languagevisibility_visibilityService {
 			$confArr = unserialize($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf']['languagevisibility']);
 			if (is_array($confArr) && $confArr['inheritanceEnabled']) {
 				self::setUseInheritance();
+			} else {
+				self::setUseInheritance(false);
 			}
 		}
 	}
