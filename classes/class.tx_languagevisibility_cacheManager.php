@@ -83,6 +83,8 @@ class tx_languagevisibility_cacheManager {
 			$confArr = unserialize($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf']['languagevisibility']);
 			if (is_array($confArr) && $confArr['useCache']) {
 				self::$useCache = ($confArr['useCache'] == 1);
+			} else {
+				self::$useCache = false;
 			}
 		}
 
