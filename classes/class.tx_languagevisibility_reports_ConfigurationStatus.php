@@ -22,7 +22,12 @@
 *  This copyright notice MUST APPEAR in all copies of the script!
 ***************************************************************/
 
-class tx_languagevisibility_reports_ConfigurationStatus implements tx_reports_StatusProvider {
+/**
+ * Class tx_languagevisibility_reports_ConfigurationStatus
+ *
+ * @package AOE\Languagevisibility\Reports
+ */
+class tx_languagevisibility_reports_ConfigurationStatus implements \TYPO3\CMS\Reports\StatusProviderInterface {
 
 	/**
 	 * Determines the Install Tool's status, mainly concerning its protection.
@@ -37,7 +42,6 @@ class tx_languagevisibility_reports_ConfigurationStatus implements tx_reports_St
 
 		return $statuses;
 	}
-
 
 	/**
 	 * Check all "root" sys_templates and try to find the value for config.sys_language_mode

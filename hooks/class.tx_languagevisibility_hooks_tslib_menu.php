@@ -23,23 +23,22 @@
  ***************************************************************/
 
 /**
+ * Class tx_languagevisibility_hooks_tslib_menu
  *
- * @author	 Tolleiv
- * @package	 TYPO3
- * @version $Id:$
+ * @package AOE\Languagevisibility\Hooks
  */
-class tx_languagevisibility_hooks_tslib_menu implements tslib_menu_filterMenuPagesHook {
+class tx_languagevisibility_hooks_tslib_menu implements \TYPO3\CMS\Frontend\ContentObject\Menu\AbstractMenuFilterPagesHookInterface {
 
 	/**
 	 * Checks if a page is OK to include in the final menu item array.
 	 *
-	 * @param	array		Array of menu items
-	 * @param	array		Array of page uids which are to be excluded
-	 * @param	boolean		If set, then the page is a spacer.
-	 * @param	tslib_menu	The menu object
-	 * @return	boolean		Returns TRUE if the page can be safely included.
+	 * @param array $data
+	 * @param array $banUidArray
+	 * @param $spacer
+	 * @param TYPO3\CMS\Frontend\ContentObject\Menu\AbstractMenuContentObject $obj
+	 * @return bool
 	 */
-	public function tslib_menu_filterMenuPagesHook(array &$data, array $banUidArray, $spacer, tslib_menu $obj) {
+	public function tslib_menu_filterMenuPagesHook(array &$data, array $banUidArray, $spacer, \TYPO3\CMS\Frontend\ContentObject\Menu\AbstractMenuContentObject $obj) {
 		if ($data['_NOTVISIBLE']) {
 			return FALSE;
 		} else {
@@ -50,13 +49,13 @@ class tx_languagevisibility_hooks_tslib_menu implements tslib_menu_filterMenuPag
 	/**
 	 * Checks if a page is OK to include in the final menu item array.
 	 *
-	 * @param	array		Array of menu items
-	 * @param	array		Array of page uids which are to be excluded
-	 * @param	boolean		If set, then the page is a spacer.
-	 * @param	tslib_menu	The menu object
-	 * @return	boolean		Returns TRUE if the page can be safely included.
+	 * @param array $data
+	 * @param array $banUidArray
+	 * @param bool $spacer
+	 * @param TYPO3\CMS\Frontend\ContentObject\Menu\AbstractMenuContentObject $obj
+	 * @return bool
 	 */
-	public function processFilter(array &$data, array $banUidArray, $spacer, tslib_menu $obj) {
+	public function processFilter(array &$data, array $banUidArray, $spacer, \TYPO3\CMS\Frontend\ContentObject\Menu\AbstractMenuContentObject $obj) {
 		return $this->tslib_menu_filterMenuPagesHook($data, $banUidArray, $spacer, $obj);
 	}
 }

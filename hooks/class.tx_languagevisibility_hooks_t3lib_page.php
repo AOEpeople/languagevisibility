@@ -23,29 +23,28 @@
  ***************************************************************/
 
 /**
+ * Class tx_languagevisibility_hooks_t3lib_page
  *
- * @author	 Tolleiv
- * @package	 TYPO3
- * @version $Id:$
+ * @package Aoe\Languagevisibility\Hooks
  */
-class tx_languagevisibility_hooks_t3lib_page implements t3lib_pageSelect_getPageOverlayHook, t3lib_pageSelect_getRecordOverlayHook {
+class tx_languagevisibility_hooks_t3lib_page implements \TYPO3\CMS\Frontend\Page\PageRepositoryGetPageOverlayHookInterface, \TYPO3\CMS\Frontend\Page\PageRepositoryGetRecordOverlayHookInterface {
 
 	/**
 	 * This function has various possible results:
-	 * 1)	$lUid unchanged -
+	 * 1)    $lUid unchanged -
 	 * there was nothing to do for langvis and the overlay is requested is fine
-	 * 2)	$lUid == null
+	 * 2)    $lUid == null
 	 * is relevant if we did the overlay ourselfs and the processing within getPageOverlay function is not relevant anymore
-	 * 3)	$lUid changed
+	 * 3)    $lUid changed
 	 * is relevant if we just changed the target-languge but require getPageOverlay to proceed with the overlay-chrunching
 	 * 4)   $lUid changed to 0 (which may be the case for forced fallbacks to default). Please check Core Setting hideIfNotTranslated in this case to be sure the page can be shown in this case
 	 *
 	 * @param mixed $pageInput
-	 * @param integer $lUid	Passed ad reference!
-	 * @param t3lib_pageSelect $parent
+	 * @param integer $lUid Passed ad reference!
+	 * @param \TYPO3\CMS\Frontend\Page\PageRepository $parent
 	 * @return void
 	 */
-	public function getPageOverlay_preProcess(&$pageInput, &$lUid, t3lib_pageSelect $parent) {
+	public function getPageOverlay_preProcess(&$pageInput, &$lUid, \TYPO3\CMS\Frontend\Page\PageRepository $parent) {
 		if (is_int($pageInput)) {
 			$page_id = $pageInput;
 		} elseif ( is_array($pageInput) && isset($pageInput['uid']) ) {
@@ -78,11 +77,10 @@ class tx_languagevisibility_hooks_t3lib_page implements t3lib_pageSelect_getPage
 	 * @param array $row
 	 * @param integer $sys_language_content
 	 * @param string $OLmode
-	 * @param t3lib_pageSelect $parent
+	 * @param \TYPO3\CMS\Frontend\Page\PageRepository $parent
 	 * @return void
 	 */
-	public function getRecordOverlay_preProcess($table, &$row, &$sys_language_content, $OLmode, t3lib_pageSelect $parent) {
-
+	public function getRecordOverlay_preProcess($table, &$row, &$sys_language_content, $OLmode, \TYPO3\CMS\Frontend\Page\PageRepository $parent) {
 		if (!tx_languagevisibility_feservices::isSupportedTable($table)
 			|| (!is_array($row))
 			|| (!isset($row['uid']))) {
@@ -97,7 +95,7 @@ class tx_languagevisibility_hooks_t3lib_page implements t3lib_pageSelect_getPage
 			$row['pid'] = 0;
 			return;
 		}
-		catch ( Exception $e ) {
+		catch (Exception $e) {
 			return;
 		}
 
@@ -123,15 +121,14 @@ class tx_languagevisibility_hooks_t3lib_page implements t3lib_pageSelect_getPage
 
 	/**
 	 *
-	 * @param unknown_type $table
-	 * @param unknown_type $row
-	 * @param unknown_type $sys_language_content
-	 * @param unknown_type $OLmode
-	 * @param t3lib_pageSelect $parent
+	 * @param string $table
+	 * @param array $row
+	 * @param integer $sys_language_content
+	 * @param string $OLmode
+	 * @param \TYPO3\CMS\Frontend\Page\PageRepository $parent
 	 * @return void
 	 */
-	public function getRecordOverlay_postProcess($table, &$row, &$sys_language_content, $OLmode, t3lib_pageSelect $parent) {
-
+	public function getRecordOverlay_postProcess($table, &$row, &$sys_language_content, $OLmode, \TYPO3\CMS\Frontend\Page\PageRepository $parent) {
 		if (is_array($row) && $row['uid'] === 0 && $row['pid'] === 0) {
 			$row = FALSE;
 			return;
@@ -147,7 +144,7 @@ class tx_languagevisibility_hooks_t3lib_page implements t3lib_pageSelect_getPage
 		try {
 			$element = tx_languagevisibility_feservices::getElement($row['uid'], $table);
 			$overlayLanguage = tx_languagevisibility_feservices::getOverlayLanguageIdForElement($element, $sys_language_content);
-		} catch ( Exception $e ) {
+		} catch (Exception $e) {
 			return;
 		}
 
