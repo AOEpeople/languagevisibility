@@ -1,33 +1,32 @@
 <?php
-/***************************************************************
- * Copyright notice
- *
- * (c) 2007 AOE media (dev@aoemedia.de)
- * All rights reserved
- *
- * This script is part of the TYPO3 project. The TYPO3 project is
- * free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * The GNU General Public License can be found at
- * http://www.gnu.org/copyleft/gpl.html.
- *
- * This script is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * This copyright notice MUST APPEAR in all copies of the script!
- ***************************************************************/
-/**
- *
- * @author	Daniel Poetzinger <poetzinger@aoemedia.de>
- * @coauthor Tolleiv Nietsch <nietsch@aoemedia.de>
- * @coauthor Timo Schmidt <schmidt@aoemedia.de>
- */
 
+/***************************************************************
+ *  Copyright notice
+ *
+ *  (c) 2014 AOE GmbH <dev@aoe.com>
+ *
+ *  All rights reserved
+ *
+ *  This script is part of the TYPO3 project. The TYPO3 project is
+ *  free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation; either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  The GNU General Public License can be found at
+ *  http://www.gnu.org/copyleft/gpl.html.
+ *
+ *  This script is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  This copyright notice MUST APPEAR in all copies of the script!
+ ***************************************************************/
+
+/**
+ * Class tx_languagevisibility_elementFactory
+ */
 class tx_languagevisibility_elementFactory {
 
 	/**
@@ -71,10 +70,10 @@ class tx_languagevisibility_elementFactory {
 		/** @var tx_languagevisibility_element $element */
 		switch ($table) {
 			case 'pages' :
-				$element = t3lib_div::makeInstance('tx_languagevisibility_pageelement', $row);
+				$element = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('tx_languagevisibility_pageelement', $row, $table);
 				break;
 			case 'tt_news' :
-				$element = t3lib_div::makeInstance('tx_languagevisibility_ttnewselement', $row);
+				$element = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('tx_languagevisibility_ttnewselement', $row, $table);
 				break;
 			case 'tt_content' :
 				if ($row['CType'] == 'templavoila_pi1') {
@@ -84,26 +83,26 @@ class tx_languagevisibility_elementFactory {
 					if (is_array($DS)) {
 						if ($DS['meta']['langDisable'] == 1 && $DS['meta']['langDatabaseOverlay'] == 1) {
 								// handle as special FCE with normal tt_content overlay:
-							$element = t3lib_div::makeInstance('tx_languagevisibility_fceoverlayelement', $row);
+							$element = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('tx_languagevisibility_fceoverlayelement', $row);
 						} else {
-							$element = t3lib_div::makeInstance('tx_languagevisibility_fceelement', $row, $DS);
+							$element = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('tx_languagevisibility_fceelement', $row, $DS);
 						}
 					} else {
 						throw new UnexpectedValueException($table . ' uid:' . $row['uid'] . ' has no valid Datastructure ', 1195039394);
 					}
 				} else {
-					$element = t3lib_div::makeInstance('tx_languagevisibility_celement', $row);
+					$element = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('tx_languagevisibility_celement', $row, $table);
 				}
 				break;
 			default:
 
 				if (isset ($GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['languagevisibility']['getElementForTable'][$table])) {
-					$hookObj = t3lib_div::getUserObj($GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['languagevisibility']['getElementForTable'][$table]);
+					$hookObj = \TYPO3\CMS\Core\Utility\GeneralUtility::getUserObj($GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['languagevisibility']['getElementForTable'][$table]);
 					if (method_exists($hookObj, 'getElementForTable')) {
 						$element = $hookObj->getElementForTable($table, $uid, $row, $overlay_ids);
 					}
 				} elseif (isset($GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['languagevisibility']['recordElementSupportedTables'][$table])) {
-					$element = $this->getElementInstance('tx_languagevisibility_recordelement', $row);
+					$element = $this->getElementInstance('tx_languagevisibility_recordelement', $row, $table);
 				} else {
 					throw new UnexpectedValueException($table . ' not supported ', 1195039394);
 				}

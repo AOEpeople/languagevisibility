@@ -1,32 +1,31 @@
 <?php
+
 /***************************************************************
- * Copyright notice
+ *  Copyright notice
  *
- * (c) 2007 AOE media (dev@aoemedia.de)
- * All rights reserved
+ *  (c) 2014 AOE GmbH <dev@aoe.com>
  *
- * This script is part of the TYPO3 project. The TYPO3 project is
- * free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
+ *  All rights reserved
  *
- * The GNU General Public License can be found at
- * http://www.gnu.org/copyleft/gpl.html.
+ *  This script is part of the TYPO3 project. The TYPO3 project is
+ *  free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation; either version 3 of the License, or
+ *  (at your option) any later version.
  *
- * This script is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ *  The GNU General Public License can be found at
+ *  http://www.gnu.org/copyleft/gpl.html.
  *
- * This copyright notice MUST APPEAR in all copies of the script!
+ *  This script is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
 /**
- *
- * @author	Daniel Poetzinger <poetzinger@aoemedia.de>
- * @coauthor Tolleiv Nietsch <nietsch@aoemedia.de>
- * @coauthor Timo Schmidt <schmidt@aoemedia.de>
+ * Class tx_languagevisibility_cacheManager
  */
 class tx_languagevisibility_cacheManager {
 
@@ -45,32 +44,33 @@ class tx_languagevisibility_cacheManager {
 	 */
 	protected static $instance;
 
-	/*
-	 * Holds the cached data.
+	/**
+	 * @var array
+	 */
+	protected static $confArray = array();
+
+	/**
+	 * @var array
 	 */
 	protected $cache = array();
 
 	/**
-	 * @param void
-	 * @return  void
+	 * Class constructor
+	 *
+	 * @return void
 	 */
 	protected function __construct() {
-		$this->cache = array();
-	}
+		if (!isset(self::$useCache)) {
+			self::$useCache = FALSE;
 
-	public function __destruct() {
-		/*echo round(memory_get_usage()/1048576,2)." megabytes";*/
-	/*	$before = memory_get_usage();
-		 unset($this->cache);
-		 $after 	= memory_get_usage();
+			if (empty(self::$confArray)) {
+				self::$confArray = @unserialize($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf']['languagevisibility']);
+			}
 
-		 $mem_usage = $before - $after;
-		 if ($mem_usage < 1024)
-		 echo $mem_usage." bytes";
-		 elseif ($mem_usage < 1048576)
-		 echo round($mem_usage/1024,2)." kilobytes";
-		 else
-		 echo round($mem_usage/1048576,2)." megabytes"; */
+			if (is_array(self::$confArray) && self::$confArray['useCache']) {
+				self::$useCache = (1 === (int)self::$confArray['useCache']);
+			}
+		}
 	}
 
 	/**
@@ -79,15 +79,6 @@ class tx_languagevisibility_cacheManager {
 	 * @return boolean
 	 */
 	public static function isCacheEnabled() {
-		if (! isset(self::$useCache)) {
-			$confArr = unserialize($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf']['languagevisibility']);
-			if (is_array($confArr) && $confArr['useCache']) {
-				self::$useCache = ($confArr['useCache'] == 1);
-			} else {
-				self::$useCache = false;
-			}
-		}
-
 		return (self::$useCache && self::$enableCache);
 	}
 

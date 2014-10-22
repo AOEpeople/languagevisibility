@@ -1,33 +1,33 @@
 <?php
+
 /***************************************************************
- * Copyright notice
+ *  Copyright notice
  *
- * (c) 2007 AOE media (dev@aoemedia.de)
- * All rights reserved
+ *  (c) 2014 AOE GmbH <dev@aoe.com>
  *
- * This script is part of the TYPO3 project. The TYPO3 project is
- * free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
+ *  All rights reserved
  *
- * The GNU General Public License can be found at
- * http://www.gnu.org/copyleft/gpl.html.
+ *  This script is part of the TYPO3 project. The TYPO3 project is
+ *  free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation; either version 3 of the License, or
+ *  (at your option) any later version.
  *
- * This script is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ *  The GNU General Public License can be found at
+ *  http://www.gnu.org/copyleft/gpl.html.
  *
- * This copyright notice MUST APPEAR in all copies of the script!
+ *  This script is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
 /**
- * Abstract basis class for all elements (elements are any translateable records in the system)
+ * Class tx_languagevisibility_element
  *
- * @author	Daniel Poetzinger <poetzinger@aoemedia.de>
- * @coauthor Tolleiv Nietsch <nietsch@aoemedia.de>
- * @coauthor Timo Schmidt <schmidt@aoemedia.de>
+ * Abstract basis class for all elements (elements are any translateable records in the system)
  */
 abstract class tx_languagevisibility_element {
 
@@ -41,7 +41,7 @@ abstract class tx_languagevisibility_element {
 	 *
 	 * @var array
 	 */
-	private $localVisibilitySetting;
+	protected $localVisibilitySetting;
 
 	/**
 	 * This array holds the global visibility setting, the global visibility setting. The translation of an element can overwrite
@@ -49,27 +49,45 @@ abstract class tx_languagevisibility_element {
 	 *
 	 * @var array
 	 */
-	private $overlayVisibilitySetting;
+	protected $overlayVisibilitySetting;
 
 	/**
-	 * @param $row
-	 * @throws tx_languagevisibility_InvalidRowException
-	 * @return void
+	 * @var \TYPO3\CMS\Core\Cache\Frontend\VariableFrontend
 	 */
-	public function __construct($row) {
+	protected $cache = NULL;
 
+	/**
+	 * @param string $row
+	 * @param string $tablename
+	 * @throws \tx_languagevisibility_InvalidRowException
+	 * @return \tx_languagevisibility_element
+	 */
+	public function __construct($row, $tablename = '') {
 		if ((!is_array($row)) || !$this->isRowOriginal($row)) {
-			throw new tx_languagevisibility_InvalidRowException();
+			throw new \tx_languagevisibility_InvalidRowException();
 		}
 
 		$this->row = $row;
-		$this->localVisibilitySetting = @unserialize($this->row['tx_languagevisibility_visibility']);
 
-		if (! is_array($this->localVisibilitySetting)) {
+		$cacheKey = NULL;
+		if ($tablename && array_key_exists('uid', $this->row) && $this->row['uid'] > 0) {
+			$cacheKey = implode('_', array(get_class($this), $tablename, $this->row['uid']));
+		}
+
+		if ($cacheKey && $this->getCache()->has($cacheKey)) {
+			$this->localVisibilitySetting = $this->getCache()->get($cacheKey);
+		} elseif ($cacheKey) {
+			$this->localVisibilitySetting = @unserialize($this->row['tx_languagevisibility_visibility']);
+			$this->getCache()->set($cacheKey, $this->localVisibilitySetting);
+		} else {
+			$this->localVisibilitySetting = @unserialize($this->row['tx_languagevisibility_visibility']);
+		}
+
+		if (!is_array($this->localVisibilitySetting)) {
 			$this->localVisibilitySetting = array();
 		}
 
-		if (! is_array($this->overlayVisibilitySetting)) {
+		if (!is_array($this->overlayVisibilitySetting)) {
 			$this->overlayVisibilitySetting = array();
 		}
 
@@ -77,16 +95,17 @@ abstract class tx_languagevisibility_element {
 	}
 
 	/**
-	 * Method to set the tablename of the recordelement.
+	 * Sets the table name
 	 *
 	 * @param string $table
+	 * @return void
 	 */
-	function setTable($table) {
+	public function setTable($table) {
 		$this->table = $table;
 	}
 
 	/**
-	 * Method to get the tablename
+	 * Gets the table name
 	 *
 	 * @return string
 	 */
@@ -100,15 +119,15 @@ abstract class tx_languagevisibility_element {
 	 */
 	protected function isRowOriginal($row) {
 		if (!isset($row['l18n_parent']) && !isset($row['l10n_parent'])) {
-			   return TRUE;
-	   }
-	   if (isset($row['l18n_parent']) && $row['l18n_parent'] == 0) {
-			   return TRUE;
-	   }
-	   if (isset($row['l10n_parent']) && $row['l10n_parent'] == 0) {
-				return TRUE;
+			return TRUE;
 		}
-	   return FALSE;
+		if (isset($row['l18n_parent']) && $row['l18n_parent'] == 0) {
+			return TRUE;
+		}
+		if (isset($row['l10n_parent']) && $row['l10n_parent'] == 0) {
+			return TRUE;
+		}
+		return FALSE;
 	}
 
 	/**
@@ -418,17 +437,19 @@ abstract class tx_languagevisibility_element {
 		return FALSE;
 	}
 
-	################
-	# ABSTRACT METHODS
-	################
-
-
 	/**
-	 * Abstract method to determine if there exsists any translation in any workspace.
+	 * Gets the cache
 	 *
-	 * @return boolean
+	 * @return \TYPO3\CMS\Core\Cache\Frontend\VariableFrontend
 	 */
-	abstract public function hasOverLayRecordForAnyLanguageInAnyWorkspace();
+	protected function getCache() {
+		if (!$this->cache) {
+			$this->cache = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\\CMS\\Core\\Cache\\CacheManager')
+				->getCache('tx_languagevisibility');
+		}
+
+		return $this->cache;
+	}
 
 	/**
 	 * This method is used to retrieve an overlay record of a given record.
@@ -490,12 +511,18 @@ abstract class tx_languagevisibility_element {
 	}
 
 	/**
+	 * Abstract method to determine if there exsists any translation in any workspace.
+	 *
+	 * @return boolean
+	 */
+	abstract public function hasOverLayRecordForAnyLanguageInAnyWorkspace();
+
+	/**
 	 * This method should provide the implementation to get the overlay of an element for a
 	 * certain language. The result is cached be the method getOverLayRecordForCertainLanguage.
 	 *
 	 * @param int $languageId
 	 * @return
-	 * @internal param int $onlyUid
 	 */
 	abstract protected function getOverLayRecordForCertainLanguageImplementation($languageId);
 }
