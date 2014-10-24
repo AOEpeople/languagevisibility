@@ -40,9 +40,4 @@ return array(
 	'tx_languagevisibility_modfunc1' => $extensionPath . 'modfunc1/class.tx_languagevisibility_modfunc1.php',
 
 	'tx_languagevisibility_beuser' => $extensionPath . 'patch/lib/class.tx_languagevisibility_beUser.php',
-
-	'tx_languagevisibility_basetestcase' => $extensionPath . 'tests/tx_languagevisibility_baseTestcase.php',
-	'tx_languagevisibility_databasetestcase' => $extensionPath . 'tests/tx_languagevisibility_databaseTestcase.php',
-	'tx_languagevisibility_databaseTtContentTestcase' => $extensionPath . 'tests/tx_languagevisibility_databaseTtContentTestcase.php',
-	'tx_languagevisibility_tests_helper_environmenthelper' => $extensionPath . 'tests/classes/class.tx_languagevisibility_tests_helper_environmentSaver.php',
 );

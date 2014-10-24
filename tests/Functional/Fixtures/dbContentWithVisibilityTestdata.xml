@@ -1,0 +1,392 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dataset>
+
+	<pages>
+		<uid>1</uid>
+		<pid>0</pid>
+		<title>Page without overlays</title>
+		<deleted>0</deleted>
+		<tx_languagevisibility_visibility>a:3:{i:0;s:1:"-";i:1;s:1:"-";i:2;s:1:"-";}</tx_languagevisibility_visibility>
+	</pages>
+
+	<pages>
+		<uid>2</uid>
+		<pid>0</pid>
+		<title>Page with overlays</title>
+		<deleted>0</deleted>
+		<tx_languagevisibility_visibility>a:3:{i:0;s:1:"-";i:1;s:1:"-";i:2;s:1:"-";}</tx_languagevisibility_visibility>
+	</pages>
+
+	<pages>
+		<uid>4</uid>
+		<pid>1</pid>
+		<deleted>0</deleted>		
+		<tx_languagevisibility_visibility>a:3:{i:0;s:3:"yes";i:1;s:3:"yes";i:2;s:3:"yes";}</tx_languagevisibility_visibility>
+	</pages>
+	
+	<pages_language_overlay>
+		<uid>5</uid>
+		<pid>4</pid>
+		<sys_language_uid>1</sys_language_uid>
+		<deleted>0</deleted>
+		<tx_languagevisibility_visibility>a:1:{i:1;s:2:"no";}</tx_languagevisibility_visibility>		
+	</pages_language_overlay>
+
+	<pages_language_overlay>
+		<uid>2</uid>
+		<pid>2</pid>
+		<sys_language_uid>1</sys_language_uid>
+		<hidden>0</hidden>
+		<deleted>0</deleted>
+	</pages_language_overlay>
+
+	<tt_content>
+		<uid>1</uid>
+		<pid>1</pid>
+		<header>Element with default visibility and without overlays</header>
+		<hidden>0</hidden>
+		<deleted>0</deleted>
+		<t3ver_wsid>0</t3ver_wsid>
+		<l18n_parent>0</l18n_parent>
+		<l18n_diffsource></l18n_diffsource>
+		<sys_language_uid>0</sys_language_uid>
+		<tx_languagevisibility_visibility>a:3:{i:0;s:1:"-";i:1;s:1:"-";i:2;s:1:"-";}</tx_languagevisibility_visibility>
+	</tt_content>
+
+	<tt_content>
+		<uid>2</uid>
+		<pid>1</pid>
+		<header>Element with default visibility and with overlay in L1</header>
+		<hidden>0</hidden>
+		<deleted>0</deleted>
+		<t3ver_wsid>0</t3ver_wsid>
+		<l18n_parent>0</l18n_parent>
+		<l18n_diffsource>0</l18n_diffsource>
+		<sys_language_uid>0</sys_language_uid>
+		<tx_languagevisibility_visibility>a:3:{i:0;s:1:"-";i:1;s:1:"-";i:2;s:1:"-";}</tx_languagevisibility_visibility>
+	</tt_content>
+
+	<tt_content>
+		<uid>3</uid>
+		<pid>1</pid>
+		<header>Overlay for Element uid-2</header>
+		<hidden>0</hidden>
+		<deleted>0</deleted>
+		<t3ver_wsid>0</t3ver_wsid>
+		<l18n_parent>2</l18n_parent>
+		<l18n_diffsource>0</l18n_diffsource>
+		<sys_language_uid>1</sys_language_uid>
+		<tx_languagevisibility_visibility></tx_languagevisibility_visibility>
+	</tt_content>
+	
+	<!-- Test to check if "force to no" in overlay takes effect -->
+		<tt_content>
+			<uid>4</uid>
+			<pid>2</pid>
+			<header>Original Element</header>
+			<hidden>0</hidden>
+			<deleted>0</deleted>
+			<t3ver_wsid>0</t3ver_wsid>
+			<l18n_parent>0</l18n_parent>
+			<l18n_diffsource>0</l18n_diffsource>
+			<sys_language_uid>0</sys_language_uid>
+			<tx_languagevisibility_visibility>a:3:{i:0;s:3:"yes";i:1;s:3:"yes";i:2;s:3:"yes";}</tx_languagevisibility_visibility>
+		</tt_content>
+	
+		<tt_content>
+			<uid>5</uid>
+			<pid>2</pid>
+			<header>Overlay Element</header>
+			<hidden>0</hidden>
+			<deleted>0</deleted>
+			<t3ver_wsid>0</t3ver_wsid>
+			<l18n_parent>4</l18n_parent>
+			<l18n_diffsource>0</l18n_diffsource>
+			<sys_language_uid>1</sys_language_uid>
+			<tx_languagevisibility_visibility>a:1:{i:1;s:2:"no";}</tx_languagevisibility_visibility>
+		</tt_content>
+	
+	<!-- Testdata to check if "force to no" in overlays takes also effect in workspaces -->
+		<!-- create original element in live workspace -->
+		<tt_content>
+			<uid>6</uid>
+			<pid>3</pid>
+			<header>Original in liveworkspace</header>
+			<sys_language_uid>0</sys_language_uid>
+			<!-- The visibility for this element is not diffrent from the global setting therefore all languages contain the "-" flag -->
+			<tx_languagevisibility_visibility>a:3:{i:0;s:1:"-";i:1;s:1:"-";i:2;s:1:"-";}</tx_languagevisibility_visibility>
+		</tt_content>
+		
+		<!-- create overlay of original element in live workspace-->
+		<tt_content>
+			<uid>7</uid>
+			<pid>3</pid>
+			<header>Overlay of original(uid 6) in liveworkspace</header>
+			<!-- point to fixture language of translation -->
+			<sys_language_uid>1</sys_language_uid>
+			<l18n_parent>6</l18n_parent>
+			<t3_origuid>6</t3_origuid>
+			<tx_languagevisibility_visibility>a:1:{i:1;s:3:"yes";}</tx_languagevisibility_visibility>
+		</tt_content>
+		
+		<!-- create workspace version of original element -->
+		<tt_content>
+			<uid>8</uid>
+			<pid>-1</pid>
+			<header></header>
+			<!-- points to original in liveworskspace -->
+			<t3ver_oid>6</t3ver_oid>
+			<t3ver_id>1</t3ver_id>
+			<!-- points to fixture uk workspace --> 
+			<t3ver_wsid>4711</t3ver_wsid>
+			<t3_origuid>6</t3_origuid>
+			<!-- The visibility for this element is "forced to yes" for all languages -->
+			<tx_languagevisibility_visibility>a:3:{i:0;s:3:"yes";i:1;s:3:"yes";i:2;s:3:"yes";}</tx_languagevisibility_visibility>
+		</tt_content>
+		
+		<!-- create workspace version of overlay -->
+		<tt_content>
+			<uid>9</uid>
+			<pid>-1</pid>
+			<header>Fixture workspace overlay record.</header>
+			<!-- points to the overlay of the live-workspace -->
+			<t3ver_oid>7</t3ver_oid>
+			<!-- points to fixture uk workspace --> 
+			<t3ver_wsid>4711</t3ver_wsid>
+			<!-- point to fixture language of translation -->
+			<sys_language_uid>1</sys_language_uid>
+			<!-- points to the original of translation in the liveworkspace ! -->
+			<l18n_parent>6</l18n_parent>
+			<!-- The visibility for this element is "forced to no" for this element -->			
+			<tx_languagevisibility_visibility>a:1:{i:1;s:2:"no";}</tx_languagevisibility_visibility>
+		</tt_content>
+		
+	<!-- Test to check if "force to yes" in overlay takes NOT effect -->
+		<tt_content>
+			<uid>10</uid>
+			<pid>2</pid>
+			<header>Original Element</header>
+			<hidden>0</hidden>
+			<deleted>0</deleted>
+			<t3ver_wsid>0</t3ver_wsid>
+			<l18n_parent>0</l18n_parent>
+			<l18n_diffsource>0</l18n_diffsource>
+			<sys_language_uid>0</sys_language_uid>
+			<tx_languagevisibility_visibility>a:3:{i:0;s:3:"yes";i:1;s:2:"no";i:2;s:3:"yes";}</tx_languagevisibility_visibility>
+		</tt_content>
+	
+		<tt_content>
+			<uid>11</uid>
+			<pid>2</pid>
+			<header>Overlay Element</header>
+			<hidden>0</hidden>
+			<deleted>0</deleted>
+			<t3ver_wsid>0</t3ver_wsid>
+			<l18n_parent>10</l18n_parent>
+			<l18n_diffsource>0</l18n_diffsource>
+			<sys_language_uid>1</sys_language_uid>
+			<tx_languagevisibility_visibility>a:1:{i:1;s:3:"yes";}</tx_languagevisibility_visibility>
+		</tt_content>
+		
+	<!--Test to check if a corrupted setting does not affect the visibility -->
+	
+		<tt_content>
+			<uid>12</uid>
+			<pid>2</pid>
+			<header>Original Element</header>
+			<hidden>0</hidden>
+			<deleted>0</deleted>
+			<t3ver_wsid>0</t3ver_wsid>
+			<l18n_parent>0</l18n_parent>
+			<l18n_diffsource>0</l18n_diffsource>
+			<sys_language_uid>0</sys_language_uid>
+			<tx_languagevisibility_visibility>a:3:{i:0;s:3:"yes";i:1;s:3:"yes";i:2;s:3:"yes";}</tx_languagevisibility_visibility>
+		</tt_content>
+	
+		<tt_content>
+			<uid>13</uid>
+			<pid>2</pid>
+			<header>Overlay Element</header>
+			<hidden>0</hidden>
+			<deleted>0</deleted>
+			<t3ver_wsid>0</t3ver_wsid>
+			<l18n_parent>12</l18n_parent>
+			<l18n_diffsource>0</l18n_diffsource>
+			<sys_language_uid>1</sys_language_uid>
+			<tx_languagevisibility_visibility>s:188:"s:179:"a:14:{i:0;s:1:"-";i:1;s:2:"no";i:2;s:1:"-";i:3;s:1:"-";i:4;s:1:"-";i:5;s:1:"-";i:6;s:1:"-";i:7;s:1:"-";i:8;s:1:"-";i:9;s:1:"-";i:10;s:1:"-";i:11;s:1:"-";i:12;s:1:"-";i:13;s:1:"-";}";";</tx_languagevisibility_visibility>
+		</tt_content>
+
+	<!-- Test hasTranslationInAnyWorkspace -->
+		<tt_content>
+			<uid>14</uid>
+			<pid>2</pid>
+			<header>Orignal Element without translation</header>
+			<hidden>0</hidden>
+			<deleted>0</deleted>
+			<t3ver_wsid>0</t3ver_wsid>
+			<l18n_parent>0</l18n_parent>
+			<l18n_diffsource>0</l18n_diffsource>
+			<sys_language_uid>0</sys_language_uid>
+			<tx_languagevisibility_visibility>s:188:"s:179:"a:14:{i:0;s:1:"-";i:1;s:2:"no";i:2;s:1:"-";i:3;s:1:"-";i:4;s:1:"-";i:5;s:1:"-";i:6;s:1:"-";i:7;s:1:"-";i:8;s:1:"-";i:9;s:1:"-";i:10;s:1:"-";i:11;s:1:"-";i:12;s:1:"-";i:13;s:1:"-";}";";</tx_languagevisibility_visibility>
+		</tt_content>
+
+
+	<tt_content>
+		<uid>15</uid>
+		<pid>1</pid>
+		<header>Element with hidden overlay</header>
+		<hidden>0</hidden>
+		<deleted>0</deleted>
+		<t3ver_wsid>0</t3ver_wsid>
+		<l18n_parent>0</l18n_parent>
+		<l18n_diffsource>0</l18n_diffsource>
+		<sys_language_uid>0</sys_language_uid>
+		<tx_languagevisibility_visibility>a:5:{i:0;s:1:"-";i:1;s:1:"-";i:2;s:1:"-";i:4;s:1:"t";i:5;s:1:"t";}</tx_languagevisibility_visibility>
+	</tt_content>
+
+	<tt_content>
+		<uid>16</uid>
+		<pid>1</pid>
+		<header>overlay</header>
+		<hidden>0</hidden>
+		<deleted>0</deleted>
+		<t3ver_wsid>0</t3ver_wsid>
+		<l18n_parent>15</l18n_parent>
+		<l18n_diffsource>0</l18n_diffsource>
+		<sys_language_uid>4</sys_language_uid>
+		<tx_languagevisibility_visibility></tx_languagevisibility_visibility>
+	</tt_content>
+
+	<tt_content>
+		<uid>17</uid>
+		<pid>1</pid>
+		<header>Hidden overlay</header>
+		<hidden>1</hidden>
+		<deleted>0</deleted>
+		<t3ver_wsid>0</t3ver_wsid>
+		<l18n_parent>15</l18n_parent>
+		<l18n_diffsource>0</l18n_diffsource>
+		<sys_language_uid>5</sys_language_uid>
+		<tx_languagevisibility_visibility></tx_languagevisibility_visibility>
+	</tt_content>
+
+	<tt_content>
+		<uid>18</uid>
+		<pid>-1</pid>
+		<header>workspace overlay</header>
+		<hidden>0</hidden>
+		<deleted>0</deleted>
+		<t3ver_wsid>5</t3ver_wsid>
+		<t3ver_state>-1</t3ver_state>
+		<t3ver_stage>1</t3ver_stage>
+		<l18n_parent>15</l18n_parent>
+		<t3_origuid>17</t3_origuid>
+		<t3ver_oid>17</t3ver_oid>
+		<l18n_diffsource>0</l18n_diffsource>
+		<sys_language_uid>5</sys_language_uid>
+		<tx_languagevisibility_visibility></tx_languagevisibility_visibility>
+	</tt_content>
+
+
+
+	<tt_content>
+		<uid>19</uid>
+		<pid>1</pid>
+		<header>Element with "force to yes" but without overlays</header>
+		<hidden>0</hidden>
+		<deleted>0</deleted>
+		<t3ver_wsid>0</t3ver_wsid>
+		<l18n_parent>0</l18n_parent>
+		<l18n_diffsource></l18n_diffsource>
+		<sys_language_uid>0</sys_language_uid>
+		<tx_languagevisibility_visibility>a:3:{i:0;s:3:"yes";i:1;s:3:"yes";i:2;s:1:"-";}</tx_languagevisibility_visibility>
+	</tt_content>
+	<tt_content>
+		<uid>20</uid>
+		<pid>1</pid>
+		<header>Element with "force to yes" with overlays</header>
+		<hidden>0</hidden>
+		<deleted>0</deleted>
+		<t3ver_wsid>0</t3ver_wsid>
+		<l18n_parent>0</l18n_parent>
+		<l18n_diffsource></l18n_diffsource>
+		<sys_language_uid>0</sys_language_uid>
+		<tx_languagevisibility_visibility>a:3:{i:0;s:3:"yes";i:1;s:3:"yes";i:2;s:1:"-";}</tx_languagevisibility_visibility>
+	</tt_content>
+		<tt_content>
+			<uid>21</uid>
+			<pid>1</pid>
+			<header>Overlay of original(uid 20) </header>
+			<sys_language_uid>1</sys_language_uid>
+			<l18n_parent>20</l18n_parent>
+			<t3_origuid>20</t3_origuid>
+			<tx_languagevisibility_visibility></tx_languagevisibility_visibility>
+		</tt_content>
+
+	<tt_content>
+		<uid>22</uid>
+		<pid>1</pid>
+		<header>Element with "force to no" with overlays</header>
+		<hidden>0</hidden>
+		<deleted>0</deleted>
+		<t3ver_wsid>0</t3ver_wsid>
+		<l18n_parent>0</l18n_parent>
+		<l18n_diffsource></l18n_diffsource>
+		<sys_language_uid>0</sys_language_uid>
+		<tx_languagevisibility_visibility>a:4:{i:0;s:2:"no";i:1;s:2:"no";i:2;s:2:"no";i:3;s:2:"no";}</tx_languagevisibility_visibility>
+	</tt_content>
+		<tt_content>
+			<uid>23</uid>
+			<pid>1</pid>
+			<header>Overlay of original(uid 22) </header>
+			<sys_language_uid>1</sys_language_uid>
+			<l18n_parent>22</l18n_parent>
+			<t3_origuid>22</t3_origuid>
+			<tx_languagevisibility_visibility></tx_languagevisibility_visibility>
+		</tt_content>
+
+	<tt_content>
+		<uid>24</uid>
+		<pid>1</pid>
+		<header>Element with "if translated" with overlays</header>
+		<hidden>0</hidden>
+		<deleted>0</deleted>
+		<t3ver_wsid>0</t3ver_wsid>
+		<l18n_parent>0</l18n_parent>
+		<l18n_diffsource></l18n_diffsource>
+		<sys_language_uid>0</sys_language_uid>
+		<tx_languagevisibility_visibility>a:4:{i:0;s:1:"t";i:1;s:1:"t";i:2;s:1:"t";i:3;s:1:"t";}</tx_languagevisibility_visibility>
+	</tt_content>
+		<tt_content>
+			<uid>25</uid>
+			<pid>1</pid>
+			<header>Overlay of original(uid 24) </header>
+			<sys_language_uid>1</sys_language_uid>
+			<l18n_parent>24</l18n_parent>
+			<t3_origuid>24</t3_origuid>
+			<tx_languagevisibility_visibility></tx_languagevisibility_visibility>
+		</tt_content>
+
+	<tt_content>
+		<uid>26</uid>
+		<pid>1</pid>
+		<header>Element with "if translated in fallback" with overlays</header>
+		<hidden>0</hidden>
+		<deleted>0</deleted>
+		<t3ver_wsid>0</t3ver_wsid>
+		<l18n_parent>0</l18n_parent>
+		<l18n_diffsource></l18n_diffsource>
+		<sys_language_uid>0</sys_language_uid>
+		<tx_languagevisibility_visibility>a:4:{i:0;s:1:"f";i:1;s:1:"f";i:2;s:1:"f";i:3;s:1:"f";}</tx_languagevisibility_visibility>
+	</tt_content>
+		<tt_content>
+			<uid>27</uid>
+			<pid>1</pid>
+			<header>Overlay of original(uid 26) </header>
+			<sys_language_uid>1</sys_language_uid>
+			<l18n_parent>26</l18n_parent>
+			<t3_origuid>26</t3_origuid>
+			<tx_languagevisibility_visibility></tx_languagevisibility_visibility>
+		</tt_content>
+
+</dataset>
