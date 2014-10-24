@@ -44,3 +44,13 @@ if (t3lib_extMgm::isLoaded('phpunit')) {
 if (t3lib_extMgm::isLoaded('aoe_wspreview')) {
 	$GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['aoe_wspreview/system/class.tx_aoewspreview_system_workspaceService.php']['createDiff']['languagevisibility'] = 'tx_languagevisibility_hooks_aoe_wspreview->aoewspreview_createDiff';
 }
+
+/**
+ * Configure TYPO3 Caching Framework
+ */
+if (!is_array($GLOBALS['TYPO3_CONF_VARS']['SYS']['caching']['cacheConfigurations']['tx_languagevisibility'])) {
+	$GLOBALS['TYPO3_CONF_VARS']['SYS']['caching']['cacheConfigurations']['tx_languagevisibility'] = array(
+		'backend' => 'TYPO3\\CMS\\Core\\Cache\\Backend\\TransientMemoryBackend',
+		'frontend' => 'TYPO3\\CMS\\Core\\Cache\\Frontend\\VariableFrontend',
+	);
+}

@@ -1,194 +1,132 @@
 <?php
+
 /***************************************************************
- * Copyright notice
+ *  Copyright notice
  *
- * (c) 2007 AOE media (dev@aoemedia.de)
- * All rights reserved
+ *  (c) 2014 AOE GmbH <dev@aoe.com>
  *
- * This script is part of the TYPO3 project. The TYPO3 project is
- * free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
+ *  All rights reserved
  *
- * The GNU General Public License can be found at
- * http://www.gnu.org/copyleft/gpl.html.
+ *  This script is part of the TYPO3 project. The TYPO3 project is
+ *  free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation; either version 3 of the License, or
+ *  (at your option) any later version.
  *
- * This script is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ *  The GNU General Public License can be found at
+ *  http://www.gnu.org/copyleft/gpl.html.
  *
- * This copyright notice MUST APPEAR in all copies of the script!
+ *  This script is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
 /**
- *
- * @author	Daniel Poetzinger <poetzinger@aoemedia.de>
- * @coauthor Tolleiv Nietsch <nietsch@aoemedia.de>
- * @coauthor Timo Schmidt <schmidt@aoemedia.de>
+ * Class tx_languagevisibility_daocommon
  */
 class tx_languagevisibility_daocommon {
 
-	protected static $recordCache;
-
-	protected static $cacheLimit = 2000;
+	/**
+	 * @var \TYPO3\CMS\Core\Cache\Frontend\VariableFrontend
+	 */
+	protected static $cache = NULL;
 
 	/**
-	 * Returns a record by table and uid.
+	 * Gets a record by UID and table
 	 *
-	 * @param $uid
-	 * @param $table
+	 * @param int $uid
+	 * @param string $table
 	 * @return array
 	 */
 	public static function getRecord($uid, $table) {
-		$cacheManager = tx_languagevisibility_cacheManager::getInstance();
-
-		$isCacheEnabled = $cacheManager->isCacheEnabled();
-		self::$recordCache = $cacheManager->get('daoRecordCache');
-
-		if ($isCacheEnabled) {
-			if (! isset(self::$recordCache[$table][$uid])) {
-					// !TODO we're still running two queries - this can be reduced to one with a tricky search criteria
-				$row = self::getRequestedRecord($uid, $table);
-
-				if ($row) {
-					self::$recordCache[$table][$uid] = $row;
-					if (count(self::$recordCache) < self::$cacheLimit) {
-						self::loadSimilarRecordsIntoCache($row, $table);
-					}
-				}
-			}
-
-			$cacheManager->set('daoRecordCache', self::$recordCache);
-
-			$result = self::$recordCache[$table][$uid];
-		} else {
-			$result = self::getRequestedRecord($uid, $table);
+		$cacheKey = sha1($table . $uid);
+		if (!self::getCache()->has($cacheKey)) {
+			self::getCache()->set($cacheKey, self::getRequestedRecord($uid, $table));
 		}
 
-		return $result;
+		return self::getCache()->get($cacheKey);
 	}
 
 	/**
-	 * Returns the single Requested Record
+	 * Gets a requested record
 	 *
-	 * @param $uid
-	 * @param $table
+	 * @param int $uid
+	 * @param string $table
 	 * @return array
 	 */
 	protected static function getRequestedRecord($uid, $table) {
-			// fix settings
-		$fields = '*';
-		$table = $table;
-		$groupBy = NULL;
-		$orderBy = '';
-		$where = 'uid=' . intval($uid);
-
-		$result = $GLOBALS['TYPO3_DB']->exec_SELECTquery($fields, $table, $where, $groupBy, $orderBy);
-		$row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($result);
-		$GLOBALS['TYPO3_DB']->sql_free_result($result);
+		$result = self::getDatabase()->exec_SELECTquery(
+			'*',
+			$table,
+			'uid=' . intval($uid)
+		);
+		$row = self::getDatabase()->sql_fetch_assoc($result);
+		self::getDatabase()->sql_free_result($result);
 
 		return $row;
 	}
 
 	/**
-	 * Returns a record by table and uid.
+	 * Gets records by table and where clause
 	 *
-	 * @param $table
-	 * @param $where
-	 * @internal param $uid
+	 * @param string $table
+	 * @param string $where
 	 * @return array
 	 */
 	public static function getRecords($table, $where) {
-		$cacheManager = tx_languagevisibility_cacheManager::getInstance();
-
-		$isCacheEnabled = $cacheManager->isCacheEnabled();
-		self::$recordCache = $cacheManager->get('daoRecordCache');
-
-		if ($isCacheEnabled) {
-			if (! isset(self::$recordCache[$table][$where])) {
-					// !TODO we're still running two queries - this can be reduced to one with a tricky search criteria
-				$rows = self::getRequestedRecords($table, $where);
-
-				if ($rows) {
-					self::$recordCache[$table][$where] = $rows;
-				}
-			}
-
-			$cacheManager->set('daoRecordCache', self::$recordCache);
-
-			$result = self::$recordCache[$table][$where];
-		} else {
-			$result = self::getRequestedRecords($table, $where);
+		$cacheKey = sha1($table . $where);
+		if (!self::getCache()->has($cacheKey)) {
+			self::getCache()->set($cacheKey, self::getRequestedRecords($table, $where));
 		}
 
-		return $result;
+		return self::getCache()->get($cacheKey);
 	}
 
 	/**
+	 * Gets requested records by table and where clause
 	 *
-	 *
-	 * @param $table
-	 * @param $where
+	 * @param string $table
+	 * @param string $where
 	 * @return array
 	 */
 	protected static function getRequestedRecords($table, $where) {
-			// fix settings
-		$fields = '*';
-		$table = $table;
-		$groupBy = NULL;
-		$orderBy = '';
-		$where = $where;
-
-		$result = $GLOBALS['TYPO3_DB']->exec_SELECTquery($fields, $table, $where, $groupBy, $orderBy);
+		$result = self::getDatabase()->exec_SELECTquery(
+			'*',
+			$table,
+			$where
+		);
 		$rows = array();
-		while ($row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($result)) {
+		while ($row = self::getDatabase()->sql_fetch_assoc($result)) {
 			$rows[] = $row;
 		}
-		$GLOBALS['TYPO3_DB']->sql_free_result($result);
+		self::getDatabase()->sql_free_result($result);
 
 		return $rows;
 	}
 
 	/**
-	 * Method trys to load similar records into the cache which will maybe requested in the future.
-	 * Requires more memory usage, but reduces the amount of querys.
+	 * Gets the cache
 	 *
-	 * @param $row
-	 * @param $table
-	 * @return void
+	 * @return \TYPO3\CMS\Core\Cache\Frontend\VariableFrontend
 	 */
-	protected function loadSimilarRecordsIntoCache($row, $table) {
-
-		if ($row['pid'] > 0) {
-			$fields = '*';
-			$tablename = $table;
-			$orderBy = '';
-			$groupBy = NULL;
-
-			$uidsInCache = implode(',', array_keys(self::$recordCache[$table]));
-
-				// get deleted hidden and workspace field from tca
-			if (is_array($GLOBALS['TCA'][$table]['ctrl'])) {
-				$deleteField = $GLOBALS['TCA'][$table]['ctrl']['delete'];
-			}
-
-			$where = 'uid !=' . $row['uid'] . ' AND pid = ' . $row['pid'] . ' AND uid NOT IN (' . $uidsInCache . ')';
-			$where .= array_key_exists('hidden', $row) ? ' AND hidden=0' : '';
-
-			if ($deleteField != '') {
-				$where .= ' AND ' . $deleteField . '=0';
-			}
-
-			$limit = 500;
-			$result = $GLOBALS['TYPO3_DB']->exec_SELECTquery($fields, $tablename, $where, $groupBy, $orderBy, $limit);
-
-			while ( $row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($result) ) {
-				self::$recordCache[$table][$row['uid']] = $row;
-			}
-
-			$GLOBALS['TYPO3_DB']->sql_free_result($result);
+	protected static function getCache() {
+		if (!self::$cache) {
+			self::$cache = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\\CMS\\Core\\Cache\\CacheManager')
+				->getCache('tx_languagevisibility');
 		}
+
+		return self::$cache;
+	}
+
+	/**
+	 * Gets a database connection
+	 *
+	 * @return \TYPO3\CMS\Core\Database\DatabaseConnection
+	 */
+	protected function getDatabase() {
+		return $GLOBALS['TYPO3_DB'];
 	}
 }
