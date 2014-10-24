@@ -1,31 +1,31 @@
 <?php
+
 /***************************************************************
- * Copyright notice
+ *  Copyright notice
  *
- * (c) 2009 AOE media (dev@aoemedia.de)
- * All rights reserved
+ *  (c) 2014 AOE GmbH <dev@aoe.com>
  *
- * This script is part of the TYPO3 project. The TYPO3 project is
- * free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
+ *  All rights reserved
  *
- * The GNU General Public License can be found at
- * http://www.gnu.org/copyleft/gpl.html.
+ *  This script is part of the TYPO3 project. The TYPO3 project is
+ *  free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation; either version 3 of the License, or
+ *  (at your option) any later version.
  *
- * This script is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ *  The GNU General Public License can be found at
+ *  http://www.gnu.org/copyleft/gpl.html.
  *
- * This copyright notice MUST APPEAR in all copies of the script!
+ *  This script is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
 /**
- *
- * @author	Daniel Poetzinger <poetzinger@aoemedia.de>
- * @author	Tolleiv Nietsch <nietsch@aoemedia.de>
+ * Class tx_languagevisibility_hooks_t3lib_tcemain
  */
 class tx_languagevisibility_hooks_t3lib_tcemain {
 
@@ -83,6 +83,11 @@ class tx_languagevisibility_hooks_t3lib_tcemain {
 
 					// flush all caches
 				tx_languagevisibility_cacheManager::getInstance()->flushAllCaches();
+
+				// Flush TYPO3 Caching Framework caches
+				\TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\\CMS\\Core\\Cache\\CacheManager')
+					->getCache('tx_languagevisibility')
+					->flush();
 			}
 		}
 	}
@@ -117,7 +122,11 @@ class tx_languagevisibility_hooks_t3lib_tcemain {
 			}
 
 			tx_languagevisibility_cacheManager::getInstance()->flushAllCaches();
-		}
 
+			// Flush TYPO3 Caching Framework caches
+			\TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\\CMS\\Core\\Cache\\CacheManager')
+				->getCache('tx_languagevisibility')
+				->flush();
+		}
 	}
 }
