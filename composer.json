@@ -1,0 +1,12 @@
+{
+  "name": "aoepeople/languagevisibility",
+  "description": "Multi level language fallback for TYPO3 projects",
+  "type": "typo3-cms-extension",
+  "keywords": ["TYPO3 CMS", "language"],
+  "homepage": "https://forge.typo3.org/projects/extension-languagevisibility/",
+  "license": "",
+  "version": "0.9.dev",
+  "support": {
+    "issues": "https://github.com/AOEpeople/languagevisibility/issues"
+  }
+}

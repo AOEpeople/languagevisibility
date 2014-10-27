@@ -1,3 +1,6 @@
+Build status:
+https://travis-ci.org/tomasnorre/languagevisibility.svg?branch=TravisCi
+
 Add new translationMode for FCEs:
 	<langDatabaseOverlay>1</langDatabaseOverlay>:
 
