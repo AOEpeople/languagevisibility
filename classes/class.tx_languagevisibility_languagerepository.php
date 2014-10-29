@@ -131,6 +131,7 @@ class tx_languagevisibility_languagerepository {
 	 * @return tx_languagevisibility_language
 	 */
 	public function getDefaultLanguage() {
+		$row = array();
 		$language = t3lib_div::makeInstance('tx_languagevisibility_language');
 		$row['uid'] = 0;
 		$row['title'] = 'Default';

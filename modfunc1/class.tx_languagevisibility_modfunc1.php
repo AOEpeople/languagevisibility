@@ -232,6 +232,7 @@ class tx_languagevisibility_modfunc1 extends t3lib_extobjbase {
 		}
 
 			// first ROW:
+		$firstRowCells = array();
 		$firstRowCells[] = '<td>' . $GLOBALS['LANG']->getLL('lang_renderl10n_page', '1') . ':</td>';
 		foreach ( $languageList as $language ) {
 			$langId = $language->getUid();
