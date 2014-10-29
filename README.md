@@ -2,6 +2,8 @@ EXT:languagevisibility
 ======================
 
 [![Build Status](https://travis-ci.org/AOEpeople/languagevisibility.svg)](https://travis-ci.org/AOEpeople/languagevisibility)
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/AOEpeople/languagevisibility/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/AOEpeople/languagevisibility/?branch=master)
+[![Code Coverage](https://scrutinizer-ci.com/g/AOEpeople/languagevisibility/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/AOEpeople/languagevisibility/?branch=master)
 
 Add new translationMode for FCEs:
 
