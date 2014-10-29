@@ -109,6 +109,7 @@ class tx_languagevisibility_hooks_t3lib_tcemain {
 			 * This can happen, if a user creates a new element AND the user has no access for the languagevisibility_field
 			 */
 			if ($status == 'new') {
+				$row = array();
 				$row['uid'] = $reference->substNEWwithIDs[$id];
 
 				if ($fieldArray['pid'] == '-1') {
