@@ -2,7 +2,7 @@
 /***************************************************************
  * Copyright notice
  *
- * (c) 2009 AOE media <dev@aoemedia.de>
+ * (c) 2014 AOE GmbH <dev@aoe.com>
  * All rights reserved
  *
  * This script is part of the TYPO3 project. The TYPO3 project is
@@ -24,24 +24,30 @@
 
 /**
  * @author	Daniel Pötzinger
+ *
+ * Class tx_languagevisibility_beUser
  */
 class tx_languagevisibility_beUser {
-	private $be_user;
 
+	private $beUser;
+
+	/**
+	 * Constructor
+	 */
 	public function __construct() {
-		$this->be_user = $GLOBALS['BE_USER'];
+		$this->beUser = $GLOBALS['BE_USER'];
 	}
 
 	/**
 	 * This Method determines if the option allow_movecutdelete_foroverlays has been
 	 * set. It
 	 *
-	 * @return unknown
+	 * @return bool
 	 */
 	public function allowCutCopyMoveDelete() {
 		$res = FALSE;
-		if (is_array($this->be_user->userGroups)) {
-			foreach ( $this->be_user->userGroups as $group ) {
+		if (is_array($this->beUser->userGroups)) {
+			foreach ( $this->beUser->userGroups as $group ) {
 				if ($group['tx_languagevisibility_allow_movecutdelete_foroverlays']) {
 					$res = TRUE;
 				}
@@ -50,8 +56,11 @@ class tx_languagevisibility_beUser {
 		return $res;
 	}
 
+	/**
+	 * @return mixed
+	 */
 	public function isAdmin() {
-		return $this->be_user->isAdmin();
+		return $this->beUser->isAdmin();
 	}
 
 	/**
@@ -60,6 +69,6 @@ class tx_languagevisibility_beUser {
 	 * @return int userId of the backend user
 	 */
 	public function getUid() {
-		return $this->be_user->user['uid'];
+		return $this->beUser->user['uid'];
 	}
 }
