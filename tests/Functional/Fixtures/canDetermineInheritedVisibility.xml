@@ -9,14 +9,17 @@
 	<pages>
 		<uid>2</uid>
 		<pid>1</pid>
+		<tx_languagevisibility_visibility></tx_languagevisibility_visibility>
 	</pages>
 	<pages>
 		<uid>3</uid>
 		<pid>2</pid>
+		<tx_languagevisibility_visibility></tx_languagevisibility_visibility>
 	</pages>
 	<pages_language_overlay>
 		<uid>4</uid>
 		<pid>3</pid>
 		<sys_language_uid>1</sys_language_uid>
+		<tx_languagevisibility_visibility></tx_languagevisibility_visibility>
 	</pages_language_overlay>
 </testdata>

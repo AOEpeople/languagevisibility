@@ -5,8 +5,10 @@
 		<pid>1</pid>
 		<header>Live header</header>
 		<deleted>0</deleted>
+		<filelink_sorting>0</filelink_sorting>
+		<tx_languagevisibility_visibility></tx_languagevisibility_visibility>
 	</tt_content>
-	
+
 	<tt_content>
 		<uid>11</uid>
 		<pid>-1</pid>
@@ -16,5 +18,7 @@
 		<t3ver_state>0</t3ver_state>
 		<t3ver_stage>10</t3ver_stage>
 		<deleted>0</deleted>
+		<filelink_sorting>0</filelink_sorting>
+		<tx_languagevisibility_visibility></tx_languagevisibility_visibility>
 	</tt_content>
 </testdata>

@@ -3,5 +3,7 @@
 	<tt_content>
 		<uid>1111</uid>
 		<sys_language_uid>-1</sys_language_uid>
+		<filelink_sorting>0</filelink_sorting>
+		<tx_languagevisibility_visibility></tx_languagevisibility_visibility>
 	</tt_content>
 </testcase>
