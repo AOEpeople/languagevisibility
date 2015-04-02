@@ -49,6 +49,10 @@ class tx_languagevisibility_recordelement extends tx_languagevisibility_element 
 	 * @see classes/tx_languagevisibility_element#getOverLayRecordForCertainLanguageImplementation($languageId)
 	 */
 	protected function getOverLayRecordForCertainLanguageImplementation($languageId) {
+		if (empty($this->table)) {
+			return array();
+		}
+
 		$ctrl = $GLOBALS['TCA'][$this->table]['ctrl'];
 
 			// we can't use the exclude fields here because we might loose (hidden) parent-records
