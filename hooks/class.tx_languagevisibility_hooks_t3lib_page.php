@@ -184,7 +184,7 @@ class tx_languagevisibility_hooks_t3lib_page implements \TYPO3\CMS\Frontend\Page
 	 * @param $structurePath
 	 * @param $pObj
 	 */
-	public function _callback_checkXMLFieldsForFallback($dsArr, $dataValue, $PA, $structurePath, &$pObj) {
+	public function _callback_checkXMLFieldsForFallback($dsArr, $dataValue, $PA, $structurePath, $pObj) {
 		if ($dsArr['TCEforms']['l10n_mode'] == 'exclude') {
 			$pObj->setArrayValueByPath($structurePath, $this->_callbackVar_overlayXML, $dataValue);
 		} elseif ($dataValue != '' && $dsArr['TCEforms']['l10n_mode'] == 'mergeIfNotBlank') {
