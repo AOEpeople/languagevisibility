@@ -140,7 +140,7 @@ $tempColumnsPages = array(
 	),
 	'tx_languagevisibility_inheritanceflag_original' => array(
 		'exclude' => 1,
-		'label' => 'LLL:EXT:l10nmgr/locallang_db.xml:pages.tx_languagevisibility_visibility',
+		'label' => 'LLL:EXT:languagevisibility/locallang_db.xml:pages.tx_languagevisibility_inheritanceflag_original',
 		'config' => array(
 			'type' => 'check',
 			'default' => '0'
@@ -148,7 +148,7 @@ $tempColumnsPages = array(
 	),
 	'tx_languagevisibility_inheritanceflag_overlayed' => array(
 		'exclude' => 1,
-		'label' => 'LLL:EXT:l10nmgr/locallang_db.xml:pages.tx_languagevisibility_visibility',
+		'label' => 'LLL:EXT:languagevisibility/locallang_db.xml:pages.tx_languagevisibility_inheritanceflag_overlayed',
 		'config' => array(
 			'type' => 'check',
 			'default' => '0'

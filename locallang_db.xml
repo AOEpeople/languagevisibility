@@ -15,6 +15,8 @@
 			<label index="sys_language.tx_languagevisibility_complexfallbacksetting">Use multiple fallbacks for Pages/Elements/TTNews</label>
 
 			<!-- Field titles -->
+			<label index="pages.tx_languagevisibility_inheritanceflag_original">Inheritance original</label>
+			<label index="pages.tx_languagevisibility_inheritanceflag_overlayed">Inheritance overlayed</label>
 			<label index="pages.tx_languagevisibility_visibility">Language visibility:</label>
 			<label index="tt_content.tx_languagevisibility_visibility">Language visibility:</label>
 
