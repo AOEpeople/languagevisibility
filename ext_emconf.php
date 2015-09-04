@@ -3,19 +3,18 @@
 ########################################################################
 # Extension Manager/Repository config file for ext "languagevisibility".
 #
-# Auto generated 26-02-2012 13:46
-#
 # Manual updates:
 # Only the data in the array - everything else is removed by next
 # writing. "version" and "dependencies" must not be touched!
 ########################################################################
 
 $EM_CONF[$_EXTKEY] = array(
-	'title' => 'Multilanguage Projects: Language Visibility',
-	'description' => 'Enables multilevel fallback and introduces the languagevisibility concept',
+	'title' => 'Language Visibility',
+	'description' => 'Enables multi level language fallback and introduces the languagevisibility concept',
 	'category' => 'fe',
-	'author' => 'Daniel Pötzinger, Tolleiv Nietsch, Timo Schmidt - AOE media GmbH',
-	'author_email' => 'dev@aoemedia.de',
+	'author' => 'Daniel Pötzinger, Tolleiv Nietsch, Timo Schmidt',
+	'author_company' => 'AOE GmbH',
+	'author_email' => 'dev@aoe.com',
 	'shy' => '',
 	'dependencies' => '',
 	'conflicts' => '',
@@ -28,12 +27,11 @@ $EM_CONF[$_EXTKEY] = array(
 	'modify_tables' => '',
 	'clearCacheOnLoad' => 1,
 	'lockType' => '',
-	'author_company' => 'AOE media GmbH',
-	'version' => '0.9.dev',
+	'version' => '1.0.0',
 	'constraints' => array(
 		'depends' => array(
 			'php' => '5.3.0-0.0.0',
-			'typo3' => '6.0.0-0.0.0',
+			'typo3' => '6.2.0-6.2.99',
 		),
 		'conflicts' => array(
 			'danp_languagefallback_patch' => '',
