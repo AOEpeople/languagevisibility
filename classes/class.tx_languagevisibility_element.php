@@ -52,6 +52,11 @@ abstract class tx_languagevisibility_element {
 	protected $overlayVisibilitySetting;
 
 	/**
+	 * @var array
+	 */
+	protected $row = array();
+
+	/**
 	 * @var \TYPO3\CMS\Core\Cache\Frontend\VariableFrontend
 	 */
 	protected $cache = NULL;
@@ -116,15 +121,16 @@ abstract class tx_languagevisibility_element {
 	/**
 	 * Method to deternmine that an Element will not be instanciated with
 	 * data of an overlay.
+	 *
+	 * @param $row
+	 *
+	 * @return bool
 	 */
 	protected function isRowOriginal($row) {
-		if (!isset($row['l18n_parent']) && !isset($row['l10n_parent'])) {
-			return TRUE;
-		}
-		if (isset($row['l18n_parent']) && $row['l18n_parent'] == 0) {
-			return TRUE;
-		}
-		if (isset($row['l10n_parent']) && $row['l10n_parent'] == 0) {
+		if (
+			(!isset($row['l18n_parent']) && !isset($row['l10n_parent'])) OR
+			(isset($row['l18n_parent']) && $row['l18n_parent'] == 0) OR
+			(isset($row['l10n_parent']) && $row['l10n_parent'] == 0)) {
 			return TRUE;
 		}
 		return FALSE;
@@ -171,12 +177,12 @@ abstract class tx_languagevisibility_element {
 	 */
 	public function getOrigElementUid() {
 		if (isset($this->row['l18n_parent'])) {
-			   return $this->row['l18n_parent'];
-	   }
-	   if (isset($this->row['l10n_parent'])) {
+			return $this->row['l18n_parent'];
+		}
+		if (isset($this->row['l10n_parent'])) {
 				return $this->row['l10n_parent'];
 		}
-	   return 0;
+		return 0;
 	}
 
 	/**
@@ -199,17 +205,14 @@ abstract class tx_languagevisibility_element {
 	 */
 	public function getInformativeDescription() {
 		if ($this->isMonolithicTranslated()) {
-			 return 'this content element is not in default language. Its only visible in the selected language';
-		}
-		elseif ( $this->isLanguageSetToAll()) {
+			return 'this content element is not in default language. Its only visible in the selected language';
+		} elseif ( $this->isLanguageSetToAll()) {
 			return 'Language is set to all - element is visibily in every language';
-		}
-		elseif ( $this->isLanguageSetToDefault()) {
+		} elseif ( $this->isLanguageSetToDefault()) {
 			return 'this is a normal content element (translations are managed with overlay records)';
-
-		} else {
-			return 'this content element is already a translated version therefore content overlays are not suppoted';
 		}
+
+		return 'this content element is already a translated version therefore content overlays are not suppoted';
 	}
 
 	/**
@@ -291,7 +294,7 @@ abstract class tx_languagevisibility_element {
 	/**
 	 * receive relevant fallbackOrder
 	 */
-	function getFallbackOrder(tx_languagevisibility_language $language) {
+	public function getFallbackOrder(tx_languagevisibility_language $language) {
 		return $language->getFallbackOrder($this);
 	}
 
@@ -301,7 +304,7 @@ abstract class tx_languagevisibility_element {
 	 *
 	 * @return boolean
 	 */
-	function isLanguageSetToDefault() {
+	public function isLanguageSetToDefault() {
 		return $this->row['sys_language_uid'] == '0';
 	}
 
@@ -312,22 +315,21 @@ abstract class tx_languagevisibility_element {
 	 */
 	protected function isOrigElement() {
 		if ($this->getOrigElementUid() > 0 ) {
-			   return FALSE;
-	   }
-	   return TRUE;
+			return FALSE;
+		}
+		return TRUE;
 	}
 
 	/**
 	 * Checks if the current record is set to language all (that is typically used to indicate that per default this element is visible in all langauges)
 	 *
-	 * @return unknown
+	 * @return boolean
 	 */
-	function isLanguageSetToAll() {
+	public function isLanguageSetToAll() {
 		if ($this->row['sys_language_uid'] == '-1') {
 			return TRUE;
-		} else {
-			return FALSE;
 		}
+		return FALSE;
 	}
 
 	/**
@@ -335,7 +337,7 @@ abstract class tx_languagevisibility_element {
 	 *
 	 * @return boolean
 	 */
-	function isLiveWorkspaceElement() {
+	public function isLiveWorkspaceElement() {
 		return ($this->row['pid'] != - 1);
 	}
 
@@ -344,13 +346,15 @@ abstract class tx_languagevisibility_element {
 	 *
 	 * @return boolean
 	 */
-	function isMonolithicTranslated() {
+	public function isMonolithicTranslated() {
 		/*
-		 * Timo: this does not work with pages because pages do not have the field 'sys_language_uid'
-		 * and the languagevisibility_pages class only represent elements from the table pages not
+		 * Timo: this does not work with pages because
+		 * pages do not have the field 'sys_language_uid'
+		 * and the languagevisibility_pages class only
+		 * represent elements from the table pages not
 		 * from page_language_overlay
 		 */
-		return ( !$this->isLanguageSetToDefault()) && (!$this->isLanguageSetToAll())  && $this->isOrigElement();
+		return ( !$this->isLanguageSetToDefault()) && (!$this->isLanguageSetToAll()) && $this->isOrigElement();
 	}
 
 	/**
@@ -375,9 +379,9 @@ abstract class tx_languagevisibility_element {
 		$result = FALSE;
 		if (! is_numeric($languageid)) {
 			$result = FALSE;
-		} else if ($languageid == 0) {
+		} elseif ($languageid == 0) {
 			$result = TRUE;
-		} else if ($this->_hasOverlayRecordForLanguage($languageid)) {
+		} elseif ($this->hasOverlayRecordForLanguage($languageid)) {
 			$result = TRUE;
 		}
 
@@ -392,9 +396,8 @@ abstract class tx_languagevisibility_element {
 	public function hasAnyTranslationInAnyWorkspace() {
 		if ($this->hasOverLayRecordForAnyLanguageInAnyWorkspace()) {
 			return TRUE;
-		} else {
-			return FALSE;
 		}
+		return FALSE;
 	}
 
 	/**
@@ -403,7 +406,7 @@ abstract class tx_languagevisibility_element {
 	 * @return boolean
 	 * @param int $langid
 	 */
-	protected function _hasOverlayRecordForLanguage($langid) {
+	protected function hasOverlayRecordForLanguage($langid) {
 		$row = $this->getOverLayRecordForCertainLanguage($langid, TRUE);
 		return $row['uid'] != '';
 	}
@@ -498,10 +501,10 @@ abstract class tx_languagevisibility_element {
 			}
 
 			if ($ctrl['enablecolumns']['fe_group'] && is_object($GLOBALS['TSFE'])) {
-				$fe_group = $row[$ctrl['enablecolumns']['fe_group']];
-				if ($fe_group) {
+				$feGroup = $row[$ctrl['enablecolumns']['fe_group']];
+				if ($feGroup) {
 					$currentUserGroups = t3lib_div::intExplode(',', $GLOBALS['TSFE']->gr_list);
-					$recordGroups = t3lib_div::intExplode(',', $fe_group);
+					$recordGroups = t3lib_div::intExplode(',', $feGroup);
 					$sharedGroups = array_intersect($recordGroups, $currentUserGroups);
 					$enabled &= count($sharedGroups) > 0;
 				}

@@ -1,3 +1,6 @@
+30.10.2014 Tomas Norre Mikkelsen <tomas.mikkelsen@aoe.com>
+	* Cleanup of classes/classs.tx_languagevisibility_element.php
+
 28.10.2014 Tomas Norre Mikkelsen <tomas.mikkelsen@aoe.com>
 	* Added scruntinizer-ci
 

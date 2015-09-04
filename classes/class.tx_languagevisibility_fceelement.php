@@ -2,7 +2,7 @@
 /***************************************************************
  * Copyright notice
  *
- * (c) 2007 AOE media (dev@aoemedia.de)
+ * (c) 2014 AOE GmbH <dev@aoe.com>
  * All rights reserved
  *
  * This script is part of the TYPO3 project. The TYPO3 project is
@@ -27,6 +27,8 @@
  * @author	Daniel Poetzinger <poetzinger@aoemedia.de>
  * @coauthor Tolleiv Nietsch <nietsch@aoemedia.de>
  * @coauthor Timo Schmidt <schmidt@aoemedia.de>
+ * 
+ * Class tx_languagevisibility_fceelement
  */
 class tx_languagevisibility_fceelement extends tx_languagevisibility_recordelement {
 
@@ -36,9 +38,13 @@ class tx_languagevisibility_fceelement extends tx_languagevisibility_recordeleme
 	private $langDatabaseOverlay;
 	private $disabledIsVisible;
 
-		// flags which are set during processings
+	// flags which are set during processings
 	private $_callBackFoundOverlay = FALSE;
 
+	/**
+	 * @param string $row
+	 * @param string $DS
+	 */
 	public function __construct($row, $DS) {
 		parent::__construct($row);
 
@@ -48,10 +54,16 @@ class tx_languagevisibility_fceelement extends tx_languagevisibility_recordeleme
 		$this->disabledIsVisible = $DS['meta']['disabledIsVisible'] ? 1 : 0;
 	}
 
+	/**
+	 * @return string
+	 */
 	public function getElementDescription() {
 		return 'FCE';
 	}
 
+	/**
+	 * @return string
+	 */
 	function getInformativeDescription() {
 		if ($this->isLanguageSetToAll()) {
 			return 'Language is set to all. Visible in every language';
@@ -70,7 +82,12 @@ class tx_languagevisibility_fceelement extends tx_languagevisibility_recordeleme
 		}
 	}
 
-	function _hasOverlayRecordForLanguage($id) {
+	/**
+	 * @param int $id
+	 *
+	 * @return bool
+	 */
+	public function hasOverlayRecordForLanguage($id) {
 		$languageRep = tx_languagevisibility_languagerepository::makeInstance();
 		$language = $languageRep->getLanguageById($id);
 		$this->langIsoCodeForFlexFormCallback = strtoupper($language->getIsoCode());
@@ -111,6 +128,12 @@ class tx_languagevisibility_fceelement extends tx_languagevisibility_recordeleme
 		}
 	}
 
+	/**
+	 * @param int  $languageId
+	 * @param bool $onlyUid
+	 *
+	 * @return array
+	 */
 	public function getOverLayRecordForCertainLanguageImplementation($languageId, $onlyUid = FALSE) {
 		$useDefaultLang = $this->langDisabled == 1 && !$this->langDatabaseOverlay;
 		return parent::getOverLayRecordForCertainLanguageImplementation($useDefaultLang ? 0 : $languageId, $onlyUid);
@@ -142,13 +165,17 @@ class tx_languagevisibility_fceelement extends tx_languagevisibility_recordeleme
 		}
 	}
 
+	/**
+	 * @param $cfg
+	 * @param $translValue
+	 *
+	 * @return bool
+	 */
 	protected function _isFlexFieldFilled($cfg, $translValue) {
 		if (($cfg['type'] == 'check' && $translValue != 0) || ($cfg['type'] != 'check' && $translValue != '')) {
 			return TRUE;
-		} else {
-			return FALSE;
 		}
-
+		return FALSE;
 	}
 
 	/**
@@ -176,6 +203,9 @@ class tx_languagevisibility_fceelement extends tx_languagevisibility_recordeleme
 		}
 	}
 
+	/**
+	 * @return bool|void
+	 */
 	public function hasOverLayRecordForAnyLanguageInAnyWorkspace() {
 	}
 }
