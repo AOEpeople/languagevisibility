@@ -2,7 +2,7 @@
 /***************************************************************
  * Copyright notice
  *
- * (c) 2007 AOE media (dev@aoemedia.de)
+ * (c) 2015 AOE GmbH (dev@aoe.com)
  * All rights reserved
  *
  * This script is part of the TYPO3 project. The TYPO3 project is
@@ -52,7 +52,7 @@ class tx_languagevisibility_fceelement extends tx_languagevisibility_recordeleme
 		return 'FCE';
 	}
 
-	function getInformativeDescription() {
+	public function getInformativeDescription() {
 		if ($this->isLanguageSetToAll()) {
 			return 'Language is set to all. Visible in every language';
 		}
@@ -70,7 +70,7 @@ class tx_languagevisibility_fceelement extends tx_languagevisibility_recordeleme
 		}
 	}
 
-	function _hasOverlayRecordForLanguage($id) {
+	public function _hasOverlayRecordForLanguage($id) {
 		$languageRep = tx_languagevisibility_languagerepository::makeInstance();
 		$language = $languageRep->getLanguageById($id);
 		$this->langIsoCodeForFlexFormCallback = strtoupper($language->getIsoCode());

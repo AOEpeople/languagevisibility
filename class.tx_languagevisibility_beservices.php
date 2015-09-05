@@ -2,7 +2,7 @@
 /***************************************************************
  * Copyright notice
  *
- * (c) 2007 AOE media (dev@aoemedia.de)
+ * (c) 2015 AOE GmbH (dev@aoe.com)
  * All rights reserved
  *
  * This script is part of the TYPO3 project. The TYPO3 project is
@@ -187,7 +187,7 @@ class tx_languagevisibility_beservices extends tx_languagevisibility_abstractser
 	 *
 	 * @param int $uid
 	 * @param string $table
-	 * @return boolean.
+	 * @return boolean
 	 */
 	public static function hasTranslationInAnyLanguage($uid, $table) {
 		$dao = t3lib_div::makeInstance('tx_languagevisibility_daocommon');

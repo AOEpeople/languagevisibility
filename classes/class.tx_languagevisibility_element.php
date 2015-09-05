@@ -3,7 +3,7 @@
 /***************************************************************
  *  Copyright notice
  *
- *  (c) 2014 AOE GmbH <dev@aoe.com>
+ *  (c) 2015 AOE GmbH <dev@aoe.com>
  *
  *  All rights reserved
  *
@@ -37,6 +37,11 @@ abstract class tx_languagevisibility_element {
 	protected $table;
 
 	/**
+	 * @var string
+	 */
+	 protected $row;
+
+	/**
 	 * This array holds the local visibility settings (from the 'tx_languagevisibility_visibility' field)
 	 *
 	 * @var array
@@ -60,7 +65,6 @@ abstract class tx_languagevisibility_element {
 	 * @param string $row
 	 * @param string $tablename
 	 * @throws \tx_languagevisibility_InvalidRowException
-	 * @return \tx_languagevisibility_element
 	 */
 	public function __construct($row, $tablename = '') {
 		if ((!is_array($row)) || !$this->isRowOriginal($row)) {
@@ -117,7 +121,7 @@ abstract class tx_languagevisibility_element {
 	 * Method to deternmine that an Element will not be instanciated with
 	 * data of an overlay.
 	 */
-	protected function isRowOriginal($row) {
+	public function isRowOriginal($row) {
 		if (!isset($row['l18n_parent']) && !isset($row['l10n_parent'])) {
 			return TRUE;
 		}
@@ -133,7 +137,7 @@ abstract class tx_languagevisibility_element {
 	/**
 	 * possibility to add inits in subclasses
 	 **/
-	protected function initialisations() {
+	public function initialisations() {
 	}
 
 	/**
@@ -278,7 +282,7 @@ abstract class tx_languagevisibility_element {
 	 * @param string $olrow
 	 * @return array
 	 */
-	protected function getContextIndependentWorkspaceOverlay($table, $olrow) {
+	public function getContextIndependentWorkspaceOverlay($table, $olrow) {
 		if (is_object($GLOBALS['TSFE']->sys_page)) {
 			$GLOBALS['TSFE']->sys_page->versionOL($table, $olrow);
 		} else {
@@ -291,7 +295,11 @@ abstract class tx_languagevisibility_element {
 	/**
 	 * receive relevant fallbackOrder
 	 */
-	function getFallbackOrder(tx_languagevisibility_language $language) {
+<<<<<<< HEAD
+	protected function getFallbackOrder(tx_languagevisibility_language $language) {
+=======
+	public function getFallbackOrder(tx_languagevisibility_language $language) {
+>>>>>>> [TASK] Cleanup
 		return $language->getFallbackOrder($this);
 	}
 
@@ -301,7 +309,11 @@ abstract class tx_languagevisibility_element {
 	 *
 	 * @return boolean
 	 */
-	function isLanguageSetToDefault() {
+<<<<<<< HEAD
+	protected function isLanguageSetToDefault() {
+=======
+	public function isLanguageSetToDefault() {
+>>>>>>> [TASK] Cleanup
 		return $this->row['sys_language_uid'] == '0';
 	}
 
@@ -310,7 +322,7 @@ abstract class tx_languagevisibility_element {
 	 *
 	 * @return boolean
 	 */
-	protected function isOrigElement() {
+	public function isOrigElement() {
 		if ($this->getOrigElementUid() > 0 ) {
 			   return FALSE;
 	   }
@@ -322,7 +334,11 @@ abstract class tx_languagevisibility_element {
 	 *
 	 * @return unknown
 	 */
-	function isLanguageSetToAll() {
+<<<<<<< HEAD
+	protected function isLanguageSetToAll() {
+=======
+	public function isLanguageSetToAll() {
+>>>>>>> [TASK] Cleanup
 		if ($this->row['sys_language_uid'] == '-1') {
 			return TRUE;
 		} else {
@@ -335,7 +351,11 @@ abstract class tx_languagevisibility_element {
 	 *
 	 * @return boolean
 	 */
-	function isLiveWorkspaceElement() {
+<<<<<<< HEAD
+	protected function isLiveWorkspaceElement() {
+=======
+	public function isLiveWorkspaceElement() {
+>>>>>>> [TASK] Cleanup
 		return ($this->row['pid'] != - 1);
 	}
 
@@ -344,7 +364,11 @@ abstract class tx_languagevisibility_element {
 	 *
 	 * @return boolean
 	 */
-	function isMonolithicTranslated() {
+<<<<<<< HEAD
+	protected function isMonolithicTranslated() {
+=======
+	public function isMonolithicTranslated() {
+>>>>>>> [TASK] Cleanup
 		/*
 		 * Timo: this does not work with pages because pages do not have the field 'sys_language_uid'
 		 * and the languagevisibility_pages class only represent elements from the table pages not
@@ -403,7 +427,7 @@ abstract class tx_languagevisibility_element {
 	 * @return boolean
 	 * @param int $langid
 	 */
-	protected function _hasOverlayRecordForLanguage($langid) {
+	public function _hasOverlayRecordForLanguage($langid) {
 		$row = $this->getOverLayRecordForCertainLanguage($langid, TRUE);
 		return $row['uid'] != '';
 	}
@@ -458,7 +482,7 @@ abstract class tx_languagevisibility_element {
 	 * @param $onlyUid
 	 * @return array
 	 */
-	public function getOverLayRecordForCertainLanguage($languageId, $onlyUid = FALSE) {
+	public function getOverLayRecordForCertainLanguage($languageId) {
 		//get caching hints
 		$table = $this->getTable();
 		$uid = $this->getUid();
