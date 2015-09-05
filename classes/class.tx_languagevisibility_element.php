@@ -37,6 +37,11 @@ abstract class tx_languagevisibility_element {
 	protected $table;
 
 	/**
+	 * @var string
+	 */
+	protected $row;
+
+	/**
 	 * This array holds the local visibility settings (from the 'tx_languagevisibility_visibility' field)
 	 *
 	 * @var array
@@ -291,7 +296,7 @@ abstract class tx_languagevisibility_element {
 	/**
 	 * receive relevant fallbackOrder
 	 */
-	function getFallbackOrder(tx_languagevisibility_language $language) {
+	public function getFallbackOrder(tx_languagevisibility_language $language) {
 		return $language->getFallbackOrder($this);
 	}
 
@@ -301,7 +306,7 @@ abstract class tx_languagevisibility_element {
 	 *
 	 * @return boolean
 	 */
-	function isLanguageSetToDefault() {
+	public function isLanguageSetToDefault() {
 		return $this->row['sys_language_uid'] == '0';
 	}
 
@@ -322,7 +327,7 @@ abstract class tx_languagevisibility_element {
 	 *
 	 * @return unknown
 	 */
-	function isLanguageSetToAll() {
+	public function isLanguageSetToAll() {
 		if ($this->row['sys_language_uid'] == '-1') {
 			return TRUE;
 		} else {
@@ -335,7 +340,7 @@ abstract class tx_languagevisibility_element {
 	 *
 	 * @return boolean
 	 */
-	function isLiveWorkspaceElement() {
+	public function isLiveWorkspaceElement() {
 		return ($this->row['pid'] != - 1);
 	}
 
@@ -344,7 +349,7 @@ abstract class tx_languagevisibility_element {
 	 *
 	 * @return boolean
 	 */
-	function isMonolithicTranslated() {
+	public function isMonolithicTranslated() {
 		/*
 		 * Timo: this does not work with pages because pages do not have the field 'sys_language_uid'
 		 * and the languagevisibility_pages class only represent elements from the table pages not

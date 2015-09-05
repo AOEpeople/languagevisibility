@@ -63,8 +63,8 @@ class tx_languagevisibility_modfunc1 extends t3lib_extobjbase {
 	 * @return	string		Output HTML for the module.
 	 */
 	public function main() {
+		$theOutput = '';
 		if ($this->pObj->id) {
-			$theOutput = '';
 
 				// Depth selector:
 			$h_func = t3lib_BEfunc::getFuncMenu($this->pObj->id, 'SET[depth]', $this->pObj->MOD_SETTINGS['depth'], $this->pObj->MOD_MENU['depth'], 'index.php');
@@ -188,7 +188,6 @@ class tx_languagevisibility_modfunc1 extends t3lib_extobjbase {
 					if ($element->hasTranslation($langId)) {
 						$viewPageLink = '<a href="#" onclick="' . htmlspecialchars(t3lib_BEfunc::viewOnClick($data['row']['uid'], $GLOBALS['BACK_PATH'], '', '', '', '&L=###LANG_UID###')) . '">' . '<img' . t3lib_iconWorks::skinImg($GLOBALS['BACK_PATH'], 'gfx/zoom.gif', 'width="12" height="12"') . ' title="' . $GLOBALS['LANG']->getLL('lang_renderl10n_viewPage', '1') . '" border="0" alt="" />' . '</a>';
 
-						$status = 'c-ok';
 						$overLayRow = $element->getOverLayRecordForCertainLanguage($langId);
 							// add uid of overlay to list of editable records:
 						$langRecUids[$langId][] = $overLayRow['uid'];
@@ -209,7 +208,6 @@ class tx_languagevisibility_modfunc1 extends t3lib_extobjbase {
 						$tCells[] = '<td class="' . $statusTrans . '">' . $info . '</td>';
 						$tCells[] = '<td class="' . $statusTrans . '" title="' . $GLOBALS['LANG']->getLL('lang_renderl10n_CEcount', '1') . '" align="center">' . $this->getContentElementCount($data['row']['uid'], $langId) . '</td>';
 					} else {
-						$status = t3lib_div::hideIfNotTranslated($data['row']['l18n_cfg']) || $data['row']['l18n_cfg'] & 1 ? 'c-blocked' : 'c-fallback';
 						$tCells[] = '<td class="' . $statusTrans . ' c-leftLine">&nbsp;</td>';
 						$tCells[] = '<td class="' . $statusTrans . '">&nbsp;</td>';
 						//add to JS
@@ -294,7 +292,7 @@ class tx_languagevisibility_modfunc1 extends t3lib_extobjbase {
 	 * @param	integer		Sys language uid
 	 * @return	integer		Number of content elements from the PID where the language is set to a certain value.
 	 */
-	function getContentElementCount($pageId, $sysLang) {
+	public function getContentElementCount($pageId, $sysLang) {
 		if ($sysLang == 0) {
 			$res = $GLOBALS['TYPO3_DB']->exec_SELECTquery('count(*)', 'tt_content', 'pid=' . intval($pageId) . ' AND sys_language_uid=' . intval($sysLang) . t3lib_BEfunc::deleteClause('tt_content') . t3lib_BEfunc::versioningPlaceholderClause('tt_content'));
 			list ( $count ) = $GLOBALS['TYPO3_DB']->sql_fetch_row($res);
@@ -318,7 +316,7 @@ class sstx_languagevisibility_modfunc1 extends t3lib_extobjbase {
 	 *
 	 * @return    Array with menuitems
 	 */
-	function modMenu() {
+	public function modMenu() {
 		return Array("tx_languagevisibility_modfunc1_check" => "" );
 	}
 
@@ -327,7 +325,7 @@ class sstx_languagevisibility_modfunc1 extends t3lib_extobjbase {
 	 *
 	 * @return    HTML
 	 */
-	function main() {
+	public function main() {
 		// Initializes the module. Done in this function because we may need to re-initialize if data is submitted!
 		$theOutput = $this->pObj->doc->spacer(5);
 		$theOutput .= $this->pObj->doc->section($GLOBALS['LANG']->getLL('title'), 'Dummy content here...', 0, 1);
