@@ -29,6 +29,7 @@ class tx_languagevisibility_fieldvisibility {
 	private $isNewElement = FALSE;
 	private $pageId = 0;
 	private $modTSconfig = array();
+	private $calcPerms = FALSE;
 
 	/**
 	 * @return void
@@ -42,7 +43,8 @@ class tx_languagevisibility_fieldvisibility {
 	 * @param $fobj
 	 * @return string
 	 */
-	public function user_fieldvisibility($PA, $fobj) {
+	public function user_fieldvisibility($PA) {
+		$content = '';
 		$this->init();
 
 			//init some class attributes
@@ -122,6 +124,7 @@ class tx_languagevisibility_fieldvisibility {
 	public function _getLanguageInfoStructurListForElementAndLanguageList($changeableElement, $languageList, $itemFormElName, $isOverlay) {
 
 		$visibility = t3lib_div::makeInstance('tx_languagevisibility_visibilityService');
+		$visibilityString = '';
 		$infosStruct = array();
 
 		foreach ( $languageList as $language ) {
@@ -180,6 +183,8 @@ class tx_languagevisibility_fieldvisibility {
 	 * @return string
 	 */
 	protected function getSelectBox($languageid, $select, $current, $name) {
+		$content = '';
+		$addClassName = '';
 		if (count($select) == 1) {
 			$addClassName = ' oneitem';
 		}
@@ -205,6 +210,7 @@ class tx_languagevisibility_fieldvisibility {
 	 * @return string
 	 */
 	protected function getCSSClassFromVisibilityKey($key) {
+		$res = '';
 		switch ($key) {
 			case 'yes' :
 			case 'no' :
@@ -243,6 +249,7 @@ class tx_languagevisibility_fieldvisibility {
 		$content .= '<table style="border-collapse: collapse;" class="visibilitytable">';
 		$content .= '<tr class="bgColor4">' . '<th >' . $this->getLLL('language') . '</th>' . '<th >' . $this->getLLL('visibility_in_default') . '</th>' . '<th >' . $this->getLLL('visibility_in_overlay') . '</th>' . '<th>' . $this->getLLL('hastranslation') . '</th>' . '<th>' . $this->getLLL('isshown') . '</th>' . '</tr>';
 
+		$i=0;
 		foreach ( $infosStruct as $info ) {
 			$i ++;
 
@@ -293,10 +300,10 @@ class tx_languagevisibility_fieldvisibility {
 	/**
 	 * Returns an HTML link for editing
 	 *
-	 * @param	string		$label: The label (or image)
-	 * @param	string		$table: The table, fx. 'tt_content'
-	 * @param	integer		$uid: The uid of the element to be edited
-	 * @param	boolean		$forced: By default the link is not shown if translatorMode is set, but with this boolean it can be forced anyway.
+	 * @param	string		$label The label (or image)
+	 * @param	string		$table The table, fx. 'tt_content'
+	 * @param	integer		$uid The uid of the element to be edited
+	 * @param	boolean		$forced By default the link is not shown if translatorMode is set, but with this boolean it can be forced anyway.
 	 * @return	string		HTML anchor tag containing the label and the correct link
 	 * @access protected
 	 */
