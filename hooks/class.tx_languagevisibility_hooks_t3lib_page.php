@@ -53,14 +53,13 @@ class tx_languagevisibility_hooks_t3lib_page implements \TYPO3\CMS\Frontend\Page
 			return;
 		}
 
-			// call service to know if element is visible and which overlay language to use
+		// call service to know if element is visible and which overlay language to use
 		$overlayLanguage = tx_languagevisibility_feservices::getOverlayLanguageIdForElementRecord($page_id, 'pages', $lUid);
+
 		if ($overlayLanguage === FALSE) {
-			$overlayLanguageForced = tx_languagevisibility_feservices::getOverlayLanguageIdForElementRecordForced($page_id, 'pages', $lUid);
-				// don't use this recursion without further checks!!!!
-				// this isn't used because there  seems to be no reason why we should overlay an invisible page...
-				// $pageInput = $parent->getPageOverlay ( &$pageInput, $overlayLanguageForced );
-			if (is_array($pageInput)) $pageInput['_NOTVISIBLE'] = TRUE;
+			if (is_array($pageInput)) {
+				$pageInput['_NOTVISIBLE'] = TRUE;
+			}
 			$lUid = NULL;
 		} else {
 			$lUid = $overlayLanguage;
