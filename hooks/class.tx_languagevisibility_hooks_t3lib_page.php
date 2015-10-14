@@ -53,14 +53,13 @@ class tx_languagevisibility_hooks_t3lib_page implements \TYPO3\CMS\Frontend\Page
 			return;
 		}
 
-			// call service to know if element is visible and which overlay language to use
+		// call service to know if element is visible and which overlay language to use
 		$overlayLanguage = tx_languagevisibility_feservices::getOverlayLanguageIdForElementRecord($page_id, 'pages', $lUid);
+
 		if ($overlayLanguage === FALSE) {
-			$overlayLanguageForced = tx_languagevisibility_feservices::getOverlayLanguageIdForElementRecordForced($page_id, 'pages', $lUid);
-				// don't use this recursion without further checks!!!!
-				// this isn't used because there  seems to be no reason why we should overlay an invisible page...
-				// $pageInput = $parent->getPageOverlay ( &$pageInput, $overlayLanguageForced );
-			if (is_array($pageInput)) $pageInput['_NOTVISIBLE'] = TRUE;
+			if (is_array($pageInput)) {
+				$pageInput['_NOTVISIBLE'] = TRUE;
+			}
 			$lUid = NULL;
 		} else {
 			$lUid = $overlayLanguage;
@@ -77,10 +76,14 @@ class tx_languagevisibility_hooks_t3lib_page implements \TYPO3\CMS\Frontend\Page
 	 * @param array $row
 	 * @param integer $sys_language_content
 	 * @param string $OLmode
-	 * @param \TYPO3\CMS\Frontend\Page\PageRepository $parent
+	 * @param \TYPO3\CMS\Frontend\Page\PageRepository $pageRepository
 	 * @return void
 	 */
-	public function getRecordOverlay_preProcess($table, &$row, &$sys_language_content, $OLmode, \TYPO3\CMS\Frontend\Page\PageRepository $parent) {
+	public function getRecordOverlay_preProcess($table, &$row, &$sys_language_content, $OLmode, \TYPO3\CMS\Frontend\Page\PageRepository $pageRepository) {
+		if (0 === $pageRepository->sys_language_uid) {
+			return;
+		}
+
 		if (!tx_languagevisibility_feservices::isSupportedTable($table)
 			|| (!is_array($row))
 			|| (!isset($row['uid']))) {
@@ -125,10 +128,14 @@ class tx_languagevisibility_hooks_t3lib_page implements \TYPO3\CMS\Frontend\Page
 	 * @param array $row
 	 * @param integer $sys_language_content
 	 * @param string $OLmode
-	 * @param \TYPO3\CMS\Frontend\Page\PageRepository $parent
+	 * @param \TYPO3\CMS\Frontend\Page\PageRepository $pageRepository
 	 * @return void
 	 */
-	public function getRecordOverlay_postProcess($table, &$row, &$sys_language_content, $OLmode, \TYPO3\CMS\Frontend\Page\PageRepository $parent) {
+	public function getRecordOverlay_postProcess($table, &$row, &$sys_language_content, $OLmode, \TYPO3\CMS\Frontend\Page\PageRepository $pageRepository) {
+		if (0 === $pageRepository->sys_language_uid) {
+			return;
+		}
+
 		if (is_array($row) && $row['uid'] === 0 && $row['pid'] === 0) {
 			$row = FALSE;
 			return;
@@ -171,7 +178,7 @@ class tx_languagevisibility_hooks_t3lib_page implements \TYPO3\CMS\Frontend\Page
 			$return = $flexObj->traverseFlexFormXMLData('tt_content', 'tx_templavoila_flex', $row, $this, '_callback_checkXMLFieldsForFallback');
 
 			if ($sys_language_content != $overlayLanguage) {
-				$row = $parent->getRecordOverlay($table, $row, $overlayLanguage, $OLmode);
+				$row = $pageRepository->getRecordOverlay($table, $row, $overlayLanguage, $OLmode);
 			}
 			$row['tx_templavoila_flex'] = t3lib_div::array2xml_cs($this->_callbackVar_overlayXML, 'T3FlexForms', array('useCDATA' => TRUE));
 		}
