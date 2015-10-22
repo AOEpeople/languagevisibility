@@ -31,6 +31,13 @@
 class tx_languagevisibility_feservices extends tx_languagevisibility_abstractservices {
 
 	/**
+	 * The cache frontend
+	 *
+	 * @var \TYPO3\CMS\Core\Cache\Frontend\FrontendInterface
+	 */
+	protected static $cache = NULL;
+
+	/**
 	 * @param $uid
 	 * @param $table
 	 * @param $lUid
@@ -97,6 +104,10 @@ class tx_languagevisibility_feservices extends tx_languagevisibility_abstractser
 	 * @return mixed
 	 */
 	public static function getOverlayLanguageIdForElementRecord($uid, $table, $lUid) {
+		$cacheKey = implode('_', array(get_class(), __FUNCTION__, $uid, $table, $lUid));
+		if (self::getCache()->has($cacheKey)) {
+			return self::getCache()->get($cacheKey);
+		}
 		$dao = t3lib_div::makeInstance('tx_languagevisibility_daocommon');
 		$elementfactory = t3lib_div::makeInstance('tx_languagevisibility_elementFactory', $dao);
 		$element = $elementfactory->getElementForTable($table, $uid);
@@ -104,7 +115,9 @@ class tx_languagevisibility_feservices extends tx_languagevisibility_abstractser
 		$language = $languageRep->getLanguageById($lUid);
 
 		$visibility = t3lib_div::makeInstance('tx_languagevisibility_visibilityService');
-		return $visibility->getOverlayLanguageIdForLanguageAndElement($language, $element);
+		$overlayLanguageId = $visibility->getOverlayLanguageIdForLanguageAndElement($language, $element);
+		self::getCache()->set($cacheKey, $overlayLanguageId);
+		return $overlayLanguageId;
 	}
 
 	/**
@@ -147,5 +160,18 @@ class tx_languagevisibility_feservices extends tx_languagevisibility_abstractser
 		}
 
 		return $result;
+	}
+
+	/**
+	 * Gets the cache frontend for tx_languagevisibility
+	 *
+	 * @return \TYPO3\CMS\Core\Cache\Frontend\VariableFrontend
+	 */
+	public static function getCache() {
+		if (!self::$cache) {
+			self::$cache = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\\CMS\\Core\\Cache\\CacheManager')
+				->getCache('tx_languagevisibility');
+		}
+		return self::$cache;
 	}
 }
