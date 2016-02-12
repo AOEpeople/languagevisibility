@@ -1,0 +1,54 @@
+<?php
+
+namespace AOE\Languagevisibility\Hooks;
+
+/***************************************************************
+ * Copyright notice
+ *
+ * (c) 2010 Tolleiv Nietsch <nietsch@aoemedia.de>
+ * All rights reserved
+ *
+ * This script is part of the TYPO3 project. The TYPO3 project is
+ * free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * The GNU General Public License can be found at
+ * http://www.gnu.org/copyleft/gpl.html.
+ *
+ * This script is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * This copyright notice MUST APPEAR in all copies of the script!
+ ***************************************************************/
+
+use AOE\Languagevisibility\Services\BeServices;
+
+/**
+ *
+ * @author	 Tolleiv
+ * @package	 TYPO3
+ * @version $Id:$
+ */
+
+class T3libUserAuthGroup {
+
+	/**
+	 *
+	 * @param array $params
+	 * @param object $ref
+	 * @return bool
+	 */
+	public function checkFullLanguagesAccess($params, $ref) {
+		if (isset($params['recordLocalizationAccess']) && $params['recordLocalizationAccess']) {
+				// so far the user had access to all existing overlay-languages
+			return BeServices::hasUserAccessToEditRecord($params['table'], $params['row']['uid']);
+		} else {
+			return $params['recordLocalizationAccess'];
+		}
+	}
+
+}

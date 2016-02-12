@@ -35,7 +35,7 @@ For some versions you need a patch in extbase TYPO3 persitence class:
    +                                continue;
    +                        }
    +
-                           if (!($this->pageSelectObject instanceof t3lib_pageSelect)) {
+                           if (!($this->pageSelectObject instanceof \TYPO3\CMS\Frontend\Page\PageRepository)) {
                                    if (TYPO3_MODE == 'FE') {
                                            if (is_object($GLOBALS['TSFE'])) {
    @@ -986,7 +991,7 @@
@@ -50,7 +50,7 @@ For some versions you need a patch in extbase TYPO3 persitence class:
    @@ -1064,4 +1069,4 @@
            }
     }
-    
+
 
 For other use-cases you can use the API to check your records:
 
@@ -60,7 +60,7 @@ For other use-cases you can use the API to check your records:
    $table = '<tablename>';
    $element = tx_languagevisibility_feservices::getElement($this->row['referenceid'], $table);
    $language_uid = tx_languagevisibility_feservices::getOverlayLanguageIdForElement($element, $GLOBALS['TSFE']->sys_language_uid);
-    
+
    // get overlay record
    if($language_uid > 0) {
            $this->row = tx_mvc_system_dbtools::getTYPO3RowOverlay($this->row, $table, $language_uid);
