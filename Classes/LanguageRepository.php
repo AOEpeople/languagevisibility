@@ -164,6 +164,9 @@ class LanguageRepository {
 				$language = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('AOE\\Languagevisibility\\Language');
 
 				$language->setData($row);
+				$id = is_array($id) ?
+					array_shift($id) :
+					$id;
 				$cacheData[$id] = $language;
 				$GLOBALS['TYPO3_DB']->sql_free_result($res);
 

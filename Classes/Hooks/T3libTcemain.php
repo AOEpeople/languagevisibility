@@ -27,7 +27,7 @@ namespace AOE\Languagevisibility\Hooks;
  ***************************************************************/
 use AOE\Languagevisibility\CacheManager;
 use AOE\Languagevisibility\Services\BeServices;
-use AOE\Languagevisibility\VisibilityService;
+use AOE\Languagevisibility\Services\VisibilityService;
 
 /**
  * Class tx_languagevisibility_hooks_t3lib_tcemain
@@ -45,7 +45,7 @@ class T3libTcemain {
 	 */
 	public function checkRecordUpdateAccess($table, $id, $data, $res, $tcemain) {
 		/** @var tx_languagevisibility_beservices $visibilityservice */
-		$visibilityservice = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('tx_languagevisibility_beservices');
+		$visibilityservice = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(BeServices::class);
 		if ($table == 'pages' && ! $visibilityservice->hasUserAccessToPageRecord($id, 'edit')) {
 			$result = 0;
 		} elseif (! $visibilityservice->hasUserAccessToEditRecord($table, $id)) {
