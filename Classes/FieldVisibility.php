@@ -25,6 +25,7 @@ namespace AOE\Languagevisibility;
  * This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
+use AOE\Languagevisibility\Services\BeServices;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
@@ -129,7 +130,7 @@ class FieldVisibility {
 	 */
 	public function _getLanguageInfoStructurListForElementAndLanguageList($changeableElement, $languageList, $itemFormElName, $isOverlay) {
 
-		$visibility = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('AOE\\Languagevisibility\\VisibilityService');
+		$visibility = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('AOE\\Languagevisibility\\Services\\VisibilityService');
 		$visibilityString = '';
 		$infosStruct = array();
 
@@ -140,7 +141,7 @@ class FieldVisibility {
 				// if there is no access to language - and localsettings exist, then do not show select box
 				// this is to not be able as an translator to override languagesetting
 			$currentSetting = $changeableElement->getLocalVisibilitySetting($language->getUid());
-			$currentOptionsForUserAndLanguage = tx_languagevisibility_beservices::getAvailableOptionsForLanguage($language, $isOverlay, $changeableElement);
+			$currentOptionsForUserAndLanguage = BeServices::getAvailableOptionsForLanguage($language, $isOverlay, $changeableElement);
 			if ($currentSetting == '' || isset($currentOptionsForUserAndLanguage[$currentSetting])) {
 
 				if ($isOverlay) {
