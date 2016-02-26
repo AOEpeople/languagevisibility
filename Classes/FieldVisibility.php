@@ -25,6 +25,7 @@ namespace AOE\Languagevisibility;
  * This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
+use AOE\Languagevisibility\Services\BeServices;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
@@ -74,7 +75,7 @@ class FieldVisibility {
 
 		$value = $PA['row'][$PA['field']];
 		$table = $PA['table'];
-		$isOverlay = \AOE\Languagevisibility\Services\BeServices::isOverlayRecord($PA['row'], $table);
+		$isOverlay = BeServices::isOverlayRecord($PA['row'], $table);
 
 		$visivilitySetting = @unserialize($value);
 		if (! is_array($visivilitySetting) && $value != '') {
@@ -82,8 +83,8 @@ class FieldVisibility {
 		}
 
 		if ($isOverlay) {
-			$uid = \AOE\Languagevisibility\Services\BeServices::getOriginalUidOfTranslation($PA['row'], $table);
-			$table = \AOE\Languagevisibility\Services\BeServices::getOriginalTableOfTranslation($table);
+			$uid = BeServices::getOriginalUidOfTranslation($PA['row'], $table);
+			$table = BeServices::getOriginalTableOfTranslation($table);
 
 				//This element is an overlay therefore we need to render the visibility field just for the language of the overlay
 			$overlayRecordsLanguage = $languageRep->getLanguageById($PA['row']['sys_language_uid']);
@@ -129,7 +130,7 @@ class FieldVisibility {
 	 */
 	public function _getLanguageInfoStructurListForElementAndLanguageList($changeableElement, $languageList, $itemFormElName, $isOverlay) {
 
-		$visibility = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('AOE\\Languagevisibility\\VisibilityService');
+		$visibility = GeneralUtility::makeInstance('AOE\\Languagevisibility\\Services\\VisibilityService');
 		$visibilityString = '';
 		$infosStruct = array();
 
@@ -140,7 +141,7 @@ class FieldVisibility {
 				// if there is no access to language - and localsettings exist, then do not show select box
 				// this is to not be able as an translator to override languagesetting
 			$currentSetting = $changeableElement->getLocalVisibilitySetting($language->getUid());
-			$currentOptionsForUserAndLanguage = tx_languagevisibility_beservices::getAvailableOptionsForLanguage($language, $isOverlay, $changeableElement);
+			$currentOptionsForUserAndLanguage = BeServices::getAvailableOptionsForLanguage($language, $isOverlay, $changeableElement);
 			if ($currentSetting == '' || isset($currentOptionsForUserAndLanguage[$currentSetting])) {
 
 				if ($isOverlay) {

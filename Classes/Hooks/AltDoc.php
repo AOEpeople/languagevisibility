@@ -25,6 +25,8 @@ namespace AOE\Languagevisibility\Hooks;
  * This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
+use AOE\Languagevisibility\Services\BeServices;
+
 /**
  * Class/Function which manipulates the item-array for the  listing (see piFlexform).
  *
@@ -46,8 +48,7 @@ class AltDoc {
 			// user wants to edit/create page record but has no access to default language
 		$hasAccess = FALSE;
 		if ($params['table'] === 'pages' && !$GLOBALS['BE_USER']->checkLanguageAccess(0)) {
-			$visibilityService = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('tx_languagevisibility_beservices'); /** @var tx_languagevisibility_beservices $visibilityService */
-			if ($visibilityService->hasUserAccessToPageRecord((int) $params['uid'], $params['cmd'])) {
+			if (BeServices::hasUserAccessToPageRecord((int) $params['uid'], $params['cmd'])) {
 				$hasAccess = TRUE;
 			}
 		}

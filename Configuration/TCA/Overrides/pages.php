@@ -10,7 +10,7 @@ $tempColumnsPages = array(
 		'config' => array(
 			'type' => 'user',
 			'size' => '30',
-			'userFunc' => 'tx_languagevisibility_fieldvisibility->user_fieldvisibility',
+			'userFunc' => 'AOE\\Languagevisibility\\FieldVisibility->user_fieldvisibility',
 		)
 	),
 	'tx_languagevisibility_inheritanceflag_original' => array(
