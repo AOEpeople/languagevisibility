@@ -62,7 +62,7 @@ class BeServices extends AbstractServices {
 			$languageRep = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('AOE\\Languagevisibility\\LanguageRepository');
 			$languageList = $languageRep->getLanguages();
 
-			$visibility = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('AOE\\Languagevisibility\\VisibilityService');
+			$visibility = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('AOE\\Languagevisibility\\Services\\VisibilityService');
 
 			$visibleFlags = array();
 			foreach ( $languageList as $language ) {
@@ -121,7 +121,7 @@ class BeServices extends AbstractServices {
 				return FALSE;
 			}
 
-			$visibility = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('AOE\\Languagevisibility\\VisibilityService');
+			$visibility = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('AOE\\Languagevisibility\\Services\\VisibilityService');
 
 			self::$cache_isVisible[$cacheKey] = $visibility->isVisible($language, $element, $omitLocal);
 		}
