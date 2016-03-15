@@ -25,6 +25,8 @@ namespace AOE\Languagevisibility;
  * This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
+use TYPO3\CMS\Core\Utility\GeneralUtility;
+
 /**
  *
  * @author	Daniel Poetzinger <poetzinger@aoemedia.de>
@@ -95,7 +97,7 @@ class LanguageRepository {
 
 		$return[] = $this->getDefaultLanguage();
 		foreach ( $results as $row ) {
-			$language = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('AOE\\Languagevisibility\\Language');
+			$language = GeneralUtility::makeInstance('AOE\\Languagevisibility\\Language');
 			$language->setData($row);
 			$return[] = $language;
 		}
@@ -118,7 +120,7 @@ class LanguageRepository {
 
 		foreach ( $results as $row ) {
 			if ($GLOBALS['BE_USER']->checkLanguageAccess($row['uid'])) {
-				$language = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('AOE\\Languagevisibility\\Language');
+				$language = GeneralUtility::makeInstance('AOE\\Languagevisibility\\Language');
 				$language->setData($row);
 				$return[] = $language;
 			}
@@ -135,7 +137,7 @@ class LanguageRepository {
 	 */
 	public function getDefaultLanguage() {
 		$row = array();
-		$language = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('AOE\\Languagevisibility\\Language');
+		$language = GeneralUtility::makeInstance('AOE\\Languagevisibility\\Language');
 		$row['uid'] = 0;
 		$row['title'] = 'Default';
 
@@ -164,6 +166,7 @@ class LanguageRepository {
 				$language = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('AOE\\Languagevisibility\\Language');
 
 				$language->setData($row);
+				$id = is_array($id) ? array_shift($id) : $id;
 				$cacheData[$id] = $language;
 				$GLOBALS['TYPO3_DB']->sql_free_result($res);
 
@@ -181,7 +184,7 @@ class LanguageRepository {
 	 */
 	public static function makeInstance() {
 		if (! self::$instance instanceof LanguageRepository) {
-			self::$instance = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('AOE\\Languagevisibility\\LanguageRepository');
+			self::$instance = GeneralUtility::makeInstance('AOE\\Languagevisibility\\LanguageRepository');
 		}
 
 		return self::$instance;
