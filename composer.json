@@ -34,9 +34,7 @@
   "scripts": {
     "post-autoload-dump": [
       "mkdir -p .Build/Web/typo3conf/ext/",
-      "[ -L .Build/Web/typo3conf/ext/languagevisibility ] || ln -snvf ../../../../. .Build/Web/typo3conf/ext/languagevisibility",
-      "mkdir -p typo3conf/ext",
-      "[ -L typo3conf/ext/languagevisibility ] || ln -snvf ../../. typo3conf/ext/languagevisibility"
+      "[ -L .Build/Web/typo3conf/ext/languagevisibility ] || ln -snvf ../../../../. .Build/Web/typo3conf/ext/languagevisibility"
     ]
   },
   "extra": {

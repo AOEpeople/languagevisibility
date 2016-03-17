@@ -30,6 +30,7 @@ use AOE\Languagevisibility\Element;
 use AOE\Languagevisibility\Language;
 use AOE\Languagevisibility\PageElement;
 use AOE\Languagevisibility\Visibility;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
  *
@@ -152,6 +153,7 @@ class VisibilityService {
 	 */
 	public function isVisible(Language $language, Element $element, $omitLocal = FALSE) {
 		$this->_relevantOverlayLanguageId = $language->getUid();
+		$languageRepository = GeneralUtility::makeInstance('AOE\\Languagevisibility\\LanguageRepository');
 
 		$visibility = $this->getVisibilitySetting($language, $element, $omitLocal);
 		if ($visibility == 'yes') {
@@ -182,7 +184,8 @@ class VisibilityService {
 				}
 
 				foreach ($fallBackOrder as $languageid) {
-					if ($element->hasTranslation($languageid)) {
+					$fallbackLanguage = $languageRepository->getLanguageById($languageid);
+					if ($element->hasTranslation($languageid) && $this->isVisible($fallbackLanguage, $element, $omitLocal)) {
 						$this->_relevantOverlayLanguageId = $languageid;
 						$result = TRUE;
 						break;
@@ -211,7 +214,7 @@ class VisibilityService {
 	 */
 	protected function getInheritedVisibility(Language $language, Element $element) {
 
-		$dao = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('AOE\\Languagevisibility\\Dao\DaoCommon');
+		$dao = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('AOE\\Languagevisibility\\Dao\\DaoCommon');
 		$elementfactory = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('AOE\\Languagevisibility\\ElementFactory', $dao);
 		$elements = $elementfactory->getParentElementsFromElement($element, $language);
 

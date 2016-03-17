@@ -55,19 +55,11 @@ before_install:
   - composer --version
 
 before_script:
-  # Removes xdebug to speed up tests
-  - phpenv config-rm xdebug.ini
   # Installs TYPO3
   - composer require typo3/cms=$TYPO3_VERSION;
-  # If TYPO3_VERSION is NOT 6.2.x
-  - >
-    if [[ "$TYPO3_VERSION" != "^6.2" ]]; then
-      export "TYPO3_PATH_WEB"=$PWD/.Build/Web;
-    else
-      export "TYPO3_PATH_WEB"=$PWD;
-    fi
   # Restore composer.json
   - git checkout composer.json;
+  - export "TYPO3_PATH_WEB"=$PWD/.Build/Web;
   # Locating UnitTests.xml
   - export "UNIT_XML"=`find . -name 'UnitTests.xml' -type f`
   # Location FunctionalTests.xml

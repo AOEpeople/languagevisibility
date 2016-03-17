@@ -103,7 +103,7 @@ class T3libPage implements \TYPO3\CMS\Frontend\Page\PageRepositoryGetPageOverlay
 			$row['pid'] = 0;
 			return;
 		}
-		catch (Exception $e) {
+		catch (\Exception $e) {
 			return;
 		}
 
@@ -152,7 +152,7 @@ class T3libPage implements \TYPO3\CMS\Frontend\Page\PageRepositoryGetPageOverlay
 		try {
 			$element = FeServices::getElement($row['uid'], $table);
 			$overlayLanguage = FeServices::getOverlayLanguageIdForElement($element, $sys_language_content);
-		} catch (Exception $e) {
+		} catch (\Exception $e) {
 			return;
 		}
 
