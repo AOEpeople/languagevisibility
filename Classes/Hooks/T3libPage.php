@@ -181,7 +181,9 @@ class T3libPage implements \TYPO3\CMS\Frontend\Page\PageRepositoryGetPageOverlay
 			if ($sys_language_content != $overlayLanguage) {
 				$row = $parent->getRecordOverlay($table, $row, $overlayLanguage, $OLmode);
 			}
-			$row['tx_templavoila_flex'] = GeneralUtility::array2xml_cs($this->_callbackVar_overlayXML, 'T3FlexForms', array('useCDATA' => TRUE));
+			if ($olrow['tx_templavoila_flex']) {
+				$row['tx_templavoila_flex'] = GeneralUtility::array2xml_cs($this->_callbackVar_overlayXML, 'T3FlexForms', array('useCDATA' => TRUE));
+			}
 		}
 	}
 
