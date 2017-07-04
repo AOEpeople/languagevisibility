@@ -156,7 +156,8 @@ class LanguageRepository {
 		$cacheManager = CacheManager::getInstance();
 		$cacheData = $cacheManager->get('languagesCache');
 		$isCacheEnabled = $cacheManager->isCacheEnabled();
-
+		$id = is_array($id) ? array_shift($id) : $id;
+		
 		if (! $isCacheEnabled || ! isset($cacheData[$id])) {
 			if ($id == 0) {
 				$cacheData[$id] = $this->getDefaultLanguage();
@@ -166,7 +167,6 @@ class LanguageRepository {
 				$language = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('AOE\\Languagevisibility\\Language');
 
 				$language->setData($row);
-				$id = is_array($id) ? array_shift($id) : $id;
 				$cacheData[$id] = $language;
 				$GLOBALS['TYPO3_DB']->sql_free_result($res);
 
