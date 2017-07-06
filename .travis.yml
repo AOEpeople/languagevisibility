@@ -56,7 +56,7 @@ before_install:
 
 before_script:
   # Installs TYPO3
-  - composer require typo3/cms=$TYPO3_VERSION;
+  - composer require typo3/cms=$TYPO3_VERSION --prefer-source;
   # Restore composer.json
   - git checkout composer.json;
   - export "TYPO3_PATH_WEB"=$PWD/.Build/Web;
