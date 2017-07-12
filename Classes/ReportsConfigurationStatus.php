@@ -92,7 +92,7 @@ class ReportsConfigurationStatus implements \TYPO3\CMS\Reports\StatusProviderInt
 			}
 		}
 
-		return GeneralUtility::makeInstance('TYPO3\CMS\Reports\Status'',
+		return GeneralUtility::makeInstance('TYPO3\CMS\Reports\Status',
 			'EXT:languagevisibility config.sys_language_mode',
 			$value,
 			$message,
