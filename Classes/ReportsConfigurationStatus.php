@@ -58,7 +58,7 @@ class ReportsConfigurationStatus implements \TYPO3\CMS\Reports\StatusProviderInt
 			'fail' => array(),
 		);
 		$value = $GLOBALS['LANG']->sL('LLL:EXT:languagevisibility/locallang_db.xml:reports.ok.value');
-		$severity = tx_reports_reports_status_Status::OK;
+		$severity = \TYPO3\CMS\Reports\Status::OK;
 
 		$rootTpls = \TYPO3\CMS\Backend\Utility\BackendUtility::getRecordsByField('sys_template', 'root', '1', '', 'pid');
 
@@ -70,8 +70,8 @@ class ReportsConfigurationStatus implements \TYPO3\CMS\Reports\StatusProviderInt
 			$tmpl->tt_track = 0;
 			$tmpl->init();
 
-				// Gets the rootLine
-			$sys_page = GeneralUtility::makeInstance('t3lib_pageSelect');
+			// Gets the rootLine
+			$sys_page = GeneralUtility::makeInstance('TYPO3\\CMS\\Frontend\\Page\\PageRepository');
 			$rootLine = $sys_page->getRootLine($tpl['pid']);
 			$tmpl->runThroughTemplates($rootLine, $tpl['uid']);
 
@@ -92,7 +92,7 @@ class ReportsConfigurationStatus implements \TYPO3\CMS\Reports\StatusProviderInt
 			}
 		}
 
-		return GeneralUtility::makeInstance('tx_reports_reports_status_Status',
+		return GeneralUtility::makeInstance('TYPO3\\CMS\\Reports\\Status',
 			'EXT:languagevisibility config.sys_language_mode',
 			$value,
 			$message,
