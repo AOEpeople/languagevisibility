@@ -92,7 +92,7 @@ class Language {
 	/**
 	 * Returns the fallback order for this language for elements
 	 *
-	 * @param tx_languagevisibility_element $contextElement
+	 * @param Element $contextElement
 	 * @return array
 	 */
 	public function getFallbackOrderElement(Element $contextElement) {
@@ -112,7 +112,7 @@ class Language {
 	/**
 	 * Returns the fallback order for news elements as array
 	 *
-	 * @param tx_languagevisibility_element $contextElement
+	 * @param Element $contextElement
 	 * @return array
 	 */
 	public function getFallbackOrderTTNewsElement(Element $contextElement) {
@@ -133,7 +133,7 @@ class Language {
 	 *
 	 * @param unknown_type $key
 	 * @param unknown_type $fallbackorder
-	 * @param tx_languagevisibility_element $contextElement
+	 * @param Element $contextElement
 	 * @return array
 	 */
 	protected function triggerFallbackHooks($key, $fallbackorder, Element $contextElement) {
@@ -170,7 +170,7 @@ class Language {
 	/**
 	 * Method to read the defaultVisibility setting of pages.
 	 *
-	 * @param tx_languagevisibility_element $contextElement
+	 * @param Element $contextElement
 	 * @return string
 	 */
 	public function getDefaultVisibilityForPage(Element $contextElement) {
@@ -180,7 +180,7 @@ class Language {
 	/**
 	 * Method to read the defaultVisibility for elements
 	 *
-	 * @param tx_languagevisibility_element $contextElement
+	 * @param Element $contextElement
 	 * @return string
 	 */
 	public function getDefaultVisibilityForElement(Element $contextElement) {
