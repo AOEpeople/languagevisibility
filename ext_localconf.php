@@ -6,7 +6,7 @@ if (!defined('TYPO3_MODE')) {
 /**
  * Register TYPO3 core hooks
  */
-$TYPO3_CONF_VARS['SC_OPTIONS']['t3lib/class.t3lib_tcemain.php']['processDatamapClass']['languagevisibility'] = 'AOE\\Languagevisibility\\Hooks\\T3LibTceMain';
+$TYPO3_CONF_VARS['SC_OPTIONS']['t3lib/class.t3lib_tcemain.php']['processDatamapClass']['languagevisibility'] = 'AOE\\Languagevisibility\\Hooks\\T3libTceMain';
 
 $TYPO3_CONF_VARS['SC_OPTIONS']['t3lib/class.t3lib_page.php']['getPageOverlay']['languagevisility'] = 'AOE\\Languagevisibility\\Hooks\\T3libPage';
 $TYPO3_CONF_VARS['SC_OPTIONS']['t3lib/class.t3lib_page.php']['getRecordOverlay']['languagevisility'] = 'AOE\\Languagevisibility\\Hooks\\T3libPage';

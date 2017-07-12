@@ -253,7 +253,7 @@ class FieldVisibility {
 		.visibilitytable td {padding: 0 5px 2px 2px}
 		</' . 'style>';
 
-		$content .= '<table style="border-collapse: collapse;" class="visibilitytable">';
+		$content = '<table style="border-collapse: collapse;" class="visibilitytable">';
 		$content .= '<tr class="bgColor4">' . '<th >' . $this->getLLL('language') . '</th>' . '<th >' . $this->getLLL('visibility_in_default') . '</th>' . '<th >' . $this->getLLL('visibility_in_overlay') . '</th>' . '<th>' . $this->getLLL('hastranslation') . '</th>' . '<th>' . $this->getLLL('isshown') . '</th>' . '</tr>';
 
 		$i=0;
