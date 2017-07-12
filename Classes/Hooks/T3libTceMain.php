@@ -31,9 +31,9 @@ use AOE\Languagevisibility\Services\BeServices;
 use AOE\Languagevisibility\Services\VisibilityService;
 
 /**
- * Class T3LibTceMain
+ * Class T3libTceMain
  */
-class T3LibTceMain {
+class T3libTceMain {
 
 	/**
 	 * @param string $table
