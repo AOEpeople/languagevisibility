@@ -15,7 +15,7 @@ CREATE TABLE sys_language (
 # Table structure for table 'pages'
 #
 CREATE TABLE pages (
-	tx_languagevisibility_visibility text NOT NULL,
+	tx_languagevisibility_visibility text NULL,
 	tx_languagevisibility_inheritanceflag_original tinyint(1) DEFAULT '0' NOT NULL,
 	tx_languagevisibility_inheritanceflag_overlayed tinyint(1) DEFAULT '0' NOT NULL
 );
