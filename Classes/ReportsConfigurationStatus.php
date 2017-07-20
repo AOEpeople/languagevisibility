@@ -60,7 +60,7 @@ class ReportsConfigurationStatus implements \TYPO3\CMS\Reports\StatusProviderInt
 		$value = $GLOBALS['LANG']->sL('LLL:EXT:languagevisibility/locallang_db.xml:reports.ok.value');
 		$severity = \TYPO3\CMS\Reports\Status::OK;
 
-		$rootTpls = \TYPO3\CMS\Backend\Utility\BackendUtility::getRecordsByField('sys_template', 'root', '1', '', 'pid');
+		$rootTpls = \TYPO3\CMS\Backend\Utility\BackendUtility::getRecordsByField('sys_template', 'root', '1', '');
 
 		foreach ($rootTpls as $tpl) {
 			/**
