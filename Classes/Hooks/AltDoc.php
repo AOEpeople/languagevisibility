@@ -26,7 +26,7 @@ namespace AOE\Languagevisibility\Hooks;
  ***************************************************************/
 
 use AOE\Languagevisibility\Services\BeServices;
-
+use TYPO3\CMS\Backend\Form\FormDataProvider\DatabaseUserPermissionCheck;
 /**
  * Class/Function which manipulates the item-array for the  listing (see piFlexform).
  *
@@ -40,7 +40,7 @@ class AltDoc {
 	 * @param SC_alt_doc $ref
 	 * @return bool
 	 */
-	public function makeEditForm_accessCheck(array $params, SC_alt_doc &$ref) {
+	public function makeEditForm_accessCheck(array $params, DatabaseUserPermissionCheck &$ref) {
 		if ($params['hasAccess']) {
 			return TRUE;
 		}
