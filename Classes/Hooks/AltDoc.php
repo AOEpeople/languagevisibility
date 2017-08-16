@@ -37,7 +37,7 @@ class AltDoc {
 
 	/**
 	 * @param array $params
-	 * @param SC_alt_doc $ref
+	 * @param DatabaseUserPermissionCheck $ref
 	 * @return bool
 	 */
 	public function makeEditForm_accessCheck(array $params, DatabaseUserPermissionCheck &$ref) {
