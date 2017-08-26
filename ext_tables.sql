@@ -15,7 +15,7 @@ CREATE TABLE sys_language (
 # Table structure for table 'pages'
 #
 CREATE TABLE pages (
-	tx_languagevisibility_visibility text NOT NULL,
+	tx_languagevisibility_visibility text,
 	tx_languagevisibility_inheritanceflag_original tinyint(1) DEFAULT '0' NOT NULL,
 	tx_languagevisibility_inheritanceflag_overlayed tinyint(1) DEFAULT '0' NOT NULL
 );
@@ -24,7 +24,7 @@ CREATE TABLE pages (
 # Table structure for table 'pages_language_overlay'
 #
 CREATE TABLE pages_language_overlay (
-	tx_languagevisibility_visibility text NOT NULL,
+	tx_languagevisibility_visibility text,
 	tx_languagevisibility_inheritanceflag_original tinyint(1) DEFAULT '0' NOT NULL,
 	tx_languagevisibility_inheritanceflag_overlayed tinyint(1) DEFAULT '0' NOT NULL
 );
@@ -33,14 +33,14 @@ CREATE TABLE pages_language_overlay (
 # Table structure for table 'tt_content'
 #
 CREATE TABLE tt_content (
-	tx_languagevisibility_visibility text NOT NULL
+	tx_languagevisibility_visibility text
 );
 
 #
 # Table structure for table 'tt_news'
 #
 CREATE TABLE tt_news (
-	tx_languagevisibility_visibility text NOT NULL
+	tx_languagevisibility_visibility text
 );
 
 #
