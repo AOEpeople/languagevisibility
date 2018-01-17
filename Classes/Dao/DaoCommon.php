@@ -26,11 +26,13 @@ namespace AOE\Languagevisibility\Dao;
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
+use TYPO3\CMS\Core\SingletonInterface;
+
 /**
  * Class DaoCommon
  * @package AOE\Languagevisibility
  */
-class DaoCommon {
+class DaoCommon implements SingletonInterface {
 
 	/**
 	 * @var \TYPO3\CMS\Core\Cache\Frontend\VariableFrontend
