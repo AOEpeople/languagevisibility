@@ -133,7 +133,7 @@ class DaoCommon implements SingletonInterface {
 	 *
 	 * @return \TYPO3\CMS\Core\Database\DatabaseConnection
 	 */
-	protected function getDatabase() {
+	protected static function getDatabase() {
 		return $GLOBALS['TYPO3_DB'];
 	}
 }
