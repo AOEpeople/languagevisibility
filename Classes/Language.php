@@ -25,6 +25,7 @@ namespace AOE\Languagevisibility;
  * This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
+
 /**
  *
  * @author	Daniel Poetzinger <poetzinger@aoemedia.de>
@@ -278,7 +279,9 @@ class Language {
 	public function getFlagImg($pidForDefault = '') {
 		$cache_key = 'pid:' . $pidForDefault . 'uid:' . $this->getUid();
 		if ( !isset(self::$flagCache[$cache_key]) ) {
-			self::$flagCache[$cache_key] = \TYPO3\CMS\Backend\Utility\IconUtility::getSpriteIcon($this->getFlagName($pidForDefault));
+			/** @var \TYPO3\CMS\Core\Imaging\IconFactory $iconFactory */
+			$iconFactory = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(\TYPO3\CMS\Core\Imaging\IconFactory::class);
+			self::$flagCache[$cache_key] = $iconFactory->getIcon($this->getFlagName($pidForDefault));
 		}
 
 		return self::$flagCache[$cache_key];
