@@ -356,7 +356,7 @@ class BeServices extends AbstractServices {
 	 *
 	 * @return boolean
 	 */
-	protected function isInheritanceEnabled() {
+	protected static function isInheritanceEnabled() {
 		$confArr = unserialize($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf']['languagevisibility']);
 		if (is_array($confArr)) {
 			return ($confArr['inheritanceEnabled'] == 1);
