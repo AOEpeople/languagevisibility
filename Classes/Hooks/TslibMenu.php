@@ -38,7 +38,7 @@ class TslibMenu implements \TYPO3\CMS\Frontend\ContentObject\Menu\AbstractMenuFi
 	 * @param array $data
 	 * @param array $banUidArray
 	 * @param $spacer
-	 * @param TYPO3\CMS\Frontend\ContentObject\Menu\AbstractMenuContentObject $obj
+	 * @param \TYPO3\CMS\Frontend\ContentObject\Menu\AbstractMenuContentObject $obj
 	 * @return bool
 	 */
 	public function tslib_menu_filterMenuPagesHook(array &$data, array $banUidArray, $spacer, \TYPO3\CMS\Frontend\ContentObject\Menu\AbstractMenuContentObject $obj) {
@@ -55,7 +55,7 @@ class TslibMenu implements \TYPO3\CMS\Frontend\ContentObject\Menu\AbstractMenuFi
 	 * @param array $data
 	 * @param array $banUidArray
 	 * @param bool $spacer
-	 * @param TYPO3\CMS\Frontend\ContentObject\Menu\AbstractMenuContentObject $obj
+	 * @param \TYPO3\CMS\Frontend\ContentObject\Menu\AbstractMenuContentObject $obj
 	 * @return bool
 	 */
 	public function processFilter(array &$data, array $banUidArray, $spacer, \TYPO3\CMS\Frontend\ContentObject\Menu\AbstractMenuContentObject $obj) {
