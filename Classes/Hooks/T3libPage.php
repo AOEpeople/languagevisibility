@@ -69,7 +69,9 @@ class T3libPage implements \TYPO3\CMS\Frontend\Page\PageRepositoryGetPageOverlay
 			if (is_array($pageInput)) {
 				$pageInput['_NOTVISIBLE'] = TRUE;
 			}
-			$lUid = NULL;
+			// This leads to a bug where the default language is taken in menu generation (only first level).
+			// The fix for now: do not edit $lUid
+			//$lUid = NULL;
 		} else {
 			$lUid = $overlayLanguage;
 		}
