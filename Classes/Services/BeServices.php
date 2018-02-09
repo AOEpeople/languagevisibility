@@ -178,7 +178,8 @@ class BeServices extends AbstractServices {
 					if ($tanslationIdField != '') {
 							// if the field which points to the orginal of the translation is
 							// not 0 a translation exists and we have an overlay record
-						$result = $row[$tanslationIdField] != 0;
+						$sysLanguageUid = is_array($row[$tanslationIdField]) ? $row[$tanslationIdField][0] : $row[$tanslationIdField];
+						$result = $sysLanguageUid != 0;
 					}
 				}
 
@@ -518,7 +519,8 @@ class BeServices extends AbstractServices {
 	 */
 	public static function getOriginalUidOfTranslation($row, $table) {
 		if (is_array($row) && is_array($GLOBALS['TCA'])) {
-			return $row[$GLOBALS['TCA'][$table]['ctrl']['transOrigPointerField']];
+			$uid = $row[$GLOBALS['TCA'][$table]['ctrl']['transOrigPointerField']];
+			return is_array($uid) ? $uid[0] : $uid;
 		} else {
 			return 0;
 		}
