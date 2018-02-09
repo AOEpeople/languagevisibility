@@ -498,6 +498,9 @@ class BeServices extends AbstractServices {
 	 * @return string
 	 */
 	public static function getOriginalTableOfTranslation($table) {
+		if ($table === 'pages_language_overlay') {
+			return 'pages';
+		}
 		$translationTable = $GLOBALS['TCA'][$table]['ctrl']['transOrigPointerTable'];
 		if ($translationTable != '') {
 			return $translationTable;
