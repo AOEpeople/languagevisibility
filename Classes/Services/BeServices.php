@@ -339,7 +339,7 @@ class BeServices extends AbstractServices {
 	 * @param int $id
 	 * @return string
 	 */
-	protected function getContextElement($table, $id) {
+	protected static function getContextElement($table, $id) {
 		$dao = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('AOE\\Languagevisibility\\Dao\\DaoCommon');
 		$elementfactory = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('AOE\\Languagevisibility\\ElementFactory', $dao);
 		try {
