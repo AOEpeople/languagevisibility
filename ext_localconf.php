@@ -26,7 +26,7 @@ $rootlineFields .= (empty($rootlineFields))? $newRootlineFields : ',' . $newRoot
 
 	// adding the inheritance flag to the pageOverlayFields
 $pagesOverlayFields = &$GLOBALS['TYPO3_CONF_VARS']['FE']['pageOverlayFields'];
-$newPagesOverlayFields = 'tx_languagevisibility_inheritanceflag_overlayed';
+$newPagesOverlayFields = 'tx_languagevisibility_inheritanceflag_overlayed,uid';
 $pagesOverlayFields .= (empty($pagesOverlayFields)) ? $newPagesOverlayFields : ',' . $newPagesOverlayFields;
 
 /**
